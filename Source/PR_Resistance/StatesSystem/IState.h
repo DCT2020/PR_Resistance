@@ -4,21 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Status.h"
+#include "StateDesc.h"
+#include "IState.generated.h"
 /**
  * 
  */
-class PR_RESISTANCE_API IState
+ UINTERFACE(Blueprintable)
+class PR_RESISTANCE_API UState : public UInterface
 {
-public:
-	IState(FStatus const * status){}
-	virtual ~IState(){}
-
-public:
-	virtual bool Init() = 0;
-	virtual bool Begin() = 0;
-	virtual void Update(float deltaTime) = 0;
-	virtual void End() = 0;
-
-	virtual int GetPriority() = 0;
+	GENERATED_BODY()
 };
 
+ class PR_RESISTANCE_API IState
+ {
+	 GENERATED_BODY()
+
+ public:
+	 virtual bool Init() = 0;
+	 virtual bool Begin() = 0;
+	 virtual void Update(float deltaTime) = 0;
+	 virtual void End() = 0;
+
+	 virtual FStateDesc GetDesc() = 0;
+ };

@@ -9,9 +9,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
-#include "PR_Resistance/StatesSystem/IState.h"
-#include "PR_Resistance/StatesSystem/Idle.h"
-#include "PR_Resistance/StatesSystem/Walk.h"
+#include "PR_Resistance/StatesSystem/StateManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
@@ -49,33 +47,31 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-	if (States[0] == nullptr)
-		States[0] = new Idle(&mStatus);
-	if (States[1] == nullptr)
-		States[1] = new Walk(&mStatus);
-
-	curState = States[1];
+	//mStateManager = NewObject()
+	mStateManager = std::make_shared<StateManager>();
+	mStateManager->Init();
 }
 
 APR_ResistanceCharacter::~APR_ResistanceCharacter()
 {
-	for (int i = 0; i < 2; ++i)
-	{
-		if(States[i] != nullptr)
-			delete States[i];
-	}
+
 }
 
 void APR_ResistanceCharacter::BeginPlay()
 {
 	ACharacter::BeginPlay();
+	GetWorld()->GetTimerManager().SetTimer(handle,[this](){
 	
+		GEngine->AddOnScreenDebugMessage(-1,0.1f,FColor::Blue,
+			mStateManager->GetCurStateDesc().StateType == CharacterState::CS_IDLE ? TEXT("State : CS_IDLE") : TEXT("State : CS_WALK"));
+	},0.1f,true);
 	// PlayerStates Init
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
 {
-	curState->Update(deltaTime);
+	//curState->Update(deltaTime);
+	mStateManager->Update(deltaTime	);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,9 +142,9 @@ void APR_ResistanceCharacter::LookUpAtRate(float Rate)
 
 void APR_ResistanceCharacter::MoveForward(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
+	if (bIsMoved)
 	{
-		curState = States[1];
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -156,18 +152,23 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
+
+		mStateManager->TryChangeState(CharacterState::CS_WALK);
 	}
 	else
 	{
-		curState = States[0];
+		mStateManager->TryChangeState(CharacterState::CS_IDLE);
 	}
+
+
+	//CheckIsMove(true, bIsMoved);
 }
 
 void APR_ResistanceCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
+	if (bIsMoved)
 	{
-		curState = States[1];
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -177,13 +178,51 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 
+
+		mStateManager->TryChangeState(CharacterState::CS_WALK);
 	}
 	else
 	{
-		curState = States[0];
+		mStateManager->TryChangeState(CharacterState::CS_IDLE);
 	}
 }
 
+
+// TODO : 개선의 여지를 찾자
+// Right와 Forward라는 2가지 움직임 상태가 있는데 만약 Forward입력만 들어오면 right은 움직이지 않은상태여서
+// 상태가 idle로 된다. 이를 해결하기위해 Walk State로의 변경을 함수 한곳에서 관리한다.
+// State를 walk상태로 하기 위한 함수다.
+void APR_ResistanceCharacter::CheckIsMove(bool bIsForward, bool bIsMoved)
+{
+	static bool forwardTrigger = false;
+	static bool rightTrigger = false;
+
+	if (bIsForward)
+	{
+		if (bIsMoved)
+		{
+			forwardTrigger = true;
+		}
+		else
+		{
+			forwardTrigger = false;
+		}
+	}
+	else
+	{
+		if (bIsMoved)
+		{
+			rightTrigger = true;
+		}
+		else
+		{
+			rightTrigger = false;
+		}
+	}
+
+	//mStateManager->
+	//curState = (forwardTrigger || rightTrigger) ? States[1] : States[0];
+}
 
 //////////////////////////
 void APR_ResistanceCharacter::SetSpeed(float speed)

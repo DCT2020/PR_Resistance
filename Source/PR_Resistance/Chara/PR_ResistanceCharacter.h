@@ -7,7 +7,7 @@
 #include "PR_Resistance/StatesSystem/Status.h"
 #include "PR_ResistanceCharacter.generated.h"
 // fornt decler
-class IState;
+class StateManager;
 
 UCLASS(config=Game)
 class APR_ResistanceCharacter : public ACharacter
@@ -37,11 +37,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = Character)
 	FStatus mStatus;
 
-	IState* curState = nullptr;
-	TArray<IState*> States = {nullptr, nullptr};
+	std::shared_ptr<StateManager> mStateManager;
+	FTimerHandle handle;
 
 private:
 	void SetSpeed(float speed);
+	void CheckIsMove(bool bIsForward, bool bIsMoved);
 
 protected: 
 	virtual void BeginPlay() override;
