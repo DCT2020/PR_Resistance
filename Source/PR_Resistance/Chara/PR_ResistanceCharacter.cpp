@@ -9,6 +9,10 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include "PR_Resistance/StatesSystem/IState.h"
+#include "PR_Resistance/StatesSystem/Idle.h"
+#include "PR_Resistance/StatesSystem/Walk.h"
+
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
 
@@ -45,6 +49,33 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	if (States[0] == nullptr)
+		States[0] = new Idle(&mStatus);
+	if (States[1] == nullptr)
+		States[1] = new Walk(&mStatus);
+
+	curState = States[1];
+}
+
+APR_ResistanceCharacter::~APR_ResistanceCharacter()
+{
+	for (int i = 0; i < 2; ++i)
+	{
+		if(States[i] != nullptr)
+			delete States[i];
+	}
+}
+
+void APR_ResistanceCharacter::BeginPlay()
+{
+	ACharacter::BeginPlay();
+	
+	// PlayerStates Init
+}
+
+void APR_ResistanceCharacter::Tick(float deltaTime)
+{
+	curState->Update(deltaTime);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,15 +103,24 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &APR_ResistanceCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &APR_ResistanceCharacter::TouchStopped);
 
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APR_ResistanceCharacter::OnResetVR);
+	// Run
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &APR_ResistanceCharacter::RunStop);
+
+
 }
 
-
-void APR_ResistanceCharacter::OnResetVR()
+// Run
+void APR_ResistanceCharacter::Run()
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+	SetSpeed(mStatus.runSpeed);
 }
+
+void APR_ResistanceCharacter::RunStop()
+{
+	SetSpeed(mStatus.walkSpeed);
+}
+//
 
 void APR_ResistanceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
@@ -108,6 +148,7 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		curState = States[1];
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -116,12 +157,17 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
+	else
+	{
+		curState = States[0];
+	}
 }
 
 void APR_ResistanceCharacter::MoveRight(float Value)
 {
 	if ( (Controller != NULL) && (Value != 0.0f) )
 	{
+		curState = States[1];
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -130,5 +176,17 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+
 	}
+	else
+	{
+		curState = States[0];
+	}
+}
+
+
+//////////////////////////
+void APR_ResistanceCharacter::SetSpeed(float speed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = speed;
 }

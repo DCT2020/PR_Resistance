@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "PR_Resistance/StatesSystem/Status.h"
 #include "PR_ResistanceCharacter.generated.h"
+// fornt decler
+class IState;
 
 UCLASS(config=Game)
 class APR_ResistanceCharacter : public ACharacter
@@ -20,6 +23,7 @@ class APR_ResistanceCharacter : public ACharacter
 	class UCameraComponent* FollowCamera;
 public:
 	APR_ResistanceCharacter();
+	virtual ~APR_ResistanceCharacter();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -29,10 +33,19 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
-protected:
+	//States
+	UPROPERTY(EditAnywhere, Category = Character)
+	FStatus mStatus;
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
+	IState* curState = nullptr;
+	TArray<IState*> States = {nullptr, nullptr};
+
+private:
+	void SetSpeed(float speed);
+
+protected: 
+	virtual void BeginPlay() override;
+	virtual void Tick(float deltaTime) override;
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -51,6 +64,12 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
+
+	/*
+	* Run Action
+	*/
+	void Run();
+	void RunStop();
 
 	/** Handler for when a touch input begins. */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
