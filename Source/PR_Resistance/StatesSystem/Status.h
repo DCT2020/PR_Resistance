@@ -25,6 +25,18 @@ public:
 		float walkSpeed;
 	UPROPERTY(EditAnywhere)
 		float runSpeed;
+	UPROPERTY(EditAnywhere)
+		float DodgeStamina;
+	UPROPERTY(EditAnywhere)
+		float DodgeTime;
+	UPROPERTY(EditAnywhere)
+		float DodgeDistance;
+	UPROPERTY(EditAnywhere)
+		float JumpDashStamina;
+	UPROPERTY(EditAnywhere)
+		float JumpDashTime;
+	UPROPERTY(EditAnywhere)
+		float JumpDashDistance;
 };
 
 		

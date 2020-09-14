@@ -4,8 +4,8 @@
 
 UIdle::UIdle()
 {
-	temp.StateType = CharacterState::CS_IDLE;
-	temp.Priority = 1;
+	mDesc.StateType = CharacterState::CS_IDLE;
+	mDesc.Priority = 1;
 }
 
 UIdle::~UIdle()
@@ -13,7 +13,7 @@ UIdle::~UIdle()
 	
 }
 
-bool UIdle::Init()
+bool UIdle::_Init()
 {
 
 	return true;
@@ -21,14 +21,9 @@ bool UIdle::Init()
 
 void UIdle::Update(float deltaTime)
 {
-	//if (GEngine && bIsCanDebug)
-	//{
-	//	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, TEXT("CurState : Idle"));
-	//	bIsCanDebug = false;
-	//}
 }
 
-bool UIdle::Begin()
+bool UIdle::Begin(CharacterState prevState)
 {
 	return true;
 }
@@ -36,9 +31,3 @@ bool UIdle::Begin()
 void UIdle::End()
 {
 }
-
-FStateDesc UIdle::GetDesc()
-{
-	return temp;
-}
-

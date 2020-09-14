@@ -5,12 +5,19 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "PR_Resistance/StatesSystem/Status.h"
+//Interface
+#include "PR_Resistance/Interface/IStaminaProvider.h"
+//
 #include "PR_ResistanceCharacter.generated.h"
-// fornt decler
-class StateManager;
+
+// fornt declare
+class StateManager_Player;
+
+//Dynamic Delegate
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
 
 UCLASS(config=Game)
-class APR_ResistanceCharacter : public ACharacter
+class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider
 {
 	GENERATED_BODY()
 
@@ -37,12 +44,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = Character)
 	FStatus mStatus;
 
-	std::shared_ptr<StateManager> mStateManager;
-	FTimerHandle handle;
+	std::shared_ptr<StateManager_Player> mStateManager;
 
-private:
-	void SetSpeed(float speed);
-	void CheckIsMove(bool bIsForward, bool bIsMoved);
+	// TODO 수정할 것, 리턴 값 즉 임시변수를 Archive에 올릴경우 발생하는 문제(호출함수가 끝나면 변수가 사라짐)
+	FVector mLastInputVector = FVector::ZeroVector;
+
+	virtual void Landed(const FHitResult& Hit);
 
 protected: 
 	virtual void BeginPlay() override;
@@ -77,6 +84,24 @@ protected:
 
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
+
+	// 스테미나 사용 이벤트 디스패쳐(델리게이트)
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere,BlueprintCallable, Category = "Event")
+		FDele_Dynamic_OneParam FucDynamicOneParam;
+
+	// Jump
+	void Jump_Wrapped();
+	void StopJumpping_Wrapped();
+
+	// Dodge
+	void Dodge();
+
+	// Jump Dash
+	void DoJumpDash();
+
+public:
+	//Interface
+	virtual bool UseStamina(float usedStamina) override;
 
 protected:
 	// APawn interface

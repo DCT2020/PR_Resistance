@@ -12,7 +12,11 @@ enum class CharacterState : uint8
 {
 	CS_NULL = 0,
 	CS_IDLE UMETA(DisplayName = "Idle"),
-	CS_WALK UMETA(DisplayName = "Walk")
+	CS_WALK UMETA(DisplayName = "Walk"),
+	CS_RUN UMETA(DisplayName = "Run"),
+	CS_DODGE UMETA(DisplayName = "Dodge"),
+	CS_JUMP UMETA(DisplayName = "Jump"),
+	CS_JUMPDASH UMETA(DisplayName = "JumpDash"),
 };
 
 /**
@@ -29,8 +33,7 @@ struct FStateDesc
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 Priority = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsManualStop = false;
+	bool bIsEnd = false;
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TScriptInterface<UState> State;*/

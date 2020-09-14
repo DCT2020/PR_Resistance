@@ -9,7 +9,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 
-#include "PR_Resistance/StatesSystem/StateManager.h"
+#include "PR_Resistance/StatesSystem/StateManager_Player.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
@@ -48,8 +48,14 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	//mStateManager = NewObject()
-	mStateManager = std::make_shared<StateManager>();
-	mStateManager->Init();
+
+	mStateManager = std::make_shared<StateManager_Player>();
+	mStateManager->SetProvider(this);
+	
+	// add to archive
+
+	
+
 }
 
 APR_ResistanceCharacter::~APR_ResistanceCharacter()
@@ -57,32 +63,19 @@ APR_ResistanceCharacter::~APR_ResistanceCharacter()
 
 }
 
-void APR_ResistanceCharacter::BeginPlay()
-{
-	ACharacter::BeginPlay();
-	GetWorld()->GetTimerManager().SetTimer(handle,[this](){
-	
-		GEngine->AddOnScreenDebugMessage(-1,0.1f,FColor::Blue,
-			mStateManager->GetCurStateDesc().StateType == CharacterState::CS_IDLE ? TEXT("State : CS_IDLE") : TEXT("State : CS_WALK"));
-	},0.1f,true);
-	// PlayerStates Init
-}
-
-void APR_ResistanceCharacter::Tick(float deltaTime)
-{
-	//curState->Update(deltaTime);
-	mStateManager->Update(deltaTime	);
+void APR_ResistanceCharacter::Landed(const FHitResult& Hit)
+{	
+	Super::Landed(Hit);
+	mStateManager->SetStateEnd(CharacterState::CS_JUMP);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
-
 void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APR_ResistanceCharacter::Jump_Wrapped);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APR_ResistanceCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APR_ResistanceCharacter::MoveRight);
@@ -100,23 +93,77 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindTouch(IE_Released, this, &APR_ResistanceCharacter::TouchStopped);
 
 	// Run
-	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Repeat, this, &APR_ResistanceCharacter::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &APR_ResistanceCharacter::RunStop);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::DoJumpDash);
 
+	//Dodge
+	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &APR_ResistanceCharacter::Dodge);
+}
 
+void APR_ResistanceCharacter::BeginPlay()
+{
+	ACharacter::BeginPlay();
+	// PlayerStates Init
+	mStateManager->AddArchiveData("Status", &mStatus);
+	mStateManager->AddArchiveData("MovementSpeed", &GetCharacterMovement()->MaxWalkSpeed);
+	mStateManager->AddArchiveData("CharacterVelocity", &GetCharacterMovement()->Velocity);
+	mStateManager->AddArchiveData("CharacterGravityScale", &GetCharacterMovement()->GravityScale);
+	mStateManager->AddArchiveData("LastInputVector", &mLastInputVector);
+	mStateManager->AddArchiveData("MovementComponent",GetMovementComponent());
+	mStateManager->Init();
+
+}
+
+void APR_ResistanceCharacter::Tick(float deltaTime)
+{
+	mStateManager->TryChangeState(CharacterState::CS_IDLE);
+
+	mStateManager->Update(deltaTime);
+	FucDynamicOneParam.Broadcast(mStatus.curStamina / mStatus.maxStamina);
+
+	// 
+ 	mLastInputVector = GetCharacterMovement()->GetLastInputVector();
+
+	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,FString::Printf(TEXT("CurState : %d"), mStateManager->GetCurStateDesc().StateType));
+}
+
+// Jump
+void APR_ResistanceCharacter::Jump_Wrapped()
+{
+	if (JumpCurrentCount < 2)
+	{
+		float forUseStamina = mStatus.maxStamina * (JumpCurrentCount == 0 ? 0.07f : 0.08f);
+		if (UseStamina(forUseStamina))
+		{
+			Jump();
+			mStateManager->TryChangeState(CharacterState::CS_JUMP);
+		}
+	}
+
+}
+
+void APR_ResistanceCharacter::Dodge()
+{
+	mStateManager->TryChangeState(CharacterState::CS_DODGE);
+}
+
+void APR_ResistanceCharacter::DoJumpDash()
+{
+	mStateManager->TryChangeState(CharacterState::CS_JUMPDASH);
 }
 
 // Run
 void APR_ResistanceCharacter::Run()
 {
-	SetSpeed(mStatus.runSpeed);
+	mStateManager->TryChangeState(CharacterState::CS_RUN);
 }
 
 void APR_ResistanceCharacter::RunStop()
 {
-	SetSpeed(mStatus.walkSpeed);
+	mStateManager->SetStateEnd(CharacterState::CS_RUN);
 }
-//
+
 
 void APR_ResistanceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
@@ -126,6 +173,7 @@ void APR_ResistanceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVecto
 void APR_ResistanceCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 		StopJumping();
+		mStateManager->SetStateEnd(CharacterState::CS_JUMP);
 }
 
 void APR_ResistanceCharacter::TurnAtRate(float Rate)
@@ -157,11 +205,8 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 	}
 	else
 	{
-		mStateManager->TryChangeState(CharacterState::CS_IDLE);
+		mStateManager->SetStateEnd(CharacterState::CS_WALK);
 	}
-
-
-	//CheckIsMove(true, bIsMoved);
 }
 
 void APR_ResistanceCharacter::MoveRight(float Value)
@@ -178,54 +223,22 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 
-
 		mStateManager->TryChangeState(CharacterState::CS_WALK);
 	}
 	else
 	{
-		mStateManager->TryChangeState(CharacterState::CS_IDLE);
+		mStateManager->SetStateEnd(CharacterState::CS_WALK);
 	}
 }
 
-
-// TODO : 개선의 여지를 찾자
-// Right와 Forward라는 2가지 움직임 상태가 있는데 만약 Forward입력만 들어오면 right은 움직이지 않은상태여서
-// 상태가 idle로 된다. 이를 해결하기위해 Walk State로의 변경을 함수 한곳에서 관리한다.
-// State를 walk상태로 하기 위한 함수다.
-void APR_ResistanceCharacter::CheckIsMove(bool bIsForward, bool bIsMoved)
+///////////Interface
+bool APR_ResistanceCharacter::UseStamina(float usedStamina)
 {
-	static bool forwardTrigger = false;
-	static bool rightTrigger = false;
+	if (mStatus.curStamina < usedStamina)
+		return false;
 
-	if (bIsForward)
-	{
-		if (bIsMoved)
-		{
-			forwardTrigger = true;
-		}
-		else
-		{
-			forwardTrigger = false;
-		}
-	}
-	else
-	{
-		if (bIsMoved)
-		{
-			rightTrigger = true;
-		}
-		else
-		{
-			rightTrigger = false;
-		}
-	}
+	mStatus.curStamina -= usedStamina;
+	FucDynamicOneParam.Broadcast(mStatus.curStamina / mStatus.maxStamina);
 
-	//mStateManager->
-	//curState = (forwardTrigger || rightTrigger) ? States[1] : States[0];
-}
-
-//////////////////////////
-void APR_ResistanceCharacter::SetSpeed(float speed)
-{
-	GetCharacterMovement()->MaxWalkSpeed = speed;
+	return true;
 }

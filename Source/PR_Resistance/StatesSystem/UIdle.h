@@ -3,22 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PR_Resistance/StatesSystem/IState.h"
+#include "PR_Resistance/StatesSystem/CState.h"
 /**
  *	use in PR_ResistanceCharacter 
  * 
  */
-class PR_RESISTANCE_API UIdle : public IState
+class PR_RESISTANCE_API UIdle : public CState
 {
-	FStateDesc temp;
 public:
 	UIdle();
 	virtual ~UIdle();
 
-	virtual bool		Init()					override;
-	virtual bool		Begin()					override;
+	virtual bool		_Init()					override;
+	virtual bool		Begin(CharacterState prevState)					override;
 	virtual void		Update(float deltaTime)	override;
 	virtual void		End()					override;
-	virtual FStateDesc	GetDesc()				override;
-
 };
