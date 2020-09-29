@@ -80,6 +80,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Attack)
 	bool bIsMeele = true;
 
+	UPROPERTY(BlueprintReadWrite, Category = State)
+	bool bIsIdle = true;
+
 	// TODO 수정할 것, 리턴 값 즉 임시변수를 Archive에 올릴경우 발생하는 문제(호출함수가 끝나면 변수가 사라짐)
 	FVector mLastInputVector = FVector::ZeroVector;
 

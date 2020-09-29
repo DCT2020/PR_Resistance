@@ -153,6 +153,15 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	mStateManager->Update(deltaTime);
 	FucDynamicOneParam.Broadcast(mStatus.curStamina / mStatus.maxStamina);
 
+	if (mStateManager->GetCurStateDesc().StateType == CharacterState::CS_IDLE)
+	{
+		bIsIdle = true;
+	}
+	else
+	{
+		bIsIdle = false;
+	}
+
 	// 
  	mLastInputVector = GetCharacterMovement()->GetLastInputVector();
 
