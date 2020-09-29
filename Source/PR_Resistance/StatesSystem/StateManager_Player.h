@@ -11,13 +11,22 @@
 /**
  * 
  */
+ UENUM(BlueprintType)
+enum class StateType : uint8
+{
+	ST_SWORD,
+	ST_GUN,
+	ST_MAX
+ };
+
 class PR_RESISTANCE_API StateManager_Player : 
 	public StateManager, public IStaminaProvider, public IStaminaUser
 {
 protected:
 	IStaminaProvider* mSPProvider = nullptr;
+	StateType mCurStateType = StateType::ST_SWORD;
 public:
-	StateManager_Player();
+	StateManager_Player(int stateTypeNum);
 	virtual ~StateManager_Player() override;
 
 
@@ -25,5 +34,5 @@ public:
 	bool UseStamina(float usedStamina) override;
 	void SetProvider(IStaminaProvider* provider) override;
 
-
+	void ChangeState(StateType type);
 };

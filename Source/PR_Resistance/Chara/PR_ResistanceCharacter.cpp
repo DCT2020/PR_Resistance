@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 #include "PR_Resistance/StatesSystem/StateManager_Player.h"
 
@@ -49,9 +50,13 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 	//mStateManager = NewObject()
 
-	mStateManager = std::make_shared<StateManager_Player>();
+	mStateManager = std::make_shared<StateManager_Player>(2);
 	mStateManager->SetProvider(this);
-	
+
+
+	Rifle = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rifle"));
+	Rifle->SetupAttachment(GetMesh(),TEXT("SM_Rifle"));
+
 	// add to archive
 
 	
@@ -69,6 +74,11 @@ void APR_ResistanceCharacter::Landed(const FHitResult& Hit)
 	mStateManager->SetStateEnd(CharacterState::CS_JUMP);
 }
 
+void APR_ResistanceCharacter::StartWait()
+{
+	mTimeToNextStepNotifier();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -76,6 +86,7 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APR_ResistanceCharacter::Jump_Wrapped);
+	PlayerInputComponent->
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APR_ResistanceCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APR_ResistanceCharacter::MoveRight);
@@ -99,18 +110,38 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 	//Dodge
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &APR_ResistanceCharacter::Dodge);
+
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APR_ResistanceCharacter::StartAttack);
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &APR_ResistanceCharacter::StopAttack);
+
+
+	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon1);
+	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon2);
 }
 
 void APR_ResistanceCharacter::BeginPlay()
 {
 	ACharacter::BeginPlay();
+	
+	//
+	GetCharacterMovement()->MaxWalkSpeed = mStatus.walkSpeed;
+	
 	// PlayerStates Init
 	mStateManager->AddArchiveData("Status", &mStatus);
 	mStateManager->AddArchiveData("MovementSpeed", &GetCharacterMovement()->MaxWalkSpeed);
 	mStateManager->AddArchiveData("CharacterVelocity", &GetCharacterMovement()->Velocity);
 	mStateManager->AddArchiveData("CharacterGravityScale", &GetCharacterMovement()->GravityScale);
 	mStateManager->AddArchiveData("LastInputVector", &mLastInputVector);
-	mStateManager->AddArchiveData("MovementComponent",GetMovementComponent());
+	mStateManager->AddArchiveData("MovementComponent", GetMovementComponent());
+	mStateManager->AddArchiveData("AnimInstance", GetMesh()->GetAnimInstance());
+	mStateManager->AddArchiveData("ActionTable", mActionDataTable);
+	mStateManager->AddArchiveData("AInput_Change", &mLastInput);
+	mStateManager->AddArchiveData("TimeToNextStepNotify", &mTimeToNextStepNotifier);
+	mStateManager->AddArchiveData("World", GetWorld());
+	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
+	mStateManager->AddArchiveData("StaticMeshComponenet", Rifle);
+	
+
 	mStateManager->Init();
 
 }
@@ -126,6 +157,19 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
  	mLastInputVector = GetCharacterMovement()->GetLastInputVector();
 
 	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,FString::Printf(TEXT("CurState : %d"), mStateManager->GetCurStateDesc().StateType));
+
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("bIsMeele : %d"), bIsMeele));
+	
+	// 효과적이고 간단하게 바꾸기
+	if (bIsMeele)
+	{
+		mStateManager->ChangeState(StateType::ST_SWORD);
+	}
+	else
+	{
+		mStateManager->ChangeState(StateType::ST_GUN);
+	}
 }
 
 // Jump
@@ -150,6 +194,7 @@ void APR_ResistanceCharacter::Dodge()
 
 void APR_ResistanceCharacter::DoJumpDash()
 {
+	mStateManager->TryChangeState(CharacterState::CS_RUN);
 	mStateManager->TryChangeState(CharacterState::CS_JUMPDASH);
 }
 
@@ -229,6 +274,33 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 	{
 		mStateManager->SetStateEnd(CharacterState::CS_WALK);
 	}
+}
+
+void APR_ResistanceCharacter::StartAttack()
+{
+	mLastInput = ActionInput::AINPUT_WEAKATTACK;
+	bIsInAttack = true;
+
+	mStateManager->TryChangeState(CharacterState::CS_ATTACK);
+}
+
+void APR_ResistanceCharacter::StopAttack()
+{
+	if (!bIsMeele)
+	{
+		mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
+	}
+}
+
+
+void APR_ResistanceCharacter::SetWeapon1()
+{
+	mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
+}
+
+void APR_ResistanceCharacter::SetWeapon2()
+{
+	mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
 }
 
 ///////////Interface

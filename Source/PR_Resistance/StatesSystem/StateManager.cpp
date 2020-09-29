@@ -8,10 +8,12 @@
 #include "PR_Resistance/StatesSystem/UWalk.h"
 #include "PR_Resistance/StatesSystem/URun.h"
 
-StateManager::StateManager()
+StateManager::StateManager(int stateTypeNum)
 {
 	if(mCDArchive == nullptr)
 		mCDArchive = new CharacterDataArchive;
+
+	mStateContiners.Reserve(stateTypeNum);
 }
 
 StateManager::~StateManager()
@@ -19,6 +21,11 @@ StateManager::~StateManager()
 	mStates.Empty();
 	if(mCDArchive != nullptr)
 		delete mCDArchive;
+}
+
+bool StateManager::Init()
+{
+	return true;
 }
 
 void StateManager::TryChangeState(CharacterState stateType)
@@ -90,12 +97,30 @@ void StateManager::SetDefaultState(CharacterState state)
 	mCurState = mStates[state];
 }
 
-std::shared_ptr<IState> StateManager::AddStateData(CharacterState stateName, std::shared_ptr<IState> newState)
+void StateManager::ChangeStateContainer(int index)
 {
+	mStates = mStateContiners[index];
+}
+
+std::shared_ptr<IState> StateManager::AddStateData(int index, CharacterState stateName, std::shared_ptr<IState> newState)
+{
+	//for (int i = mStateContiners.Num(); i <= index; ++i)
+	//{
+	//	mStateContiners.Push(TMap<CharacterState, std::shared_ptr<IState>>());
+	//}
+
 	newState->Init(mCDArchive);
-	mStates.Add(stateName,newState);
-	mStates[stateName] = newState;
+	if (!mStateContiners.IsValidIndex(index))
+	{
+		mStateContiners.EmplaceAt(index);
+	}
+	mStateContiners[index].Add(stateName,newState);
 	return newState;
+}
+
+std::shared_ptr<IState> StateManager::GetStateData(int index, CharacterState stateName)
+{
+	return mStateContiners[index][stateName];
 }
 
 /*
@@ -110,7 +135,6 @@ bool StateManager::ChangeState(std::shared_ptr<IState> newState)
 		newState->SetStart();
 		mCurState = newState;
 	}
-
 
 	return true;
 }

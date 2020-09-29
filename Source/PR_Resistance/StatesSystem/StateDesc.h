@@ -17,6 +17,9 @@ enum class CharacterState : uint8
 	CS_DODGE UMETA(DisplayName = "Dodge"),
 	CS_JUMP UMETA(DisplayName = "Jump"),
 	CS_JUMPDASH UMETA(DisplayName = "JumpDash"),
+	CS_ATTACK UMETA(DisplayName = "Attack"),
+	CS_STRONGATTACK UMETA(DisplayName = "StrongAttack"),
+	CS_FIRE UMETA(DisplayName = "Fire"),
 };
 
 /**

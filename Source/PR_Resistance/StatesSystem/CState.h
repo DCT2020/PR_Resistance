@@ -22,8 +22,8 @@ public:
 	FStateDesc GetStateDesc() override;
 
 
-	void SetStart() final override;
-	void SetStop() final override;
+	virtual void SetStart() override;
+	virtual void SetStop() override;
 
 protected:
 	virtual bool _Init() = 0;

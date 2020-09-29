@@ -4,10 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Engine/DataTable.h"
 #include "PR_Resistance/StatesSystem/Status.h"
+//struct
+#include "PR_Resistance/Combo/Action.h"
 //Interface
 #include "PR_Resistance/Interface/IStaminaProvider.h"
+#include "PR_Resistance/ITimeToNextStepNotify.h"
+//Components
+#include "Components/StaticMeshComponent.h"
+
 //
+#include <functional>
+//
+
 #include "PR_ResistanceCharacter.generated.h"
 
 // fornt declare
@@ -17,7 +27,7 @@ class StateManager_Player;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
 
 UCLASS(config=Game)
-class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider
+class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, public IITimeToNextStepNotify
 {
 	GENERATED_BODY()
 
@@ -28,6 +38,23 @@ class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Rifle;
+
+
+private:
+	// 내부 변수들
+	// combo
+	ActionInput mLastInput = ActionInput::AINPUT_NULL;
+
+	//state
+	std::shared_ptr<StateManager_Player> mStateManager;
+
+
+	std::function<void()> mTimeToNextStepNotifier;
+
+
 public:
 	APR_ResistanceCharacter();
 	virtual ~APR_ResistanceCharacter();
@@ -40,18 +67,27 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
+	bool bIsInAttack = false;
+
 	//States
-	UPROPERTY(EditAnywhere, Category = Character)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
 	FStatus mStatus;
 
-	std::shared_ptr<StateManager_Player> mStateManager;
+	UPROPERTY(EditAnywhere, Category = Attack)
+	UDataTable* mActionDataTable;
+
+	UPROPERTY(BlueprintReadWrite, Category = Attack)
+	bool bIsMeele = true;
 
 	// TODO 수정할 것, 리턴 값 즉 임시변수를 Archive에 올릴경우 발생하는 문제(호출함수가 끝나면 변수가 사라짐)
 	FVector mLastInputVector = FVector::ZeroVector;
 
-	virtual void Landed(const FHitResult& Hit);
+	// 스테미나 사용 이벤트 디스패쳐(델리게이트)
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
+		FDele_Dynamic_OneParam FucDynamicOneParam;
 
-protected: 
+protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
 
@@ -85,9 +121,7 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	// 스테미나 사용 이벤트 디스패쳐(델리게이트)
-	UPROPERTY(BlueprintAssignable, VisibleAnywhere,BlueprintCallable, Category = "Event")
-		FDele_Dynamic_OneParam FucDynamicOneParam;
+
 
 	// Jump
 	void Jump_Wrapped();
@@ -99,9 +133,24 @@ protected:
 	// Jump Dash
 	void DoJumpDash();
 
+	//Attack
+	void StartAttack();
+	void StopAttack();
+
+	// Swap
+	void SetWeapon1();
+	void SetWeapon2();
+
+
 public:
 	//Interface
 	virtual bool UseStamina(float usedStamina) override;
+
+	void StartWait() override;
+
+	// callback
+	virtual void Landed(const FHitResult& Hit);
+	
 
 protected:
 	// APawn interface

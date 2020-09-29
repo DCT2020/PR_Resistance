@@ -15,17 +15,18 @@ class PR_RESISTANCE_API StateManager
 {
 private:
 	TQueue<FStateDesc> mStateChangeCalls;
+	TArray<TMap<CharacterState, std::shared_ptr<IState>>> mStateContiners;
 	TMap<CharacterState,std::shared_ptr<IState>> mStates; // State리스트는 에디터에서 받을수 있도록
 	std::shared_ptr<IState> mCurState = nullptr;
 	CharacterDataArchive* mCDArchive = nullptr;
 public:
-	StateManager();
+	StateManager(int stateTypeNum);
 	virtual ~StateManager();
 
 	/*
 	* Init 호출 이전에 AddArchiveData가 호출되어야 합니다.
 	*/
-	virtual bool Init() = 0;
+	virtual bool Init();
 	/*
 	* State변경을 시도합니다.
 	* FStateDesc의 Priority에 따라 실패하거나 성공합니다.
@@ -54,6 +55,8 @@ public:
 protected:
 
 	void SetDefaultState(CharacterState state);
-	std::shared_ptr<IState>  AddStateData(CharacterState stateName, std::shared_ptr<IState> newState);
+	void ChangeStateContainer(int index);
+	std::shared_ptr<IState> AddStateData(int index, CharacterState stateName, std::shared_ptr<IState> newState);
+	std::shared_ptr<IState> GetStateData(int index, CharacterState stateName);
 	bool ChangeState(std::shared_ptr<IState> newState);
 };

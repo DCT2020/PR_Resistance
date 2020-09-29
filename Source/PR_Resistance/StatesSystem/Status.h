@@ -37,6 +37,20 @@ public:
 		float JumpDashTime;
 	UPROPERTY(EditAnywhere)
 		float JumpDashDistance;
+	
+	// TODO : 나중에 무기로 뺄 것
+	UPROPERTY(EditAnywhere)
+		float FireDelayTime;
+	UPROPERTY(EditAnywhere)
+		float BulletSpeed;
+	UPROPERTY(EditAnywhere)
+		float BulletLifeTime;
+	UPROPERTY(EditAnywhere)
+		float BulletDamage;
+	UPROPERTY(EditAnywhere)
+		UClass* ProjectileClass;
+	UPROPERTY(EditAnywhere)
+		UStaticMesh* GunModelWith_FireSocket;
 };
 
 		
