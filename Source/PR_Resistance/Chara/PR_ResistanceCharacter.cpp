@@ -9,6 +9,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "PR_Resistance/StatesSystem/StateManager_Player.h"
 
@@ -322,7 +323,7 @@ void APR_ResistanceCharacter::SetWeapon2()
 
 void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//UGameplayStatics::ApplyDamage(OtherActor,10.0f,GetController(),this,NULL);
+	UGameplayStatics::ApplyDamage(OtherActor,10.0f,GetController(),this,NULL);
 }
 
 ///////////Interface

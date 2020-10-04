@@ -5,6 +5,7 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/public/DrawDebugHelpers.h"
 #include "PR_Resistance/Chara/PR_ResistanceCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -42,13 +43,15 @@ void AProjectile::UpdatePosition(float DeltaTime)
 void AProjectile::OnProjectileBeginOverlap_inheritance(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("Hit"));
+	UGameplayStatics::ApplyDamage(OtherActor, 10.0f, NULL, this, NULL);
+
 	Destroy();
 }
 
 void AProjectile::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!OtherActor->Tags.Contains<FName>(TEXT("Player")))
+	if (!OtherActor->ActorHasTag(TEXT("Player")))
 	{
 		OnProjectileBeginOverlap_inheritance(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	}
