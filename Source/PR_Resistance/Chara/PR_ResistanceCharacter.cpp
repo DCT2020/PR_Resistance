@@ -53,7 +53,7 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 	
 
 	// 라이플 StaticMesh
-	Rifle = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rifle"));
+	Rifle = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle"));
 	Rifle->SetupAttachment(GetMesh(),TEXT("SM_Rifle"));
 
 	// 근접 무기 StaticMesh

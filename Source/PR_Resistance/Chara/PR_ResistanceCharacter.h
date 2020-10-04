@@ -47,7 +47,7 @@ class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, pub
 	UStaticMeshComponent* Rifle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* MeleeWeapon;
+	USkeletalMeshComponent* MeleeWeapon;
 
 private:
 	// 내부 변수들
