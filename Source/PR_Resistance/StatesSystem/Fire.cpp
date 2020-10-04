@@ -4,6 +4,7 @@
 #include "Fire.h"
 #include "PR_Resistance/StatesSystem/CharacterDataArchive.h"
 #include "PR_Resistance/Object/Projectile.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 
 Fire::Fire()
@@ -70,7 +71,13 @@ void Fire::Update(float deltaTime)
 				FQuat rot = tempTransform.GetRotation();
 				FVector lookAt = FVector::ForwardVector;
 				lookAt = rot.RotateVector(lookAt);
-				projectile->Init(lookAt,mCharacterStatus->DodgeStamina,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
+
+				FVector2D screenSize;
+				FVector direciton;
+				FVector position;
+				GEngine->GameViewport->GetViewportSize(screenSize);
+				UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(GEngine->GetWorld(),0), screenSize, position, direciton);
+				projectile->Init(direciton,mCharacterStatus->DodgeStamina,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
 			}
 		}
 	}
