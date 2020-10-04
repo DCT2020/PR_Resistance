@@ -52,6 +52,9 @@ public:
 	bool AddArchiveData(FName key, void* data);
 	void RemoveArchiveData(FName key);
 
+	// UActorComponent
+	
+
 protected:
 
 	void SetDefaultState(CharacterState state);

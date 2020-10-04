@@ -6,11 +6,15 @@
 #include "GameFramework/Character.h"
 #include "Engine/DataTable.h"
 #include "PR_Resistance/StatesSystem/Status.h"
+
 //struct
 #include "PR_Resistance/Combo/Action.h"
+
 //Interface
 #include "PR_Resistance/Interface/IStaminaProvider.h"
 #include "PR_Resistance/ITimeToNextStepNotify.h"
+#include "PR_Resistance/Noti/StateNotify/ReceiverInterface/NotifyState_ToCharacterReceiver.h"
+
 //Components
 #include "Components/StaticMeshComponent.h"
 
@@ -27,7 +31,7 @@ class StateManager_Player;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
 
 UCLASS(config=Game)
-class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, public IITimeToNextStepNotify
+class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, public IITimeToNextStepNotify, public INotifyState_ToCharacterReceiver
 {
 	GENERATED_BODY()
 
@@ -42,6 +46,8 @@ class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, pub
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Rifle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* MeleeWeapon;
 
 private:
 	// 내부 변수들
@@ -90,6 +96,8 @@ public:
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
 		FDele_Dynamic_OneParam FucDynamicOneParam;
 
+
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
@@ -124,8 +132,6 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-
-
 	// Jump
 	void Jump_Wrapped();
 	void StopJumpping_Wrapped();
@@ -144,6 +150,10 @@ protected:
 	void SetWeapon1();
 	void SetWeapon2();
 
+	// Weapon OverlapBegin
+	UFUNCTION()
+	virtual void OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
 	//Interface
@@ -159,6 +169,11 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+
+	// INotifyState_ToCharacterReceiver interface
+	void ReceiveNotification(EAnimNotifyToCharacterTypes curNotiType, bool bIsEnd) override;
+	// End of INotifyState_ToCharacterReceiver interface
+
 
 public:
 	/** Returns CameraBoom subobject **/

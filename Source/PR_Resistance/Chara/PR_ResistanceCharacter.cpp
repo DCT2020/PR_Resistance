@@ -46,21 +46,26 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-	//mStateManager = NewObject()
+	
+
+	// 라이플 StaticMesh
+	Rifle = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rifle"));
+	Rifle->SetupAttachment(GetMesh(),TEXT("SM_Rifle"));
+
+	// 근접 무기 StaticMesh
+	MeleeWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeleeWeapon"));
+	MeleeWeapon->SetupAttachment(GetMesh(), TEXT("SM_Melee"));
 
 	mStateManager = std::make_shared<StateManager_Player>(2);
 	mStateManager->SetProvider(this);
 
-
-	Rifle = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Rifle"));
-	Rifle->SetupAttachment(GetMesh(),TEXT("SM_Rifle"));
-
 	// add to archive
 
-	
 
+	
 }
 
 APR_ResistanceCharacter::~APR_ResistanceCharacter()
@@ -86,7 +91,6 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APR_ResistanceCharacter::Jump_Wrapped);
-	PlayerInputComponent->
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APR_ResistanceCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APR_ResistanceCharacter::MoveRight);
@@ -144,6 +148,10 @@ void APR_ResistanceCharacter::BeginPlay()
 
 	mStateManager->Init();
 
+	// weapon collision (나중에 Rifle에서 MeleeWeapon으로 바꿀 것)	
+	Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Rifle->OnComponentBeginOverlap.AddDynamic(this, &APR_ResistanceCharacter::OnWeaponOverlaped);
+	Rifle->SetGenerateOverlapEvents(true);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
@@ -312,6 +320,11 @@ void APR_ResistanceCharacter::SetWeapon2()
 	mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
 }
 
+void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//UGameplayStatics::ApplyDamage(OtherActor,10.0f,GetController(),this,NULL);
+}
+
 ///////////Interface
 bool APR_ResistanceCharacter::UseStamina(float usedStamina)
 {
@@ -323,3 +336,23 @@ bool APR_ResistanceCharacter::UseStamina(float usedStamina)
 
 	return true;
 }
+
+void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes curNotiType, bool bIsEnd)
+{
+	switch (curNotiType)
+	{
+	case EAnimNotifyToCharacterTypes::ATC_ATTACK:
+		if (bIsEnd)
+		{
+			Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+		else
+		{
+			Rifle->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		}
+		break;
+	default:
+		break;
+	}
+}
+///////////
