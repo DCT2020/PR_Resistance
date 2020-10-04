@@ -157,6 +157,8 @@ void APR_ResistanceCharacter::BeginPlay()
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
 {
+	Super::Tick(deltaTime);
+
 	mStateManager->TryChangeState(CharacterState::CS_IDLE);
 
 	mStateManager->Update(deltaTime);

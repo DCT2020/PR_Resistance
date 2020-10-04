@@ -75,9 +75,11 @@ void Fire::Update(float deltaTime)
 				FVector2D screenSize;
 				FVector direciton;
 				FVector position;
+				auto playerController = UGameplayStatics::GetPlayerController(mStaticMeshComp->GetOwner()->GetWorld(),0);
 				GEngine->GameViewport->GetViewportSize(screenSize);
-				UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(GEngine->GetWorld(),0), screenSize, position, direciton);
-				projectile->Init(direciton,mCharacterStatus->DodgeStamina,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
+				screenSize *= 0.5f;
+				UGameplayStatics::DeprojectScreenToWorld(playerController, screenSize, position, direciton);
+				projectile->Init(direciton,mCharacterStatus->BulletDamage,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
 			}
 		}
 	}
