@@ -36,10 +36,10 @@ bool Fire::_Init()
 	{
 		mCharacterTransform = (FTransform*)(buffer);
 	}
-	result = GetCharacterDataArchive()->GetData(TEXT("StaticMeshComponenet"), &buffer);
+	result = GetCharacterDataArchive()->GetData(TEXT("SkeletalMeshComponent"), &buffer);
 	if (result)
 	{
-		mStaticMeshComp = (UStaticMeshComponent*)(buffer);
+		mStaticMeshComp = (USkeletalMeshComponent*)(buffer);
 	}
 	
 

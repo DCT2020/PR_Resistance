@@ -43,11 +43,11 @@ class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, pub
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* Rifle;
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* Rifle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* MeleeWeapon;
+	UStaticMeshComponent* MeleeWeapon;
 
 private:
 	// 내부 변수들
@@ -62,7 +62,7 @@ private:
 
 
 public:
-	APR_ResistanceCharacter();
+	APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual ~APR_ResistanceCharacter();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -88,6 +88,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = State)
 	bool bIsIdle = true;
+
+	UPROPERTY(BlueprintReadWrite, Category = State)
+	bool bIsAim = false;
 
 	// TODO 수정할 것, 리턴 값 즉 임시변수를 Archive에 올릴경우 발생하는 문제(호출함수가 끝나면 변수가 사라짐)
 	FVector mLastInputVector = FVector::ZeroVector;
@@ -149,6 +152,9 @@ protected:
 	// Swap
 	void SetWeapon1();
 	void SetWeapon2();
+
+	void Turn(float var);
+	void LookUp(float var);
 
 	// Weapon OverlapBegin
 	UFUNCTION()

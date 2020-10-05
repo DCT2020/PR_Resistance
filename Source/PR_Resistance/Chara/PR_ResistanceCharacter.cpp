@@ -16,7 +16,8 @@
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
 
-APR_ResistanceCharacter::APR_ResistanceCharacter()
+APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -53,9 +54,22 @@ APR_ResistanceCharacter::APR_ResistanceCharacter()
 	
 
 	// 라이플 StaticMesh
+	
 	Rifle = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle"));
-	Rifle->SetupAttachment(GetMesh(),TEXT("SM_Rifle"));
-
+	if (Rifle)
+	{
+		Rifle->AlwaysLoadOnClient = true;
+		Rifle->AlwaysLoadOnServer = true;
+		Rifle->bOwnerNoSee = false;
+		Rifle->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
+		Rifle->bCastDynamicShadow = true;
+		Rifle->bAffectDynamicIndirectLighting = true;
+		Rifle->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+		Rifle->SetupAttachment(GetMesh(), TEXT("SM_Rifle"));
+		Rifle->SetCollisionProfileName(TEXT("Rifle"));
+		Rifle->SetGenerateOverlapEvents(false);
+		Rifle->SetCanEverAffectNavigation(false);
+	}
 	// 근접 무기 StaticMesh
 	MeleeWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeleeWeapon"));
 	MeleeWeapon->SetupAttachment(GetMesh(), TEXT("SM_Melee"));
@@ -99,9 +113,11 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	//PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &APR_ResistanceCharacter::Turn);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APR_ResistanceCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	//PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APR_ResistanceCharacter::LookUp);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APR_ResistanceCharacter::LookUpAtRate);
 
 	// handle touch devices
@@ -144,7 +160,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("TimeToNextStepNotify", &mTimeToNextStepNotifier);
 	mStateManager->AddArchiveData("World", GetWorld());
 	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
-	mStateManager->AddArchiveData("StaticMeshComponenet", Rifle);
+	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
 	
 
 	mStateManager->Init();
@@ -321,6 +337,22 @@ void APR_ResistanceCharacter::SetWeapon1()
 void APR_ResistanceCharacter::SetWeapon2()
 {
 	mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
+}
+
+void APR_ResistanceCharacter::Turn(float var)
+{
+	APawn::AddControllerYawInput(var);
+	if (bIsAim)
+	{
+		FRotator rot = Controller->GetControlRotation();
+		rot.Pitch = 0.0f;
+		RootComponent->SetWorldRotation(rot);
+	}
+}
+
+void APR_ResistanceCharacter::LookUp(float var)
+{
+	APawn::AddControllerPitchInput(var);
 }
 
 void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

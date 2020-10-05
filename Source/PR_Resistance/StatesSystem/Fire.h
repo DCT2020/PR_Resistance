@@ -15,7 +15,7 @@ protected:
 	FStatus* mCharacterStatus = nullptr;
 	UWorld* mWorld = nullptr;
 
-	UStaticMeshComponent* mStaticMeshComp = nullptr;
+	USkeletalMeshComponent* mStaticMeshComp = nullptr;
 	FTransform* mCharacterTransform = nullptr;
 	UClass* mProjectileClass = nullptr;
 	
