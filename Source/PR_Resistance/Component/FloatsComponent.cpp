@@ -28,6 +28,7 @@ void UFloatsComponent::MakeFloats(uint8 size)
 	if (mFloats.Num() < size)
 	{
 		mFloats.Reserve(size);
+		mListeners.Reserve(size);
 	}
 }
 
@@ -46,12 +47,12 @@ bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index
 	return true;
 }
 
-int UFloatsComponent::PushBack(float newValue)
-{
-	mFloats.Add(newValue);
-	mListeners.Add(TArray<IFloatListener*>());
-	return mFloats.Num();
-}
+//int UFloatsComponent::PushBack(float newValue)
+//{
+//	mFloats.Add(newValue);
+//	mListeners.Emplace();
+//	return mFloats.Num();
+//}
 
 bool UFloatsComponent::Set(const float newValue, uint8 index)
 {
@@ -87,10 +88,10 @@ void UFloatsComponent::MakeFloats_bp(uint8 size)
 	MakeFloats(size);
 }
 // Blueprint call
-void UFloatsComponent::PushBack_bp(float newValue, int& size)
-{
-	size = PushBack(newValue);
-}
+//void UFloatsComponent::PushBack_bp(float newValue, int& size)
+//{
+//	size = PushBack(newValue);
+//}
 
 void UFloatsComponent::Get_bp(uint8 index, float& value, bool& isValid)
 {
