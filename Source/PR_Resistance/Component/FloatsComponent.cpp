@@ -48,6 +48,7 @@ bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index
 
 int UFloatsComponent::PushBack(float newValue)
 {
+	mFloats.Add(newValue);
 	return mFloats.Num();
 }
 
