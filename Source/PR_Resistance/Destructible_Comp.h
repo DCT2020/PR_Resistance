@@ -2,24 +2,40 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance.h"
+// in engine headers
 #include "Components/ActorComponent.h"
+
+// my headers
+#include "PR_Resistance/Component/FloatsComponent.h"
+#include "Containers/ContainerAllocationPolicies.h"
+
 #include "Destructible_Comp.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PR_RESISTANCE_API UDestructible_Comp : public UActorComponent
+class PR_RESISTANCE_API UDestructible_Comp : public UActorComponent, public IFloatListener
 {
 	GENERATED_BODY()
 
+	bool bIsInitCalled = false;
+
 public:	
 	// Sets default values for this component's properties
-	UDestructible_Comp();
+	UDestructible_Comp(const FObjectInitializer& ObjectInitializer);
 
 	UStaticMeshComponent* mOwnerStaticMesh = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = Destructible)
-	UStaticMesh* 
+	UPROPERTY(EditAnywhere, Category = Destructible, meta = (DisplayName = "Destructible State Stage HPs"))
+	float mHPs[3];
+
+	UPROPERTY(VisibleAnywhere, Category = Destructible, meta = (DisplayName = "Normal Shape"))
+	UStaticMesh* mNormalShape;
+
+	UPROPERTY(VisibleAnywhere, Category = Destructible, meta = (DisplayName = "Second Shape"))
+	UStaticMesh* mSecondShape;
+
+	UPROPERTY(VisibleAnywhere, Category = Destructible, meta = (DisplayName = "Last Shape"))
+	UStaticMesh* mLastShape;
 
 protected:
 	// Called when the game starts
@@ -29,5 +45,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+public: // native call
+	void Init(UStaticMeshComponent* targetStateMesh, UFloatsComponent* floatcomp, uint8 indexOfHpInFloatsComp);
+	void ListenFloat(float newFloat) override;
+public: // blueprint call
+	
+	UFUNCTION(BlueprintCallable, Category = Destructible, meta = (DisplayName = "Init"))
+	void Init_bp(const UStaticMeshComponent* targetStateMesh, const UFloatsComponent* floatcomp, const uint8 indexOfHpInFloatsComp);
 };
