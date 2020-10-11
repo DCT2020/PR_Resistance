@@ -40,6 +40,9 @@ public:	//native call
 	bool	Get(uint8 index, float& out);				// index에 해당하는 float가 존재하지 않을시 false 반환
 public: //blueprint call
 
+	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisplayName = "MakeFloats"))
+	void MakeFloats_bp(uint8 size);
+
 	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisplayName = "PushBack"))
 	void PushBack_bp(float newValue, int& size);
 

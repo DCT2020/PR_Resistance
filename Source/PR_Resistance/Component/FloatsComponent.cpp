@@ -49,6 +49,7 @@ bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index
 int UFloatsComponent::PushBack(float newValue)
 {
 	mFloats.Add(newValue);
+	mListeners.Add(TArray<IFloatListener*>());
 	return mFloats.Num();
 }
 
@@ -81,6 +82,10 @@ int UFloatsComponent::GetSize()
 }
 
 
+void UFloatsComponent::MakeFloats_bp(uint8 size)
+{
+	MakeFloats(size);
+}
 // Blueprint call
 void UFloatsComponent::PushBack_bp(float newValue, int& size)
 {
