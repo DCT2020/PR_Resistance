@@ -47,6 +47,6 @@ void UDestructible_Comp::ListenFloat(float newFloat)
 
 void UDestructible_Comp::Init_bp(const UStaticMeshComponent* targetStateMesh, const UFloatsComponent* floatcomp, const uint8 indexOfHpInFloatsComp)
 {
-	Init(targetStateMesh,floatcomp,indexOfHpInFloatsComp);
+	Init(const_cast<UStaticMeshComponent*>(targetStateMesh),const_cast<UFloatsComponent*>(floatcomp),indexOfHpInFloatsComp);
 }
 

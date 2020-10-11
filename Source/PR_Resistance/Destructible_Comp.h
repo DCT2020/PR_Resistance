@@ -51,5 +51,5 @@ public: // native call
 public: // blueprint call
 	
 	UFUNCTION(BlueprintCallable, Category = Destructible, meta = (DisplayName = "Init"))
-	void Init_bp(const UStaticMeshComponent* targetStateMesh, const UFloatsComponent* floatcomp, const uint8 indexOfHpInFloatsComp);
+	void Init_bp(const UStaticMeshComponent* targetStateMesh, const UFloatsComponent* FloatComponent, const uint8 indexOfHpInFloatsComp);
 };
