@@ -17,8 +17,6 @@ class PR_RESISTANCE_API UDestructible_Comp : public UActorComponent, public IFlo
 {
 	GENERATED_BODY()
 
-	bool bIsInitCalled = false;
-
 public:	
 	// statics
 	static const int MAX_STAGE = 3;

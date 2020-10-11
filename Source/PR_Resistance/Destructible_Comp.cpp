@@ -17,8 +17,6 @@ void UDestructible_Comp::Init(UStaticMeshComponent* targetStateMesh, UFloatsComp
 {
 	mOwnerStaticMesh = targetStateMesh;
 	floatcomp->AddListener(this, indexOfHpInFloatsComp);
-
-	bIsInitCalled = true;
 }
 
 // Called when the game starts
@@ -26,16 +24,9 @@ void UDestructible_Comp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!bIsInitCalled)
-	{
-		UE_LOG(PRR, Error, TEXT("please call %s::Init(...) function"), *this->GetClass()->GetName());
-	}
-	else
-	{
-		mStageShapes[0] = mNormalShape;
-		mStageShapes[1] = mSecondShape;
-		mStageShapes[2] = mLastShape;
-	}
+	mStageShapes[0] = mNormalShape;
+	mStageShapes[1] = mSecondShape;
+	mStageShapes[2] = mLastShape;
 }
 
 
@@ -50,7 +41,7 @@ void UDestructible_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 // IFloatListener
 void UDestructible_Comp::ListenFloat(float newFloat)
 {
-	if(mCurStage < UDestructible_Comp::MAX_STAGE)
+	if(mCurStage >= UDestructible_Comp::MAX_STAGE)
 		return;
 
 	if (newFloat < mHPs[mCurStage])
