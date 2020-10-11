@@ -55,7 +55,10 @@ void UDestructible_Comp::ListenFloat(float newFloat)
 
 	if (newFloat < mHPs[mCurStage])
 	{
-		mOwnerStaticMesh->SetStaticMesh(mStageShapes[mCurStage]);
+		if (mStageShapes[mCurStage] != nullptr)
+		{
+			mOwnerStaticMesh->SetStaticMesh(mStageShapes[mCurStage]);
+		}
 		++mCurStage;
 	}
 }
