@@ -14,6 +14,16 @@ UFloatsComponent::UFloatsComponent()
 }
 
 
+UFloatsComponent::~UFloatsComponent()
+{
+	for (int i = 0; i < mListeners.Num(); ++i)
+	{
+		delete mListeners[i];
+	}
+
+	mListeners.Empty();
+}
+
 // Called when the game starts
 void UFloatsComponent::BeginPlay()
 {
@@ -27,40 +37,43 @@ void UFloatsComponent::MakeFloats(uint8 size)
 {
 	if (mFloats.Num() < size)
 	{
-		mFloats.Reserve(size);
-		mListeners.Reserve(size);
+		mFloats.SetNum(size);
+		for (int i = mListeners.Num(); i < size; ++i)
+		{
+			mListeners.Emplace(new TArray<IFloatListener*>);
+		}
 	}
 }
 
 bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index)
 {
-	if (mListeners.Num() < index)
+	if (!mListeners.IsValidIndex(index))
 	{
 		return false;
 	}
 	else
 	{
 		auto listener = mListeners[index];
-		listener.Add(newFloatListener);
+		listener->Add(newFloatListener);
 	}
 
 	return true;
 }
 
-//int UFloatsComponent::PushBack(float newValue)
-//{
-//	mFloats.Add(newValue);
-//	mListeners.Emplace();
-//	return mFloats.Num();
-//}
+int UFloatsComponent::PushBack(float newValue)
+{
+	mFloats.Add(newValue);
+	mListeners.Emplace(new TArray<IFloatListener*>);
+	return mFloats.Num();
+}
 
 bool UFloatsComponent::Set(const float newValue, uint8 index)
 {
-	if(mFloats.Num() < index)
+	if(!mFloats.IsValidIndex(index))
 		return false;
 
 	mFloats[index] = newValue;
-	for (auto listener : mListeners[index])
+	for (auto listener : *mListeners[index])
 	{
 		listener->ListenFloat(mFloats[index]);
 	}
@@ -70,7 +83,7 @@ bool UFloatsComponent::Set(const float newValue, uint8 index)
 
 bool UFloatsComponent::Get(uint8 index, float& out)
 {
-	if (mFloats.Num() < index)
+	if (!mFloats.IsValidIndex(index))
 		return false;
 
 	out = mFloats[index];
@@ -88,10 +101,10 @@ void UFloatsComponent::MakeFloats_bp(uint8 size)
 	MakeFloats(size);
 }
 // Blueprint call
-//void UFloatsComponent::PushBack_bp(float newValue, int& size)
-//{
-//	size = PushBack(newValue);
-//}
+void UFloatsComponent::PushBack_bp(float newValue, int& size)
+{
+	size = PushBack(newValue);
+}
 
 void UFloatsComponent::Get_bp(uint8 index, float& value, bool& isValid)
 {

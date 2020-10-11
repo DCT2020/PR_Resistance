@@ -50,7 +50,7 @@ void UDestructible_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 // IFloatListener
 void UDestructible_Comp::ListenFloat(float newFloat)
 {
-	if(mCurStage > UDestructible_Comp::MAX_STAGE)
+	if(mCurStage < UDestructible_Comp::MAX_STAGE)
 		return;
 
 	if (newFloat < mHPs[mCurStage])
