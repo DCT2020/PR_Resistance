@@ -20,6 +20,9 @@ class PR_RESISTANCE_API UDestructible_Comp : public UActorComponent, public IFlo
 	bool bIsInitCalled = false;
 
 public:	
+	// statics
+	static const int MAX_STAGE = 3;
+
 	// Sets default values for this component's properties
 	UDestructible_Comp(const FObjectInitializer& ObjectInitializer);
 
@@ -28,14 +31,17 @@ public:
 	UPROPERTY(EditAnywhere, Category = Destructible, meta = (DisplayName = "Destructible State Stage HPs"))
 	float mHPs[3];
 
-	UPROPERTY(VisibleAnywhere, Category = Destructible, meta = (DisplayName = "Normal Shape"))
+	UPROPERTY(EditAnywhere, Category = Destructible, meta = (DisplayName = "Normal Shape"))
 	UStaticMesh* mNormalShape;
 
-	UPROPERTY(VisibleAnywhere, Category = Destructible, meta = (DisplayName = "Second Shape"))
+	UPROPERTY(EditAnywhere, Category = Destructible, meta = (DisplayName = "Second Shape"))
 	UStaticMesh* mSecondShape;
 
-	UPROPERTY(VisibleAnywhere, Category = Destructible, meta = (DisplayName = "Last Shape"))
+	UPROPERTY(EditAnywhere, Category = Destructible, meta = (DisplayName = "Last Shape"))
 	UStaticMesh* mLastShape;
+
+	int mCurStage = 0;
+	UStaticMesh* mStageShapes[MAX_STAGE];
 
 protected:
 	// Called when the game starts

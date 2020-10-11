@@ -3,6 +3,7 @@
 
 #include "Destructible_Comp.h"
 
+
 // Sets default values for this component's properties
 UDestructible_Comp::UDestructible_Comp(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
@@ -29,6 +30,12 @@ void UDestructible_Comp::BeginPlay()
 	{
 		UE_LOG(PRR, Error, TEXT("please call %s::Init(...) function"), *this->GetClass()->GetName());
 	}
+	else
+	{
+		mStageShapes[0] = mNormalShape;
+		mStageShapes[1] = mSecondShape;
+		mStageShapes[2] = mLastShape;
+	}
 }
 
 
@@ -43,8 +50,17 @@ void UDestructible_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 // IFloatListener
 void UDestructible_Comp::ListenFloat(float newFloat)
 {
+	if(mCurStage > UDestructible_Comp::MAX_STAGE)
+		return;
+
+	if (newFloat < mHPs[mCurStage])
+	{
+		mOwnerStaticMesh->SetStaticMesh(mStageShapes[mCurStage]);
+		++mCurStage;
+	}
 }
 
+// Blueprint calls
 void UDestructible_Comp::Init_bp(const UStaticMeshComponent* targetStateMesh, const UFloatsComponent* floatcomp, const uint8 indexOfHpInFloatsComp)
 {
 	Init(const_cast<UStaticMeshComponent*>(targetStateMesh),const_cast<UFloatsComponent*>(floatcomp),indexOfHpInFloatsComp);
