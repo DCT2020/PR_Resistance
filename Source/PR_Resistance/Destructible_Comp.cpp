@@ -44,7 +44,7 @@ void UDestructible_Comp::ListenFloat(float newFloat)
 	if(mCurStage >= UDestructible_Comp::MAX_STAGE)
 		return;
 
-	if (newFloat < mHPs[mCurStage])
+	if (newFloat <= mHPs[mCurStage])
 	{
 		if (mStageShapes[mCurStage] != nullptr)
 		{
