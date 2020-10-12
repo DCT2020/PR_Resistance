@@ -24,9 +24,17 @@ void UDestructible_Comp::BeginPlay()
 {
 	Super::BeginPlay();
 
-	mStageShapes[0] = mNormalShape;
-	mStageShapes[1] = mSecondShape;
-	mStageShapes[2] = mLastShape;
+	if (mNormalShape == nullptr || mSecondShape == nullptr || mLastShape == nullptr)
+	{
+		UE_LOG(PRR,Error,TEXT("Please init shapes : %s"), *this->StaticClass()->GetName())
+	}
+	else
+	{
+		mStageShapes[0] = mNormalShape;
+		mStageShapes[1] = mSecondShape;
+		mStageShapes[2] = mLastShape;
+	}
+
 }
 
 

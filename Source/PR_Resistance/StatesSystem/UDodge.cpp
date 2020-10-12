@@ -25,6 +25,10 @@ bool UDodge::_Init()
 
 bool UDodge::Begin(CharacterState prevState)
 {
+	if(prevState == CharacterState::CS_JUMP 
+	|| prevState == CharacterState::CS_JUMPDASH)
+		return false;
+
 	assert(mSPProvider == nullptr);
 
 	void* buffer = nullptr;
