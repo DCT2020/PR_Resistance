@@ -41,7 +41,9 @@ public:
 	* Priroty를 무시하고 즉시 상태를 변경합니다.
 	*/
 	void SetState(CharacterState destateTypesc);
-	void Update(float deltaTime);
+	
+	virtual void Update(float deltaTime);
+	
 	FStateDesc GetCurStateDesc();
 
 	/*

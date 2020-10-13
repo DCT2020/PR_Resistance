@@ -9,6 +9,7 @@
 
 //struct
 #include "PR_Resistance/Combo/Action.h"
+#include "PR_Resistance/StatesSystem/StateDesc.h"
 
 //Interface
 #include "PR_Resistance/Interface/IStaminaProvider.h"
@@ -92,9 +93,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = State)
 	bool bIsAim = false;
 
-	// TODO 수정할 것, 리턴 값 즉 임시변수를 Archive에 올릴경우 발생하는 문제(호출함수가 끝나면 변수가 사라짐)
-	FVector mLastInputVector = FVector::ZeroVector;
-
 	// 스테미나 사용 이벤트 디스패쳐(델리게이트)
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
 		FDele_Dynamic_OneParam FucDynamicOneParam;
@@ -160,6 +158,9 @@ protected:
 	UFUNCTION()
 	virtual void OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "GetCurrentCharacterState"))
+	void GetCurrentCharacterState_bp(CharacterState& state);
 
 public:
 	//Interface

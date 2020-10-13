@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance/PR_Resistance.h"
 #include "PR_Resistance/StatesSystem/CState.h"
 #include "PR_Resistance/StatesSystem/Status.h"
 #include "PR_Resistance/Interface/IStaminaUser.h"

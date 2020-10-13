@@ -23,6 +23,8 @@ class PR_RESISTANCE_API StateManager_Player :
 	public StateManager, public IStaminaProvider, public IStaminaUser
 {
 protected:
+	StateManager mChildStateManager;
+
 	IStaminaProvider* mSPProvider = nullptr;
 	StateType mCurStateType = StateType::ST_SWORD;
 public:
@@ -31,8 +33,11 @@ public:
 
 
 	bool Init() override;
+	void Update(float deltaTime) override;
 	bool UseStamina(float usedStamina) override;
 	void SetProvider(IStaminaProvider* provider) override;
 
 	void ChangeState(StateType type);
+
+	CharacterState GetChildState();
 };

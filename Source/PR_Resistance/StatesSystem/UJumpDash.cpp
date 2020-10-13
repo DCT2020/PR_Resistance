@@ -29,44 +29,41 @@ bool UJumpDash::Begin(CharacterState prevState)
 	mElapsedTime = 0.0f;
 
 	void* buffer = nullptr;
-	bool result = true;
-	result = GetCharacterDataArchive()->GetData("Status", &buffer);
-	if (result)
+	
+	GetCharaDataWithLog("Status",&buffer);
 	{
 		mCharacterStatus = (FStatus*)buffer;
 		if (!mSPProvider->UseStamina(mCharacterStatus->maxStamina * mCharacterStatus->JumpDashStamina))
 			return false;
-			
 	}
-	result = GetCharacterDataArchive()->GetData("CharacterGravityScale", &buffer);
-	if (result)
+
+	GetCharaDataWithLog("CharacterGravityScale", &buffer);
 	{
 		mCharacterGScale = (float*)buffer;
 		mOriginalGScale = (*mCharacterGScale);
 		(*mCharacterGScale) = 0.0f;
 	}
-	result = GetCharacterDataArchive()->GetData("MovementSpeed", &buffer);
-	if(result)
+
+	GetCharaDataWithLog("MovementSpeed", &buffer);
 	{
 		mMaxWalkSpeed = (float*)buffer;
 		(*mMaxWalkSpeed) = mCharacterStatus->JumpDashDistance / mCharacterStatus->JumpDashTime;
 	}
-	result = GetCharacterDataArchive()->GetData("CharacterVelocity", &buffer);
-	if (result)
+	
+	GetCharaDataWithLog("CharacterVelocity", &buffer);
 	{
 		mVelocity = (FVector*)buffer;
-		result = GetCharacterDataArchive()->GetData("LastInputVector", &buffer);
-		if (result)
-		{
-			mDirection = *(FVector*)buffer;
-			if (mDirection.IsZero())
-			{
-				mDirection = FVector::ForwardVector;
-			}
-			(*mVelocity) = mDirection * (*mMaxWalkSpeed);
-		}
 	}
-	
+
+	GetCharaDataWithLog("LastInputVector", &buffer);
+	{
+		mDirection = *(FVector*)buffer;
+		if (mDirection.IsZero())
+		{
+			mDirection = FVector::ForwardVector;
+		}
+		(*mVelocity) = mDirection * (*mMaxWalkSpeed);
+	}
 
 	assert(mSPProvider == nullptr);
 		return true;

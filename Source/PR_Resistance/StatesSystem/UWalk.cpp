@@ -17,24 +17,24 @@ UWalk::~UWalk()
 bool UWalk::_Init()
 {
 	void* buffer;
-	bool result;
-	result = GetCharacterDataArchive()->GetData("Status", &buffer);
-	if (result)
+
+	GetCharaDataWithLog("Status", &buffer);
 	{
 		mCharacterStatus = (FStatus*)buffer;
-		result = GetCharacterDataArchive()->GetData("MovementSpeed", &buffer);
-		if (result)
-		{
-			mMaxWalkSpeed = (float*)buffer;
-			(*mMaxWalkSpeed) = mCharacterStatus->walkSpeed;
-		}
 	}
+
+	GetCharaDataWithLog("MovementSpeed", &buffer);
+	{
+		mMaxWalkSpeed = (float*)buffer;
+		(*mMaxWalkSpeed) = mCharacterStatus->walkSpeed;
+	}
+
 	return true;
 }
 
 bool UWalk::Begin(CharacterState prevState)
 {
-	
+	(*mMaxWalkSpeed) = mCharacterStatus->walkSpeed;
 	return true;
 }
 

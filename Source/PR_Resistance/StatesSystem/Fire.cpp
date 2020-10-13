@@ -21,27 +21,22 @@ Fire::~Fire()
 bool Fire::_Init()
 {
 	void* buffer = nullptr;
-	auto result = GetCharacterDataArchive()->GetData(TEXT("World"), &buffer);
-	if (result)
+	GetCharaDataWithLog("World", &buffer);
 	{
 		mWorld = (UWorld*)(buffer);
 	}
-	result = GetCharacterDataArchive()->GetData(TEXT("Status"), &buffer);
-	if (result)
+	GetCharaDataWithLog("Status", &buffer);
 	{
 		mCharacterStatus = (FStatus*)(buffer);
 	}
-	result = GetCharacterDataArchive()->GetData(TEXT("CharacterTransform"), &buffer);
-	if (result)
+	GetCharaDataWithLog("CharacterTransform", &buffer);
 	{
 		mCharacterTransform = (FTransform*)(buffer);
 	}
-	result = GetCharacterDataArchive()->GetData(TEXT("SkeletalMeshComponent"), &buffer);
-	if (result)
+	GetCharaDataWithLog("SkeletalMeshComponent", &buffer);
 	{
 		mStaticMeshComp = (USkeletalMeshComponent*)(buffer);
 	}
-	
 
 	return true;
 }

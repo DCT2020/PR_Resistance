@@ -64,14 +64,14 @@ void StateManager::Update(float deltaTime)
 			{
 				ChangeState(mStates[nextDesc.StateType]);
 			}
-			else if(nextDesc.Priority > mCurState->GetStateDesc().Priority)
+			else if (nextDesc.Priority > mCurState->GetStateDesc().Priority)
 			{
 				ChangeState(mStates[nextDesc.StateType]);
 			}
 		}
 	}
 
-	if(mCurState != nullptr)
+	if (mCurState != nullptr)
 	{
 		mCurState->Update(deltaTime);
 	}
@@ -134,7 +134,9 @@ bool StateManager::ChangeState(std::shared_ptr<IState> newState)
 		mCurState->End();
 		newState->SetStart();
 		mCurState = newState;
+
+		return true;
 	}
 
-	return true;
+	return false;
 }

@@ -34,11 +34,12 @@ void CharacterDataArchive::RemoveData(FName key)
 
 bool CharacterDataArchive::GetData(FName key, _Out_ void** data)
 {
-	*data = mDatas[key];
-	if (*data == nullptr)
+	*data = nullptr;
+	if (mDatas.Contains(key))
 	{
-		return false;
+		*data = mDatas[key];
+		return true;
 	}
 
-	return true;
+	return false;
 }

@@ -56,31 +56,26 @@ void UAttack::SetStop()
 
 bool UAttack::_Init()
 {
-	void* temp = nullptr;
-	bool result = false;
+	void* buffer = nullptr;
 	UAnimInstance* mAnimInstance = nullptr;
 	UDataTable* mActionTable = nullptr;
 	std::function<void()>* notifer;
 
-	result = GetCharacterDataArchive()->GetData("AnimInstance", &temp);
-	if (result)
+	GetCharaDataWithLog("AnimInstance", &buffer);
 	{
-		mAnimInstance = (UAnimInstance*)temp;
+		mAnimInstance = (UAnimInstance*)buffer;
 	}
-	result = GetCharacterDataArchive()->GetData("ActionTable", &temp);
-	if (result)
+	GetCharaDataWithLog("ActionTable", &buffer);
 	{
-		mActionTable = (UDataTable*)temp;
+		mActionTable = (UDataTable*)buffer;
 	}
-	result = GetCharacterDataArchive()->GetData("AInput_Change", &temp);
-	if (result)
+	GetCharaDataWithLog("AInput_Change", &buffer);
 	{
-		AInput = (ActionInput*)temp;
+		AInput = (ActionInput*)buffer;
 	}
-	result = GetCharacterDataArchive()->GetData("TimeToNextStepNotify", &temp);
-	if (result)
+	GetCharaDataWithLog("TimeToNextStepNotify", &buffer);
 	{
-		notifer = (std::function<void()>*)temp;
+		notifer = (std::function<void()>*)buffer;
 		(*notifer) = [this]() {mComboManager->StartWaitInput(); };
 	}
 

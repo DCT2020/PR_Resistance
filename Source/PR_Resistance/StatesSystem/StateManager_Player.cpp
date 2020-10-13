@@ -74,6 +74,12 @@ bool StateManager_Player::Init()
 	return true;
 }
 
+void StateManager_Player::Update(float deltaTime)
+{
+	StateManager::Update(deltaTime);
+	mChildStateManager.Update(deltaTime);
+}
+
 bool StateManager_Player::UseStamina(float usedStamina)
 {
 	assert(mSPProvider == nullptr);
@@ -90,4 +96,9 @@ void StateManager_Player::ChangeState(StateType type)
 {	
 	mCurStateType = type;
 	ChangeStateContainer((uint8)mCurStateType);
+}
+
+CharacterState StateManager_Player::GetChildState()
+{
+	return mChildStateManager.GetCurStateDesc().StateType;
 }

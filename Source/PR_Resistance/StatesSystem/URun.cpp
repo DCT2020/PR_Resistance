@@ -18,41 +18,35 @@ URun::~URun()
 
 bool URun::_Init()
 {
-	bool result = true;
 	void* buffer;
 
-	result = GetCharacterDataArchive()->GetData("Status", &buffer);
-	if (result)
-	{
-		mCharacterStatus = (FStatus*)buffer;
-		result = GetCharacterDataArchive()->GetData("MovementSpeed", &buffer);
-		if (result)
-		{
-			mMaxWalkSpeed = (float*)buffer;
-			(*mMaxWalkSpeed) = mCharacterStatus->runSpeed;
-		}
-	}
+	GetCharaDataWithLog("Status", &buffer);
+	mCharacterStatus = (FStatus*)buffer;
+
+	GetCharaDataWithLog("MovementSpeed", &buffer);
+	mMaxWalkSpeed = (float*)buffer;
 
 	return true;
 }
 
 bool URun::Begin(CharacterState prevState)
 {
+	if(prevState != CharacterState::CS_WALK)
+		return false;
+
 	assert(mSPProvider == nullptr);
+	(*mMaxWalkSpeed) = mCharacterStatus->runSpeed;
 
 	return true;
 }
 
 void URun::Update(float deltaTime)
 {
+// 수정해야 할 것
 	bool isCanRun = mSPProvider->UseStamina(mCharacterStatus->maxStamina * mSPUsePerSec * deltaTime);
-	if(isCanRun)
+	if(!isCanRun)
 	{
-		(*mMaxWalkSpeed) = mCharacterStatus->runSpeed;
-	}
-	else
-	{
-		(*mMaxWalkSpeed) = mCharacterStatus->walkSpeed;
+		this->SetStop();
 	}
 }
 

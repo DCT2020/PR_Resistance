@@ -125,9 +125,8 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindTouch(IE_Released, this, &APR_ResistanceCharacter::TouchStopped);
 
 	// Run
-	PlayerInputComponent->BindAction("Run", IE_Repeat, this, &APR_ResistanceCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &APR_ResistanceCharacter::RunStop);
-	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::DoJumpDash);
 
 	//Dodge
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &APR_ResistanceCharacter::Dodge);
@@ -152,7 +151,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("MovementSpeed", &GetCharacterMovement()->MaxWalkSpeed);
 	mStateManager->AddArchiveData("CharacterVelocity", &GetCharacterMovement()->Velocity);
 	mStateManager->AddArchiveData("CharacterGravityScale", &GetCharacterMovement()->GravityScale);
-	mStateManager->AddArchiveData("LastInputVector", &mLastInputVector);
+	mStateManager->AddArchiveData("LastInputVector", &LastControlInputVector);
 	mStateManager->AddArchiveData("MovementComponent", GetMovementComponent());
 	mStateManager->AddArchiveData("AnimInstance", GetMesh()->GetAnimInstance());
 	mStateManager->AddArchiveData("ActionTable", mActionDataTable);
@@ -162,7 +161,6 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
 	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
 	
-
 	mStateManager->Init();
 
 	// weapon collision (나중에 Rifle에서 MeleeWeapon으로 바꿀 것)	
@@ -176,9 +174,7 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	Super::Tick(deltaTime);
 
 	mStateManager->TryChangeState(CharacterState::CS_IDLE);
-
 	mStateManager->Update(deltaTime);
-	FucDynamicOneParam.Broadcast(mStatus.curStamina / mStatus.maxStamina);
 
 	if (mStateManager->GetCurStateDesc().StateType == CharacterState::CS_IDLE)
 	{
@@ -189,12 +185,7 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 		bIsIdle = false;
 	}
 
-	// 
- 	mLastInputVector = GetCharacterMovement()->GetLastInputVector();
-
 	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,FString::Printf(TEXT("CurState : %d"), mStateManager->GetCurStateDesc().StateType));
-
-
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("bIsMeele : %d"), bIsMeele));
 	
 	// 효과적이고 간단하게 바꾸기
@@ -237,7 +228,8 @@ void APR_ResistanceCharacter::DoJumpDash()
 // Run
 void APR_ResistanceCharacter::Run()
 {
-	mStateManager->TryChangeState(CharacterState::CS_RUN);
+	mStateManager->SetState(CharacterState::CS_RUN);
+	mStateManager->SetState(CharacterState::CS_JUMPDASH);
 }
 
 void APR_ResistanceCharacter::RunStop()
@@ -390,4 +382,8 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 		break;
 	}
 }
-///////////
+/////////// bps
+void APR_ResistanceCharacter::GetCurrentCharacterState_bp(CharacterState& state)
+{
+	state = mStateManager->GetCurStateDesc().StateType;
+}
