@@ -2,49 +2,41 @@
 
 
 #include "StateManager.h"
-#include "PR_Resistance/StatesSystem/CharacterDataArchive.h"
-#include "PR_Resistance/StatesSystem/IState.h"
-#include "PR_Resistance/StatesSystem/UIdle.h"
-#include "PR_Resistance/StatesSystem/UWalk.h"
-#include "PR_Resistance/StatesSystem/URun.h"
 
-StateManager::StateManager(int stateTypeNum)
+UStateManager::UStateManager()
 {
-	if(mCDArchive == nullptr)
-		mCDArchive = new CharacterDataArchive;
-
-	mStateContiners.Reserve(stateTypeNum);
+	PrimaryComponentTick.bCanEverTick = true;
+	//PrimaryComponentTick.bAllowTickOnDedicatedServer
 }
 
-StateManager::~StateManager()
+
+UStateManager::~UStateManager()
 {
-	mStates.Empty();
-	if(mCDArchive != nullptr)
-		delete mCDArchive;
 }
 
-bool StateManager::Init()
+bool UStateManager::Init()
 {
+	mCDArchive = NewObject<UCharacterDataArchive>();
 	return true;
 }
 
-void StateManager::TryChangeState(CharacterState stateType)
+void UStateManager::TryChangeState(CharacterState stateType)
 {
 	// 이후 editor에서 가져오는걸로 바꾸기 (FStateDesc를)
-	mStateChangeCalls.Enqueue(mStates[stateType]->GetStateDesc());
+	mStateChangeCalls.Enqueue(mStates.mStateContainer[stateType]->GetStateDesc());
 }
 
-void StateManager::SetStateEnd(CharacterState stateType)
+void UStateManager::SetStateEnd(CharacterState stateType)
 {
-	mStates[stateType]->SetStop();
+	mStates.mStateContainer[stateType]->SetStop();
 }
 
-void StateManager::SetState(CharacterState stateType)
+void UStateManager::SetState(CharacterState stateType)
 {
-	ChangeState(mStates[stateType]);
+	ChangeState(mStates.mStateContainer[stateType]);
 }
 
-void StateManager::Update(float deltaTime)
+void UStateManager::Update(float deltaTime)
 {
 	if (!mStateChangeCalls.IsEmpty())
 	{
@@ -62,11 +54,11 @@ void StateManager::Update(float deltaTime)
 		{
 			if (mCurState->GetStateDesc().bIsEnd)
 			{
-				ChangeState(mStates[nextDesc.StateType]);
+				ChangeState(mStates.mStateContainer[nextDesc.StateType]);
 			}
-			else if (nextDesc.Priority > mCurState->GetStateDesc().Priority)
+			else if (nextDesc.Priority >= mCurState->GetStateDesc().Priority)
 			{
-				ChangeState(mStates[nextDesc.StateType]);
+				ChangeState(mStates.mStateContainer[nextDesc.StateType]);
 			}
 		}
 	}
@@ -77,32 +69,49 @@ void StateManager::Update(float deltaTime)
 	}
 }
 
-FStateDesc StateManager::GetCurStateDesc()
+FStateDesc UStateManager::GetCurStateDesc()
 {
 	return mCurState->GetStateDesc();
 }
 
-bool StateManager::AddArchiveData(FName key, void* data)
+bool UStateManager::AddArchiveData(FName key, void* data)
 {
 	return mCDArchive->AddData(key,data);
 }
 
-void StateManager::RemoveArchiveData(FName key)
+void UStateManager::RemoveArchiveData(FName key)
 {
 	mCDArchive->RemoveData(key);
 }
 
-void StateManager::SetDefaultState(CharacterState state)
+void UStateManager::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	mCurState = mStates[state];
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	this->Update(DeltaTime);
 }
 
-void StateManager::ChangeStateContainer(int index)
+UCharacterDataArchive * UStateManager::GetCharacterDataArchive()
+{
+	return mCDArchive;
+}
+
+void UStateManager::SetCharacterDataArchive(UCharacterDataArchive* archive)
+{
+	mCDArchive = archive;
+}
+
+void UStateManager::SetDefaultState(int index,CharacterState state)
+{
+	ChangeStateContainer(index);
+	mCurState = mStates.mStateContainer[state];
+}
+
+void UStateManager::ChangeStateContainer(int index)
 {
 	mStates = mStateContiners[index];
 }
 
-std::shared_ptr<IState> StateManager::AddStateData(int index, CharacterState stateName, std::shared_ptr<IState> newState)
+UCState* UStateManager::AddStateData(int index, CharacterState stateName, UCState* newState)
 {
 	//for (int i = mStateContiners.Num(); i <= index; ++i)
 	//{
@@ -114,20 +123,20 @@ std::shared_ptr<IState> StateManager::AddStateData(int index, CharacterState sta
 	{
 		mStateContiners.EmplaceAt(index);
 	}
-	mStateContiners[index].Add(stateName,newState);
+	mStateContiners[index].mStateContainer.Add(stateName,newState);
 
 	return newState;
 }
 
-std::shared_ptr<IState> StateManager::GetStateData(int index, CharacterState stateName)
+UCState* UStateManager::GetStateData(int index, CharacterState stateName)
 {
-	return mStateContiners[index][stateName];
+	return mStateContiners[index].mStateContainer[stateName];
 }
 
 /*
 *
 */
-bool StateManager::ChangeState(std::shared_ptr<IState> newState)
+bool UStateManager::ChangeState(UCState* newState)
 {
 	if(newState->Begin(mCurState->GetStateDesc().StateType))
 	{

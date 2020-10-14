@@ -2,14 +2,17 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance/PR_Resistance.h"
 #include "PR_Resistance/StatesSystem/CState.h"
+#include "UIdle.generated.h"
 /**
  *	use in PR_ResistanceCharacter 
  * 
  */
-class PR_RESISTANCE_API UIdle : public CState
+ UCLASS()
+class PR_RESISTANCE_API UIdle : public UCState
 {
+	GENERATED_BODY()
 public:
 	UIdle();
 	virtual ~UIdle();

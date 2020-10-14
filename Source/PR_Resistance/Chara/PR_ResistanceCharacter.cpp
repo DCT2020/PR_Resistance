@@ -11,7 +11,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-#include "PR_Resistance/StatesSystem/StateManager_Player.h"
+#include "PR_Resistance/StatesSystem/Managers/StateManager_Player.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
@@ -74,7 +74,7 @@ APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& Objec
 	MeleeWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeleeWeapon"));
 	MeleeWeapon->SetupAttachment(GetMesh(), TEXT("SM_Melee"));
 
-	mStateManager = std::make_shared<StateManager_Player>(2);
+	mStateManager = CreateDefaultSubobject<UStateManager_Player>(TEXT("FSM"));
 	mStateManager->SetProvider(this);
 
 	// add to archive
@@ -137,12 +137,19 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 
 	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon1);
 	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon2);
+
+	////////////////////////////// SubState //////////////////////////////////////////
+	//Reload
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &APR_ResistanceCharacter::Reload);
 }
 
 void APR_ResistanceCharacter::BeginPlay()
 {
 	ACharacter::BeginPlay();
 	
+	mStateManager->Init();
+
+
 	//
 	GetCharacterMovement()->MaxWalkSpeed = mStatus.walkSpeed;
 	
@@ -161,7 +168,10 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
 	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
 	
-	mStateManager->Init();
+	// Load states
+	mStateManager->LoadStates();
+
+
 
 	// weapon collision (나중에 Rifle에서 MeleeWeapon으로 바꿀 것)	
 	Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -172,9 +182,6 @@ void APR_ResistanceCharacter::BeginPlay()
 void APR_ResistanceCharacter::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
-
-	mStateManager->TryChangeState(CharacterState::CS_IDLE);
-	mStateManager->Update(deltaTime);
 
 	if (mStateManager->GetCurStateDesc().StateType == CharacterState::CS_IDLE)
 	{
@@ -245,8 +252,8 @@ void APR_ResistanceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVecto
 
 void APR_ResistanceCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
-		StopJumping();
-		mStateManager->SetStateEnd(CharacterState::CS_JUMP);
+	StopJumping();
+	mStateManager->SetStateEnd(CharacterState::CS_JUMP);
 }
 
 void APR_ResistanceCharacter::TurnAtRate(float Rate)
@@ -347,6 +354,11 @@ void APR_ResistanceCharacter::LookUp(float var)
 	APawn::AddControllerPitchInput(var);
 }
 
+void APR_ResistanceCharacter::Reload()
+{
+	mStateManager->TryChangeSubState(CharacterState::CS_SUB_RELOAD);
+}
+
 void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UGameplayStatics::ApplyDamage(OtherActor,10.0f,GetController(),this,NULL);
@@ -387,4 +399,9 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 void APR_ResistanceCharacter::GetCurrentCharacterState_bp(CharacterState& state)
 {
 	state = mStateManager->GetCurStateDesc().StateType;
+}
+
+void APR_ResistanceCharacter::GetCurrentCharacterSubState_bp(CharacterState& subState)
+{
+	subState = mStateManager->GetCurSubState();
 }

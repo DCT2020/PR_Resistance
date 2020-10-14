@@ -2,15 +2,18 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance/PR_Resistance.h"
 #include "PR_Resistance/StatesSystem/CState.h"
 #include "PR_Resistance/StatesSystem/Status.h"
+#include "Fire.generated.h"
 /**
  * 
  */
- class UStaticMeshComponent;
-class PR_RESISTANCE_API Fire : public CState
+class UStaticMeshComponent;
+UCLASS()
+class PR_RESISTANCE_API UFire : public UCState
 {
+	GENERATED_BODY()
 protected:
 	FStatus* mCharacterStatus = nullptr;
 	UWorld* mWorld = nullptr;
@@ -25,8 +28,8 @@ protected:
 	bool _Init() override;
 
 public:
-	Fire();
-	~Fire();
+	UFire();
+	~UFire();
 
 	bool Begin(CharacterState prevState) override;
 	void Update(float deltaTime) override;

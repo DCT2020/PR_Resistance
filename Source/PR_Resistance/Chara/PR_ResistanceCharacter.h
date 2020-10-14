@@ -13,20 +13,18 @@
 
 //Interface
 #include "PR_Resistance/Interface/IStaminaProvider.h"
-#include "PR_Resistance/ITimeToNextStepNotify.h"
+#include "PR_Resistance/Noti/Notify/ITimeToNextStepNotify.h"
 #include "PR_Resistance/Noti/StateNotify/ReceiverInterface/NotifyState_ToCharacterReceiver.h"
 
 //Components
 #include "Components/StaticMeshComponent.h"
+#include "PR_Resistance/StatesSystem/Managers/StateManager_Player.h"
 
 //
 #include <functional>
 //
 
 #include "PR_ResistanceCharacter.generated.h"
-
-// fornt declare
-class StateManager_Player;
 
 //Dynamic Delegate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
@@ -56,7 +54,8 @@ private:
 	ActionInput mLastInput = ActionInput::AINPUT_NULL;
 
 	//state
-	std::shared_ptr<StateManager_Player> mStateManager;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	UStateManager_Player* mStateManager;
 
 
 	std::function<void()> mTimeToNextStepNotifier;
@@ -154,6 +153,9 @@ protected:
 	void Turn(float var);
 	void LookUp(float var);
 
+	//Substate
+	void Reload();
+
 	// Weapon OverlapBegin
 	UFUNCTION()
 	virtual void OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -161,6 +163,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, meta = (DisplayName = "GetCurrentCharacterState"))
 	void GetCurrentCharacterState_bp(CharacterState& state);
+
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "GetcurrentCharacterSubState"))
+	void GetCurrentCharacterSubState_bp(CharacterState& subState);
 
 public:
 	//Interface

@@ -2,7 +2,7 @@
 
 
 #include "TimeToNextStepNotify.h"
-#include "PR_Resistance/ITimeToNextStepNotify.h"
+#include "PR_Resistance/Noti/Notify/ITimeToNextStepNotify.h"
 
 void UTimeToNextStepNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {

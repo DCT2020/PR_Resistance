@@ -2,14 +2,17 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance/PR_Resistance.h"
 #include "PR_Resistance/StatesSystem/CState.h"
 #include "PR_Resistance/Interface/IStaminaUser.h"
+#include "UJumpDash.generated.h"
 /**
  * 
  */
-class PR_RESISTANCE_API UJumpDash : public CState , public IStaminaUser
+ UCLASS()
+class PR_RESISTANCE_API UJumpDash : public UCState, public IStaminaUser
 {
+	GENERATED_BODY()
 protected:
 	IStaminaProvider* mSPProvider = nullptr;
 	FStatus* mCharacterStatus = nullptr;

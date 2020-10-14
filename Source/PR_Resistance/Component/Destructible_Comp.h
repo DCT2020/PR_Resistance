@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "PR_Resistance.h"
+#include "PR_Resistance/PR_Resistance.h"
 // in engine headers
 #include "Components/ActorComponent.h"
 

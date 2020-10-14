@@ -2,18 +2,22 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance/PR_Resistance.h"
 #include "PR_Resistance/StatesSystem/CState.h"
 #include "PR_Resistance/Interface/IStaminaUser.h"
 #include "PR_Resistance/Combo/Action.h"
+
+#include "UAttack.generated.h"
 /**
  * 
  */
  class ComboManager;
  class UAnimInstance;
  class UDataTable;
-class PR_RESISTANCE_API UAttack : public CState, public IStaminaUser
+ UCLASS()
+ class PR_RESISTANCE_API UAttack : public UCState, public IStaminaUser
 {
+	GENERATED_BODY()
 protected:
 	IStaminaProvider* mSPProvider = nullptr;
 	FStatus* mCharacterStatus = nullptr;

@@ -7,18 +7,18 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 
-Fire::Fire()
+UFire::UFire()
 {
 	mDesc.StateType = CharacterState::CS_ATTACK;
 	mDesc.Priority = 3;
 }
 
-Fire::~Fire()
+UFire::~UFire()
 {
 	
 }
 
-bool Fire::_Init()
+bool UFire::_Init()
 {
 	void* buffer = nullptr;
 	GetCharaDataWithLog("World", &buffer);
@@ -41,12 +41,12 @@ bool Fire::_Init()
 	return true;
 }
 
-bool Fire::Begin(CharacterState prevState)
+bool UFire::Begin(CharacterState prevState)
 {
 	return true;
 }
 
-void Fire::Update(float deltaTime)
+void UFire::Update(float deltaTime)
 {
 	if (mCharacterStatus->FireDelayTime >= mElapsedTime)
 	{
@@ -56,7 +56,7 @@ void Fire::Update(float deltaTime)
 	{
 		mElapsedTime = 0.0f;
 
-		FTransform tempTransform = mStaticMeshComp->GetSocketTransform("FirePoint");
+		FTransform tempTransform = mStaticMeshComp->GetSocketTransform("UFirePoint");
 		auto actor = mWorld->SpawnActor(mCharacterStatus->ProjectileClass, &tempTransform);
 		if (actor != nullptr)
 		{
@@ -80,6 +80,6 @@ void Fire::Update(float deltaTime)
 	}
 }
 
-void Fire::End()
+void UFire::End()
 {
 }

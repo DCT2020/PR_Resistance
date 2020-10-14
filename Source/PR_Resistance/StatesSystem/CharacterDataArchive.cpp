@@ -3,20 +3,20 @@
 
 #include "CharacterDataArchive.h"
 
-CharacterDataArchive::CharacterDataArchive()
+UCharacterDataArchive::UCharacterDataArchive()
 {
 }
 
-CharacterDataArchive::~CharacterDataArchive()
+UCharacterDataArchive::~UCharacterDataArchive()
 {
 }
 
-void CharacterDataArchive::Init()
+void UCharacterDataArchive::Init()
 {
 	mDatas.Empty();
 }
 
-bool CharacterDataArchive::AddData(FName key, void* data)
+bool UCharacterDataArchive::AddData(FName key, void* data)
 {
 	void* result = mDatas.Add(key,data);
 	if (result == nullptr)
@@ -27,12 +27,12 @@ bool CharacterDataArchive::AddData(FName key, void* data)
 	return true;
 }
 
-void CharacterDataArchive::RemoveData(FName key)
+void UCharacterDataArchive::RemoveData(FName key)
 {
 	mDatas.Remove(key);
 }
 
-bool CharacterDataArchive::GetData(FName key, _Out_ void** data)
+bool UCharacterDataArchive::GetData(FName key, _Out_ void** data)
 {
 	*data = nullptr;
 	if (mDatas.Contains(key))

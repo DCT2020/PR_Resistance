@@ -10,8 +10,10 @@ UWalk::UWalk()
 	mDesc.Priority = 2;
 }
 
+
 UWalk::~UWalk()
 {
+
 }
 
 bool UWalk::_Init()

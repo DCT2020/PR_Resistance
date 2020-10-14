@@ -3,17 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
+#include "CharacterDataArchive.generated.h"
 /**
  * 
  */
-class PR_RESISTANCE_API CharacterDataArchive
+ UCLASS()
+class PR_RESISTANCE_API UCharacterDataArchive : public UObject
 {
+	GENERATED_BODY()
 private:
 	TMap<FName,void*> mDatas;
 public:
-	CharacterDataArchive();
-	~CharacterDataArchive();
+	UCharacterDataArchive();
+	~UCharacterDataArchive();
 
 	/*
 	* clear data map

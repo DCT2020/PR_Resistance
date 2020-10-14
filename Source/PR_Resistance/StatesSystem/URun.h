@@ -3,14 +3,17 @@
 #pragma once
 
 #include "PR_Resistance/PR_Resistance.h"
-#include "PR_Resistance/StatesSystem/CState.h"
 #include "PR_Resistance/StatesSystem/Status.h"
 #include "PR_Resistance/Interface/IStaminaUser.h"
+#include "PR_Resistance/StatesSystem/CState.h"
+#include "URun.generated.h"
 /**
  * 
  */
-class PR_RESISTANCE_API URun : public CState , public IStaminaUser
+ UCLASS()
+class PR_RESISTANCE_API URun : public UCState, public IStaminaUser
 {
+	GENERATED_BODY()
 protected:
 	const float mSPUsePerSec = 0.05f;
 	FStatus* mCharacterStatus = nullptr;

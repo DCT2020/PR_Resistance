@@ -4,29 +4,50 @@
 
 #include "CoreMinimal.h"
 #include "PR_Resistance/StatesSystem/StateDesc.h"
+#include "PR_Resistance/StatesSystem/CState.h"
+#include "StateManager.generated.h"
 
-
-class IState;
-class CharacterDataArchive;
 /**
  * 
  */
-class PR_RESISTANCE_API StateManager
+
+ USTRUCT()
+ struct FChracterState
+ {
+	GENERATED_BODY()
+	public:
+	UPROPERTY()
+		TMap<CharacterState, UCState*> mStateContainer;
+ };
+
+ UCLASS()
+class PR_RESISTANCE_API UStateManager : public UActorComponent
 {
+	GENERATED_BODY()
 private:
+	UPROPERTY()
+		TArray<FChracterState> mStateContiners;
+
+	UPROPERTY()
+		UCharacterDataArchive* mCDArchive = nullptr;
+
+	UPROPERTY()
+		UCState* mCurState = nullptr;
+
 	TQueue<FStateDesc> mStateChangeCalls;
-	TArray<TMap<CharacterState, std::shared_ptr<IState>>> mStateContiners;
-	TMap<CharacterState,std::shared_ptr<IState>> mStates; // State리스트는 에디터에서 받을수 있도록
-	std::shared_ptr<IState> mCurState = nullptr;
-	CharacterDataArchive* mCDArchive = nullptr;
+
+	FChracterState mStates; // State리스트는 에디터에서 받을수 있도록
 public:
-	StateManager(int stateTypeNum = 1);
-	virtual ~StateManager();
+	UStateManager();
+	//UStateManager(int stateTypeNum = 1);
+	//UStateManager(CharacterDataArchive * const archive);
+	virtual ~UStateManager();
 
 	/*
 	* Init 호출 이전에 AddArchiveData가 호출되어야 합니다.
 	*/
 	virtual bool Init();
+	virtual void LoadStates() {}
 	/*
 	* State변경을 시도합니다.
 	* FStateDesc의 Priority에 따라 실패하거나 성공합니다.
@@ -42,7 +63,8 @@ public:
 	*/
 	void SetState(CharacterState destateTypesc);
 	
-	virtual void Update(float deltaTime);
+	// UActorComponent
+	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	FStateDesc GetCurStateDesc();
 
@@ -54,14 +76,18 @@ public:
 	bool AddArchiveData(FName key, void* data);
 	void RemoveArchiveData(FName key);
 
-	// UActorComponent
+
 	
 
 protected:
+	virtual void Update(float deltaTime);
 
-	void SetDefaultState(CharacterState state);
+	UCharacterDataArchive * GetCharacterDataArchive();
+	void SetCharacterDataArchive(UCharacterDataArchive* archive);
+
+	void SetDefaultState(int index, CharacterState state);
 	void ChangeStateContainer(int index);
-	std::shared_ptr<IState> AddStateData(int index, CharacterState stateName, std::shared_ptr<IState> newState);
-	std::shared_ptr<IState> GetStateData(int index, CharacterState stateName);
-	bool ChangeState(std::shared_ptr<IState> newState);
+	UCState* AddStateData(int index, CharacterState stateName, UCState* newState);
+	UCState* GetStateData(int index, CharacterState stateName);
+	bool ChangeState(UCState* newState);
 };

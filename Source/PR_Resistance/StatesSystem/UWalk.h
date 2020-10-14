@@ -2,23 +2,30 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PR_Resistance/PR_Resistance.h"
 #include "PR_Resistance/StatesSystem/CState.h"
+#include "UWalk.generated.h"
 /**
  * 
  */
-class PR_RESISTANCE_API UWalk : public CState
+ UCLASS()
+class PR_RESISTANCE_API UWalk : public UCState
 {
+	GENERATED_BODY()
 public:
 	FStatus* mCharacterStatus = nullptr;
 	float* mMaxWalkSpeed = nullptr;
+
+
+	bool Begin(CharacterState prevState) override;
+	void Update(float deltaTime) override;
+	void End() override;
 
 public:
 	UWalk();
 	virtual ~UWalk();
 
-	virtual bool		_Init()					override;
-	virtual bool		Begin(CharacterState prevState)					override;
-	virtual void		Update(float deltaTime) override;
-	virtual void		End()					override;
-};
+protected:
+	bool _Init() override;
+
+ };

@@ -2,12 +2,17 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "PR_Resistance/StatesSystem/StateManager.h"
+#include "PR_Resistance/PR_Resistance.h"
+#include "PR_Resistance/StatesSystem/Managers/StateManager.h"
+
+//my class
+#include "PR_Resistance/StatesSystem/Managers/StateManager_SubState.h"
 
 // interface
 #include "PR_Resistance/Interface/IStaminaProvider.h"
 #include "PR_Resistance/Interface/IStaminaUser.h"
+
+#include "StateManager_Player.generated.h"
 /**
  * 
  */
@@ -19,15 +24,21 @@ enum class StateType : uint8
 	ST_MAX
  };
 
-class PR_RESISTANCE_API StateManager_Player : 
-	public StateManager, public IStaminaProvider, public IStaminaUser
+ UCLASS()
+class PR_RESISTANCE_API UStateManager_Player : 
+	public UStateManager, public IStaminaProvider, public IStaminaUser
 {
+	GENERATED_BODY()
 protected:
 	IStaminaProvider* mSPProvider = nullptr;
+
 	StateType mCurStateType = StateType::ST_SWORD;
+
+	UPROPERTY();
+	UStateManager_SubState* mSubState = nullptr;
 public:
-	StateManager_Player(int stateTypeNum);
-	virtual ~StateManager_Player() override;
+	UStateManager_Player();
+	virtual ~UStateManager_Player() override;
 
 
 	bool Init() override;
@@ -36,4 +47,12 @@ public:
 	void SetProvider(IStaminaProvider* provider) override;
 
 	void ChangeState(StateType type);
-};
+
+	// subState
+	CharacterState GetCurSubState();
+	void TryChangeSubState(CharacterState subState);
+	void SetSubStateEnd(CharacterState subState);
+
+	void LoadStates() override;
+
+ };

@@ -2,45 +2,37 @@
 
 #pragma once
 
-#include "PR_Resistance/PR_Resistance.h"
+#include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-
-// My Class
-#include "PR_Resistance/StatesSystem/Status.h"
-#include "PR_Resistance/StatesSystem/StateDesc.h"
-#include "PR_Resistance/StatesSystem/CharacterDataArchive.h"
-
-#include "CState.generated.h"
-
+#include "PR_Resistance/PR_Resistance.h"
+#include "PR_Resistance/StatesSystem/IState.h"
 /**
  * 
  */
-UCLASS()
-class PR_RESISTANCE_API UCState : public UObject
+
+class CharacterDataArchive;
+UCALSS()
+class PR_RESISTANCE_API UCState : public UObject, public IState
 {
 	GENERATED_BODY()
 private:
-	UCharacterDataArchive* mDataArchive = nullptr;
+	CharacterDataArchive* mDataArchive = nullptr;
 protected:
 	FStateDesc mDesc;
 public:
 	UCState();
 	~UCState();
 
-	bool Init(UCharacterDataArchive* archive);
-	FStateDesc GetStateDesc();
+	bool Init(CharacterDataArchive* archive) final override;
+	FStateDesc GetStateDesc() override;
 
 
-	virtual void SetStart();
-	virtual void SetStop();
-
-	virtual bool Begin(CharacterState prevState);
-	virtual void Update(float deltaTime);
-	virtual void End();
+	virtual void SetStart() override;
+	virtual void SetStop() override;
 
 protected:
-	virtual bool _Init();
-	UCharacterDataArchive * GetCharacterDataArchive();
+	virtual bool _Init() = 0;
+	CharacterDataArchive * const GetCharacterDataArchive();
 
 #define GetCharaDataWithLog(dataName, out)																										\
 	{																																			\

@@ -3,36 +3,56 @@
 
 #include "CState.h"
 
-CState::CState()
+UCState::UCState()
 {
 }
 
-CState::~CState()
+UCState ::~UCState()
 {
 }
 
-FStateDesc CState::GetStateDesc()
+FStateDesc UCState::GetStateDesc()
 {
 	return mDesc;
 }
 
-void CState::SetStart()
+void UCState::SetStart()
 {
 	mDesc.bIsEnd = false;
 }
 
-void CState::SetStop()
+void UCState::SetStop()
 {
 	mDesc.bIsEnd = true;
 }
 
-CharacterDataArchive * const CState::GetCharacterDataArchive()
+bool UCState::Begin(CharacterState prevState)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+void UCState::Update(float deltaTime)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+void UCState::End()
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+bool UCState::_Init()
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+UCharacterDataArchive* UCState::GetCharacterDataArchive()
 {
 	return mDataArchive;
 }
 
-bool CState::Init(CharacterDataArchive* archive)
-{	
+bool UCState::Init(UCharacterDataArchive* archive)
+{
 	if (archive == nullptr)
 	{
 		return false;
