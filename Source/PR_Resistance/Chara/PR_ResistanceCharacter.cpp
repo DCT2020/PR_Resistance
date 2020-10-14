@@ -371,6 +371,7 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 	case EAnimNotifyToCharacterTypes::ATC_ATTACK:
 		if (bIsEnd)
 		{
+			// 현재 라이플이지만 검으로 사용하고 있다.
 			Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 		else

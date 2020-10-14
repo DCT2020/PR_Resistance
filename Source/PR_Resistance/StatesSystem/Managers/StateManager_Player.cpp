@@ -25,7 +25,6 @@ StateManager_Player::~StateManager_Player()
 
 bool StateManager_Player::Init()
 {
-
 	// ST_SWORD
 	#pragma region ST_SWORD
 		AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_IDLE, std::make_shared<UIdle>());
@@ -64,9 +63,7 @@ bool StateManager_Player::Init()
 		AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_DODGE, dodge);
 		AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_JUMPDASH, jumpDash);
 		AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_ATTACK, std::make_shared<Fire>());
-
 	#pragma endregion
-	
 
 	ChangeStateContainer((uint8)StateType::ST_GUN);
 	SetDefaultState(CharacterState::CS_IDLE);
@@ -77,7 +74,6 @@ bool StateManager_Player::Init()
 void StateManager_Player::Update(float deltaTime)
 {
 	StateManager::Update(deltaTime);
-	mChildStateManager.Update(deltaTime);
 }
 
 bool StateManager_Player::UseStamina(float usedStamina)
@@ -96,9 +92,4 @@ void StateManager_Player::ChangeState(StateType type)
 {	
 	mCurStateType = type;
 	ChangeStateContainer((uint8)mCurStateType);
-}
-
-CharacterState StateManager_Player::GetChildState()
-{
-	return mChildStateManager.GetCurStateDesc().StateType;
 }

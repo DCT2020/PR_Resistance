@@ -20,7 +20,7 @@ private:
 	std::shared_ptr<IState> mCurState = nullptr;
 	CharacterDataArchive* mCDArchive = nullptr;
 public:
-	StateManager(int stateTypeNum);
+	StateManager(int stateTypeNum = 1);
 	virtual ~StateManager();
 
 	/*

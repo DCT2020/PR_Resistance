@@ -115,6 +115,7 @@ std::shared_ptr<IState> StateManager::AddStateData(int index, CharacterState sta
 		mStateContiners.EmplaceAt(index);
 	}
 	mStateContiners[index].Add(stateName,newState);
+
 	return newState;
 }
 
