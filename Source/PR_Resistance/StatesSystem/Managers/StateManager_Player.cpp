@@ -111,7 +111,6 @@ void UStateManager_Player::ChangeState(StateType type)
 
 CharacterState UStateManager_Player::GetCurSubState()
 {
-	return CharacterState::CS_SUB_IDLE;
 	return mSubState->GetCurStateDesc().StateType;
 }
 
