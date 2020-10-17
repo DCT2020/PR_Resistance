@@ -3,7 +3,7 @@
 UReload::UReload()
 {
 	mDesc.StateType = CharacterState::CS_SUB_RELOAD;
-	mDesc.Priority = 1;
+	mDesc.Priority = 2;
 }
 
 bool UReload::Begin(CharacterState prevState)
@@ -15,7 +15,7 @@ bool UReload::Begin(CharacterState prevState)
 void UReload::Update(float deltaTime)
 {
 	elapsedTime+= deltaTime	;
-	if (elapsedTime >= 2.0f)
+	if (elapsedTime >= 3.1f)
 	{
 		elapsedTime = 0.0f;
 		mDesc.bIsEnd = true;
@@ -24,6 +24,7 @@ void UReload::Update(float deltaTime)
 
 void UReload::End()
 {
+	
 }
 
 bool UReload::_Init()
