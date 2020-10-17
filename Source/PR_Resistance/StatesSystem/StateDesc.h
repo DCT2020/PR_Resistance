@@ -25,6 +25,8 @@ enum class CharacterState : uint8
 	// sub state
 	CS_SUB_IDLE UMETA(DisplayName = "Idle Substate"),
 	CS_SUB_RELOAD UMETA(DisplayName = "Reload Substate"),
+	CS_SUB_AIM UMETA(DisplayName = "Aim Substate"),
+	CS_SUB_FIRE UMETA(DisplayName = "Fire Substate"),
 };
 
 /**

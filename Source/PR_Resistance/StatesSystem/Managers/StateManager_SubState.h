@@ -11,7 +11,6 @@ class UStateManager_SubState : public UStateManager
 public:
 	UStateManager_SubState();
 
-
 	// StateManager
 	bool Init_SubState(UCharacterDataArchive* archive);
 	void Update(float deltaTime) override;

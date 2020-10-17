@@ -84,6 +84,11 @@ void UStateManager::RemoveArchiveData(FName key)
 	mCDArchive->RemoveData(key);
 }
 
+UStateManager::FChangeEvent& UStateManager::OnStateChange()
+{
+	return mChangeEvent;
+}
+
 void UStateManager::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -140,6 +145,9 @@ bool UStateManager::ChangeState(UCState* newState)
 {
 	if(newState->Begin(mCurState->GetStateDesc().StateType))
 	{
+		//broadcast
+		mChangeEvent.Broadcast(mCurState->GetStateDesc().StateType, newState->GetStateDesc().StateType);
+
 		mCurState->SetStop();
 		mCurState->End();
 		newState->SetStart();
@@ -150,3 +158,4 @@ bool UStateManager::ChangeState(UCState* newState)
 
 	return false;
 }
+

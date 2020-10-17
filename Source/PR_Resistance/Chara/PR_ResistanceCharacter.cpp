@@ -141,6 +141,10 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	////////////////////////////// SubState //////////////////////////////////////////
 	//Reload
 	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &APR_ResistanceCharacter::Reload);
+
+	//Aim
+	PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &APR_ResistanceCharacter::StartAiming);
+	PlayerInputComponent->BindAction("Aiming", IE_Released, this, &APR_ResistanceCharacter::EndAiming);
 }
 
 void APR_ResistanceCharacter::BeginPlay()
@@ -357,6 +361,16 @@ void APR_ResistanceCharacter::LookUp(float var)
 void APR_ResistanceCharacter::Reload()
 {
 	mStateManager->TryChangeSubState(CharacterState::CS_SUB_RELOAD);
+}
+
+void APR_ResistanceCharacter::StartAiming()
+{
+	mStateManager->TryChangeSubState(CharacterState::CS_SUB_AIM);
+}
+
+void APR_ResistanceCharacter::EndAiming()
+{
+	mStateManager->SetSubStateEnd(CharacterState::CS_SUB_AIM);
 }
 
 void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

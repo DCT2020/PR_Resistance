@@ -29,6 +29,14 @@ bool UStateManager_Player::Init()
 	mSubState = NewObject<UStateManager_SubState>();
 	mSubState->Init_SubState(GetCharacterDataArchive());
 
+	TBaseDelegate<void,CharacterState,CharacterState> delegator;
+	delegator.BindUObject(this, &UStateManager_Player::OnSubStateChange);
+	mSubState->BindStateChangeCall(delegator);
+
+	delegator.BindUObject(this, &UStateManager_Player::OnMyStateChange);
+	this->BindStateChangeCall(delegator);
+
+
 	// subState Init
 	mSubState->Init();
 
@@ -74,7 +82,8 @@ void UStateManager_Player::LoadStates()
 	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_RUN, run);
 	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_DODGE, dodge);
 	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_JUMPDASH, jumpDash);
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_ATTACK, NewObject<UFire>());
+	AddPlayerBaseState((uint8)StateType::ST_GUN, CharacterState::CS_ATTACK, NewObject<UFire>());
+
 #pragma endregion
 
 	SetDefaultState((uint8)StateType::ST_GUN, CharacterState::CS_IDLE);
@@ -83,12 +92,19 @@ void UStateManager_Player::LoadStates()
 }
 
 
+void UStateManager_Player::AddPlayerBaseState(int index, CharacterState stateName, UCState_PlayerBase* newState)
+{
+	newState->InitDatas(&mCurStateInfo);
+	AddStateData(index, stateName, newState);
+}
+
 void UStateManager_Player::Update(float deltaTime)
 {
 	UStateManager::Update(deltaTime);
 	mSubState->Update(deltaTime);
 
 	TryChangeState(CharacterState::CS_IDLE);
+
 }
 
 bool UStateManager_Player::UseStamina(float usedStamina)
@@ -122,4 +138,16 @@ void UStateManager_Player::TryChangeSubState(CharacterState subState)
 void UStateManager_Player::SetSubStateEnd(CharacterState subState)
 {
 	mSubState->SetStateEnd(subState);
+}
+
+
+// binded function
+void UStateManager_Player::OnSubStateChange(CharacterState prevState, CharacterState newState)
+{
+	mCurStateInfo.mCurSubState = newState;
+}
+
+void UStateManager_Player::OnMyStateChange(CharacterState prevState, CharacterState newState)
+{
+	mCurStateInfo.mCurMainState = newState;
 }

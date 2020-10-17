@@ -154,7 +154,12 @@ protected:
 	void LookUp(float var);
 
 	//Substate
+	// reload
 	void Reload();
+	// aim
+	void StartAiming();
+	void EndAiming();
+
 
 	// Weapon OverlapBegin
 	UFUNCTION()

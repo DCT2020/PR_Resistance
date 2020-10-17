@@ -76,9 +76,18 @@ public:
 	bool AddArchiveData(FName key, void* data);
 	void RemoveArchiveData(FName key);
 
+public: //Event
+	// 상태가 변할때마다 호출									prevState		curState
+	DECLARE_EVENT_TwoParams(UStateManager, FChangeEvent, CharacterState, CharacterState);
+	FChangeEvent& OnStateChange();
 
-	
+	inline void BindStateChangeCall(const TBaseDelegate<void, CharacterState, CharacterState> func) 
+	{
+		mChangeEvent.Add(func);
+	}
 
+private: // Event
+	FChangeEvent mChangeEvent;
 protected:
 	virtual void Update(float deltaTime);
 

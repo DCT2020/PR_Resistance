@@ -7,6 +7,7 @@
 
 //my class
 #include "PR_Resistance/StatesSystem/Managers/StateManager_SubState.h"
+#include "PR_Resistance/StatesSystem/CState_PlayerBase.h"
 
 // interface
 #include "PR_Resistance/Interface/IStaminaProvider.h"
@@ -36,10 +37,12 @@ protected:
 
 	UPROPERTY();
 	UStateManager_SubState* mSubState = nullptr;
+
+	FStateData_PlayerBase mCurStateInfo;
+
 public:
 	UStateManager_Player();
 	virtual ~UStateManager_Player() override;
-
 
 	bool Init() override;
 	void Update(float deltaTime) override;
@@ -55,4 +58,12 @@ public:
 
 	void LoadStates() override;
 
+	void AddPlayerBaseState(int index, CharacterState stateName, UCState_PlayerBase* newState);
+
+protected:
+	UFUNCTION()
+		void OnSubStateChange(CharacterState prevState, CharacterState newState);
+
+	UFUNCTION()
+		void OnMyStateChange(CharacterState prevState, CharacterState newState);
  };

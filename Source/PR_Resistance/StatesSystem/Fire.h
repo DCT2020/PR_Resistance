@@ -3,7 +3,7 @@
 #pragma once
 
 #include "PR_Resistance/PR_Resistance.h"
-#include "PR_Resistance/StatesSystem/CState.h"
+#include "PR_Resistance/StatesSystem/CState_PlayerBase.h"
 #include "PR_Resistance/StatesSystem/Status.h"
 #include "Fire.generated.h"
 /**
@@ -11,7 +11,7 @@
  */
 class UStaticMeshComponent;
 UCLASS()
-class PR_RESISTANCE_API UFire : public UCState
+class PR_RESISTANCE_API UFire : public UCState_PlayerBase
 {
 	GENERATED_BODY()
 protected:

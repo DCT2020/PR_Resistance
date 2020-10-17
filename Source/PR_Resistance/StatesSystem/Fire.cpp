@@ -20,6 +20,8 @@ UFire::~UFire()
 
 bool UFire::_Init()
 {
+	bool isInited = UCState_PlayerBase::_Init();  
+
 	void* buffer = nullptr;
 	GetCharaDataWithLog("World", &buffer);
 	{
@@ -38,11 +40,18 @@ bool UFire::_Init()
 		mStaticMeshComp = (USkeletalMeshComponent*)(buffer);
 	}
 
-	return true;
+	return isInited;
 }
 
 bool UFire::Begin(CharacterState prevState)
 {
+	if(prevState == CharacterState::CS_RUN)
+		return false;
+
+	if (mCurrentStateInfos->mCurSubState != CharacterState::CS_SUB_AIM)
+		return false;
+
+
 	return true;
 }
 
