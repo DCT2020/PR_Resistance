@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "FloatsComponent.generated.h"
 
-
 class IFloatListener
 {
 public:
@@ -33,6 +32,7 @@ protected:
 public:	//native call
 	void	MakeFloats(uint8 size); // size 개수 만큼 float를 생성 합니다. 0 ~ (size -1), 기존의 0 ~ (size - 1) 사이의 값 들은 유지됩니다.
 	bool	AddListener(IFloatListener* newFloatListener, uint8 index); // index에 해당되는 float가 존재하지 않으면 실패합니다.
+	void	AddConditionChecker(TBaseDelegate<bool, uint8, float> func, uint8 index);
 	
 	int		PushBack(float newValue); // 사이즈를 반환합니다.
 
@@ -53,4 +53,17 @@ public: //blueprint call
 	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisplayName = "Set"))
 	void Set_bp(float newValue, uint8 index, bool& isValid);
 
+	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisPlayName = "AddConditionChecker"))
+	void AddConditionChecker_bp(TBaseDelegate<bool, uint8, float> func, uint8 index);
+	
+	/*DECLARE_EVENT_TwoParams(UFloatsComponent, FConditionEvent, uint8, float);
+	FConditionEvent& OnStateChange();
+
+	inline void BindStateChangeCall( func)
+	{
+		mChangeEvent.Add(func);
+	}*/
+
+private:
+	TArray<TArray<TBaseDelegate<bool, uint8, float>>> mConditionCheckers;
 };

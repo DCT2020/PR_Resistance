@@ -25,7 +25,13 @@ public:
 	
 	UPROPERTY()
 		UStateManager* mStateManager = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status, meta = (DisplayName = "MaxHP"))
+		float mMaxHp = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status, meta = (DisplayName = "HP"))
+		float mCurHP = 0.0f;
 	
+	static const int HP_INDEX = 0;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

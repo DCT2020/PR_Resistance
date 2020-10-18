@@ -19,6 +19,12 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	mFloatsComponent->PushBack(0);
+	mFloatsComponent->AddListener(this, HP_INDEX);
+	mStateManager->AddArchiveData(TEXT("Floats"), mFloatsComponent);
+
+
+	
 }
 
 // Called every frame
@@ -37,6 +43,12 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::ListenFloat(int index, float newFloat)
 {
+	switch (index)
+	{
+	case HP_INDEX:
+		mCurHP = newFloat;
+		break;
 	
+	}
 }
 
