@@ -11,6 +11,12 @@ UENUM(BlueprintType)
 enum class CharacterState : uint8
 {
 	CS_NULL = 0,
+};
+
+UENUM(BlueprintType)
+enum class PlayerState : CharacterState
+{
+	CS_NULL = 0,
 	CS_IDLE UMETA(DisplayName = "Idle"),
 	CS_WALK UMETA(DisplayName = "Walk"),
 	CS_RUN UMETA(DisplayName = "Run"),
