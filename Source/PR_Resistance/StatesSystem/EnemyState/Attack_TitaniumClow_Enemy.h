@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PR_RESISTANCE_API UAttack_TitaniumClow_Enemy : public UCState
 {
 	GENERATED_BODY()
