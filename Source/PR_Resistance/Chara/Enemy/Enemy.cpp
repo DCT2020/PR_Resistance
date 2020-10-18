@@ -21,7 +21,7 @@ void AEnemy::BeginPlay()
 
 	mFloatsComponent->PushBack(0);
 	mFloatsComponent->AddListener(this, HP_INDEX);
-	mStateManager->AddArchiveData(TEXT("Floats"), mFloatsComponent);
+	//mStateManager->AddArchiveData(TEXT("Floats"), mFloatsComponent);
 
 
 	
