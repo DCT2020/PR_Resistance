@@ -60,7 +60,7 @@ bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index
 	return true;
 }
 
-void UFloatsComponent::AddConditionChecker(TBaseDelegate<bool, uint8, float> func, uint8 index)
+void UFloatsComponent::AddConditionChecker(FDele_CheckCondition func, uint8 index)
 {
 	mConditionCheckers[index].Add(func);
 }
@@ -81,6 +81,14 @@ bool UFloatsComponent::Set(const float newValue, uint8 index)
 	for (auto listener : *mListeners[index])
 	{
 		listener->ListenFloat(index, mFloats[index]);
+
+		if(mConditionCheckers.IsValidIndex(index))
+		{
+			for (auto conditionChecker : mConditionCheckers[index])
+			{
+				conditionChecker.Execute(newValue, index);
+			}
+		}
 	}
 
 	return true;
@@ -121,7 +129,7 @@ void UFloatsComponent::Set_bp(float newValue, uint8 index, bool& isValid)
 	isValid = Set(newValue,index);
 }
 
-void UFloatsComponent::AddConditionChecker_bp(TBaseDelegate<bool, uint8, float> func, uint8 index)
+void UFloatsComponent::AddConditionChecker_bp(const FDele_CheckCondition& func, uint8 index)
 {
 	AddConditionChecker(func, index);
 }

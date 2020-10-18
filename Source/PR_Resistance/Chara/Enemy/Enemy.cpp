@@ -43,12 +43,5 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::ListenFloat(int index, float newFloat)
 {
-	switch (index)
-	{
-	case HP_INDEX:
-		mCurHP = newFloat;
-		break;
-	
-	}
 }
 

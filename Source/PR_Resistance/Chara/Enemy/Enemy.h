@@ -20,10 +20,10 @@ public:
 	// Sets default values for this pawn's properties
 	AEnemy();
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		UFloatsComponent* mFloatsComponent = nullptr;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		UStateManager* mStateManager = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Status, meta = (DisplayName = "MaxHP"))
