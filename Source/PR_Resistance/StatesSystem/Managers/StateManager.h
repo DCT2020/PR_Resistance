@@ -53,22 +53,16 @@ public:
 	* FStateDesc의 Priority에 따라 실패하거나 성공합니다.
 	* 다음 프레임에 시도됩니다.
 	*/
-	UFUNCTION(BlueprintCallable)
 	void TryChangeState(uint8 stateType);
 	/*
 	* 현재 상태를 종료시킵니다.
 	*/
-	UFUNCTION(BlueprintCallable)
 	void SetStateEnd(uint8 stateType);
 	/*
 	* Priroty를 무시하고 즉시 상태를 변경합니다.
 	*/
-	UFUNCTION(BlueprintCallable)
 	void SetState(uint8 destateTypesc);
 
-	UFUNCTION(BlueprintCallable)
-	void VoidPointerTest(void* pointer){}
-	
 	// UActorComponent
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
@@ -79,10 +73,14 @@ public:
 	* data : 공유할 데이터입니다. 데이터의 생명주기는 함수를 호출한 객체가 책임져야합니다.
 	* return : 성공시 true, 실패시 false를 리턴합니다.
 	*/
-	UFUNCTION(BlueprintCallable)
 	bool AddArchiveData(FName key, void* data);
 	void RemoveArchiveData(FName key);
 
+
+	UFUNCTION(BlueprintCallable, Category = FSM, meta = (DisplayName = "AddStateData"))
+		void AddStateData_bp(const int index, const uint8 stateName, const UCState* newState, UCState*& ret);
+
+	
 public: //Event
 	// 상태가 변할때마다 호출									prevState		curState
 	DECLARE_EVENT_TwoParams(UStateManager, FChangeEvent, uint8, uint8);

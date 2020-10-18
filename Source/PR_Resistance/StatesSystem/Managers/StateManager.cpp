@@ -84,6 +84,11 @@ void UStateManager::RemoveArchiveData(FName key)
 	mCDArchive->RemoveData(key);
 }
 
+void UStateManager::AddStateData_bp(int index, uint8 stateName, const UCState* newState, UCState*& ret)
+{
+	ret = AddStateData(index, stateName, const_cast<UCState*>(newState));
+}
+
 UStateManager::FChangeEvent& UStateManager::OnStateChange()
 {
 	return mChangeEvent;

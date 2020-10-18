@@ -15,8 +15,9 @@ UDestructible_Comp::UDestructible_Comp(const FObjectInitializer& ObjectInitializ
 
 void UDestructible_Comp::Init(UStaticMeshComponent* targetStateMesh, UFloatsComponent* floatcomp, uint8 indexOfHpInFloatsComp)
 {
+	mIndexOfHp = indexOfHpInFloatsComp;
 	mOwnerStaticMesh = targetStateMesh;
-	floatcomp->AddListener(this, indexOfHpInFloatsComp);
+	floatcomp->AddListener(this, mIndexOfHp);
 }
 
 // Called when the game starts
@@ -47,8 +48,11 @@ void UDestructible_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 }
 
 // IFloatListener
-void UDestructible_Comp::ListenFloat(float newFloat)
+void UDestructible_Comp::ListenFloat(int index, float newFloat)
 {
+	if (index != mIndexOfHp)
+		return;
+	
 	if(mCurStage >= UDestructible_Comp::MAX_STAGE)
 		return;
 

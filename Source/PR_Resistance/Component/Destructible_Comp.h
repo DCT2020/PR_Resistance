@@ -51,9 +51,12 @@ public:
 
 public: // native call
 	void Init(UStaticMeshComponent* targetStateMesh, UFloatsComponent* floatcomp, uint8 indexOfHpInFloatsComp);
-	void ListenFloat(float newFloat) override;
+	void ListenFloat(int index, float newFloat) override;
 public: // blueprint call
 	
 	UFUNCTION(BlueprintCallable, Category = Destructible, meta = (DisplayName = "Init"))
 	void Init_bp(const UStaticMeshComponent* targetStateMesh, const UFloatsComponent* FloatComponent, const uint8 indexOfHpInFloatsComp);
+
+protected:
+	int mIndexOfHp = 0;
 };

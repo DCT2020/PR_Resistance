@@ -75,7 +75,7 @@ bool UFloatsComponent::Set(const float newValue, uint8 index)
 	mFloats[index] = newValue;
 	for (auto listener : *mListeners[index])
 	{
-		listener->ListenFloat(mFloats[index]);
+		listener->ListenFloat(index, mFloats[index]);
 	}
 
 	return true;

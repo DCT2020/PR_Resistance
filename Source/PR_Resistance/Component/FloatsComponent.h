@@ -10,7 +10,7 @@
 class IFloatListener
 {
 public:
-	virtual void ListenFloat(float newFloat) = 0;
+	virtual void ListenFloat(int index, float newFloat) = 0;
 };
 
 UCLASS( ClassGroup=(Float), meta=(BlueprintSpawnableComponent) )
