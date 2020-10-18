@@ -14,7 +14,6 @@ class PR_RESISTANCE_API UAttack_TitaniumClow_Enemy : public UCState
 {
 	GENERATED_BODY()
 
-
 public:
 	virtual bool Begin(uint8 prevState) override;
 	virtual void Update(float deltaTime) override;
