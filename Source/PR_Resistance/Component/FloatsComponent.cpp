@@ -129,7 +129,7 @@ void UFloatsComponent::Set_bp(float newValue, uint8 index, bool& isValid)
 	isValid = Set(newValue,index);
 }
 
-void UFloatsComponent::AddConditionChecker_bp(const FDele_CheckCondition& func, uint8 index)
+void UFloatsComponent::AddConditionChecker_bp(uint8 index, const FDele_CheckCondition& func)
 {
 	AddConditionChecker(func, index);
 }
