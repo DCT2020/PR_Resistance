@@ -5,7 +5,7 @@
 
 UAim::UAim()
 {
-	mDesc.StateType = CharacterState::CS_SUB_AIM;
+	mDesc.StateType = (uint8)CharacterState::CS_SUB_AIM;
 	mDesc.Priority = 3;
 }
 
@@ -14,7 +14,7 @@ bool UAim::_Init()
 	return true;
 }
 
-bool UAim::Begin(CharacterState prevState)
+bool UAim::Begin(uint8 prevState)
 {
 	return true;
 }

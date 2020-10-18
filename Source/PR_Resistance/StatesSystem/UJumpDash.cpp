@@ -7,7 +7,7 @@
 
 UJumpDash::UJumpDash()
 {
-	mDesc.StateType = CharacterState::CS_JUMPDASH;
+	mDesc.StateType = (uint8)CharacterState::CS_JUMPDASH;
 	mDesc.Priority = 5;
 }
 
@@ -21,9 +21,9 @@ bool UJumpDash::_Init()
 	return true;
 }
 
-bool UJumpDash::Begin(CharacterState prevState)
+bool UJumpDash::Begin(uint8 prevState)
 {
-	if (prevState != CharacterState::CS_JUMP)
+	if (prevState != (uint8)CharacterState::CS_JUMP)
 		return false;
 
 	mElapsedTime = 0.0f;

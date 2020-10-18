@@ -21,15 +21,15 @@ bool UStateManager_SubState::Init_SubState(UCharacterDataArchive* archive)
 void UStateManager_SubState::Update(float deltaTime)
 {
 	UStateManager::Update(deltaTime);
-	TryChangeState(CharacterState::CS_IDLE);
+	TryChangeState((uint8)CharacterState::CS_IDLE);
 }
 
 void UStateManager_SubState::LoadStates()
 {
-	AddStateData(0, CharacterState::CS_IDLE, NewObject<UIdle>());
-	AddStateData(0, CharacterState::CS_SUB_RELOAD, NewObject<UReload>());
-	AddStateData(0, CharacterState::CS_SUB_AIM, NewObject<UAim>());
+	AddStateData(0, (uint8)CharacterState::CS_IDLE, NewObject<UIdle>());
+	AddStateData(0, (uint8)CharacterState::CS_SUB_RELOAD, NewObject<UReload>());
+	AddStateData(0, (uint8)CharacterState::CS_SUB_AIM, NewObject<UAim>());
 
-	SetDefaultState(0, CharacterState::CS_IDLE);
+	SetDefaultState(0, (uint8)CharacterState::CS_IDLE);
 }
 

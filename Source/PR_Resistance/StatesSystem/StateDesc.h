@@ -11,12 +11,6 @@ UENUM(BlueprintType)
 enum class CharacterState : uint8
 {
 	CS_NULL = 0,
-};
-
-UENUM(BlueprintType)
-enum class PlayerState : CharacterState
-{
-	CS_NULL = 0,
 	CS_IDLE UMETA(DisplayName = "Idle"),
 	CS_WALK UMETA(DisplayName = "Walk"),
 	CS_RUN UMETA(DisplayName = "Run"),
@@ -44,7 +38,7 @@ struct FStateDesc
 	GENERATED_BODY()
 	
     UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	CharacterState StateType = CharacterState::CS_NULL;
+	uint8 StateType = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 Priority = 0;

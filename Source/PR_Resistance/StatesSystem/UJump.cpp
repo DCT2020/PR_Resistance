@@ -5,7 +5,7 @@
 
 UJump::UJump()
 {
-	mDesc.StateType = CharacterState::CS_JUMP;
+	mDesc.StateType = (uint8)CharacterState::CS_JUMP;
 	mDesc.Priority = 4;
 }
 
@@ -13,7 +13,7 @@ UJump::~UJump()
 {
 }
 
-bool UJump::Begin(CharacterState prevState)
+bool UJump::Begin(uint8 prevState)
 {
 	return true;
 }

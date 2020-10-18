@@ -16,7 +16,7 @@ public:
 	UJump();
 	~UJump();
 
-	bool Begin(CharacterState prevState) override;
+	bool Begin(uint8 prevState) override;
 	void Update(float deltaTime) override;
 	void End() override;
 

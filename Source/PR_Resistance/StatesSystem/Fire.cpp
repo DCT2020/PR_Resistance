@@ -9,7 +9,7 @@
 
 UFire::UFire()
 {
-	mDesc.StateType = CharacterState::CS_ATTACK;
+	mDesc.StateType = (uint8)CharacterState::CS_ATTACK;
 	mDesc.Priority = 3;
 }
 
@@ -43,9 +43,9 @@ bool UFire::_Init()
 	return isInited;
 }
 
-bool UFire::Begin(CharacterState prevState)
+bool UFire::Begin(uint8 prevState)
 {
-	if(prevState == CharacterState::CS_RUN)
+	if(prevState == (uint8)CharacterState::CS_RUN)
 		return false;
 
 	if (mCurrentStateInfos->mCurSubState != CharacterState::CS_SUB_AIM)

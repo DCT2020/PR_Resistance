@@ -18,7 +18,7 @@ public:
 	virtual ~UIdle();
 
 	virtual bool		_Init()					override;
-	virtual bool		Begin(CharacterState prevState)					override;
+	virtual bool		Begin(uint8 prevState)					override;
 	virtual void		Update(float deltaTime)	override;
 	virtual void		End()					override;
 };

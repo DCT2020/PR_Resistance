@@ -4,7 +4,7 @@
 
 UIdle::UIdle()
 {
-	mDesc.StateType = CharacterState::CS_IDLE;
+	mDesc.StateType = (uint8)CharacterState::CS_IDLE;
 	mDesc.Priority = 1;
 }
 
@@ -23,7 +23,7 @@ void UIdle::Update(float deltaTime)
 {
 }
 
-bool UIdle::Begin(CharacterState prevState)
+bool UIdle::Begin(uint8 prevState)
 {
 	return true;
 }

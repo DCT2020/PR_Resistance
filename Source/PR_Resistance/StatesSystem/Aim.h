@@ -17,7 +17,7 @@ class PR_RESISTANCE_API UAim : public UCState
 public:
 	UAim();
 
-	bool Begin(CharacterState prevState) override;
+	bool Begin(uint8 prevState) override;
 	void Update(float deltaTime) override;
 	void End() override;
 

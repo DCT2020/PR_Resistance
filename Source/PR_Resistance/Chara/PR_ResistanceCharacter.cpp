@@ -91,7 +91,7 @@ APR_ResistanceCharacter::~APR_ResistanceCharacter()
 void APR_ResistanceCharacter::Landed(const FHitResult& Hit)
 {	
 	Super::Landed(Hit);
-	mStateManager->SetStateEnd(CharacterState::CS_JUMP);
+	mStateManager->SetStateEnd((uint8)CharacterState::CS_JUMP);
 }
 
 void APR_ResistanceCharacter::StartWait()
@@ -187,7 +187,7 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 {
 	Super::Tick(deltaTime);
 
-	if (mStateManager->GetCurStateDesc().StateType == CharacterState::CS_IDLE)
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_IDLE)
 	{
 		bIsIdle = true;
 	}
@@ -219,7 +219,7 @@ void APR_ResistanceCharacter::Jump_Wrapped()
 		if (UseStamina(forUseStamina))
 		{
 			Jump();
-			mStateManager->TryChangeState(CharacterState::CS_JUMP);
+			mStateManager->TryChangeState((uint8)CharacterState::CS_JUMP);
 		}
 	}
 
@@ -227,25 +227,25 @@ void APR_ResistanceCharacter::Jump_Wrapped()
 
 void APR_ResistanceCharacter::Dodge()
 {
-	mStateManager->TryChangeState(CharacterState::CS_DODGE);
+	mStateManager->TryChangeState((uint8)CharacterState::CS_DODGE);
 }
 
 void APR_ResistanceCharacter::DoJumpDash()
 {
-	mStateManager->TryChangeState(CharacterState::CS_RUN);
-	mStateManager->TryChangeState(CharacterState::CS_JUMPDASH);
+	mStateManager->TryChangeState((uint8)CharacterState::CS_RUN);
+	mStateManager->TryChangeState((uint8)CharacterState::CS_JUMPDASH);
 }
 
 // Run
 void APR_ResistanceCharacter::Run()
 {
-	mStateManager->SetState(CharacterState::CS_RUN);
-	mStateManager->SetState(CharacterState::CS_JUMPDASH);
+	mStateManager->SetState((uint8)CharacterState::CS_RUN);
+	mStateManager->SetState((uint8)CharacterState::CS_JUMPDASH);
 }
 
 void APR_ResistanceCharacter::RunStop()
 {
-	mStateManager->SetStateEnd(CharacterState::CS_RUN);
+	mStateManager->SetStateEnd((uint8)CharacterState::CS_RUN);
 }
 
 
@@ -257,7 +257,7 @@ void APR_ResistanceCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVecto
 void APR_ResistanceCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	StopJumping();
-	mStateManager->SetStateEnd(CharacterState::CS_JUMP);
+	mStateManager->SetStateEnd((uint8)CharacterState::CS_JUMP);
 }
 
 void APR_ResistanceCharacter::TurnAtRate(float Rate)
@@ -285,11 +285,11 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 
-		mStateManager->TryChangeState(CharacterState::CS_WALK);
+		mStateManager->TryChangeState((uint8)CharacterState::CS_WALK);
 	}
 	else
 	{
-		mStateManager->SetStateEnd(CharacterState::CS_WALK);
+		mStateManager->SetStateEnd((uint8)CharacterState::CS_WALK);
 	}
 }
 
@@ -307,11 +307,11 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 
-		mStateManager->TryChangeState(CharacterState::CS_WALK);
+		mStateManager->TryChangeState((uint8)CharacterState::CS_WALK);
 	}
 	else
 	{
-		mStateManager->SetStateEnd(CharacterState::CS_WALK);
+		mStateManager->SetStateEnd((uint8)CharacterState::CS_WALK);
 	}
 }
 
@@ -320,26 +320,26 @@ void APR_ResistanceCharacter::StartAttack()
 	mLastInput = ActionInput::AINPUT_WEAKATTACK;
 	bIsInAttack = true;
 
-	mStateManager->TryChangeState(CharacterState::CS_ATTACK);
+	mStateManager->TryChangeState((uint8)CharacterState::CS_ATTACK);
 }
 
 void APR_ResistanceCharacter::StopAttack()
 {
 	if (!bIsMeele)
 	{
-		mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
+		mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
 	}
 }
 
 
 void APR_ResistanceCharacter::SetWeapon1()
 {
-	mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
+	mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
 }
 
 void APR_ResistanceCharacter::SetWeapon2()
 {
-	mStateManager->SetStateEnd(CharacterState::CS_ATTACK);
+	mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
 }
 
 void APR_ResistanceCharacter::Turn(float var)
@@ -412,7 +412,7 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 /////////// bps
 void APR_ResistanceCharacter::GetCurrentCharacterState_bp(CharacterState& state)
 {
-	state = mStateManager->GetCurStateDesc().StateType;
+	state = (CharacterState)mStateManager->GetCurStateDesc().StateType;
 }
 
 void APR_ResistanceCharacter::GetCurrentCharacterSubState_bp(CharacterState& subState)

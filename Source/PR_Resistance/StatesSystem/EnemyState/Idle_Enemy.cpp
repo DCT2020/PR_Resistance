@@ -3,7 +3,7 @@
 
 #include "Idle_Enemy.h"
 
-bool UIdle_Enemy::Begin(CharacterState prevState)
+bool UIdle_Enemy::Begin(uint8 prevState)
 {
 	
 	return true;

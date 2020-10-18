@@ -9,7 +9,7 @@
 
 UDodge::UDodge()
 {
-	mDesc.StateType = CharacterState::CS_DODGE;
+	mDesc.StateType = (uint8)CharacterState::CS_DODGE;
 	mDesc.Priority = 5;
 }
 
@@ -23,10 +23,10 @@ bool UDodge::_Init()
 }
 
 
-bool UDodge::Begin(CharacterState prevState)
+bool UDodge::Begin(uint8 prevState)
 {
-	if(prevState == CharacterState::CS_JUMP 
-	|| prevState == CharacterState::CS_JUMPDASH)
+	if(prevState == (uint8)CharacterState::CS_JUMP 
+	|| prevState == (uint8)CharacterState::CS_JUMPDASH)
 		return false;
 
 	assert(mSPProvider == nullptr);

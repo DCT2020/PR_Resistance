@@ -34,7 +34,7 @@ public:
 	virtual void SetStart();
 	virtual void SetStop();
 
-	virtual bool Begin(CharacterState prevState);
+	virtual bool Begin(uint8 prevState);
 	virtual void Update(float deltaTime);
 	virtual void End();
 

@@ -12,7 +12,7 @@
 
 UAttack::UAttack()
 {
-	mDesc.StateType = CharacterState::CS_ATTACK;
+	mDesc.StateType = (uint8)CharacterState::CS_ATTACK;
 	mDesc.Priority = 3;
 }
 
@@ -25,7 +25,7 @@ UAttack::~UAttack()
 	}
 }
 
-bool UAttack::Begin(CharacterState prevState)
+bool UAttack::Begin(uint8 prevState)
 {
 	return true;
 }

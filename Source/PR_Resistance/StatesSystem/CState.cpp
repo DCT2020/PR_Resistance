@@ -26,7 +26,7 @@ void UCState::SetStop()
 	mDesc.bIsEnd = true;
 }
 
-bool UCState::Begin(CharacterState prevState)
+bool UCState::Begin(uint8 prevState)
 {
 	throw std::logic_error("The method or operation is not implemented.");
 }

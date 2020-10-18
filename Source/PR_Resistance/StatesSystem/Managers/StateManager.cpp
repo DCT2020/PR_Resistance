@@ -20,18 +20,18 @@ bool UStateManager::Init()
 	return true;
 }
 
-void UStateManager::TryChangeState(CharacterState stateType)
+void UStateManager::TryChangeState(uint8 stateType)
 {
 	// 이후 editor에서 가져오는걸로 바꾸기 (FStateDesc를)
 	mStateChangeCalls.Enqueue(mStates.mStateContainer[stateType]->GetStateDesc());
 }
 
-void UStateManager::SetStateEnd(CharacterState stateType)
+void UStateManager::SetStateEnd(uint8 stateType)
 {
 	mStates.mStateContainer[stateType]->SetStop();
 }
 
-void UStateManager::SetState(CharacterState stateType)
+void UStateManager::SetState(uint8 stateType)
 {
 	ChangeState(mStates.mStateContainer[stateType]);
 }
@@ -44,7 +44,7 @@ void UStateManager::Update(float deltaTime)
 		FStateDesc nextDesc;
 		while (mStateChangeCalls.Dequeue(curDesc))
 		{
-			if (nextDesc.StateType == CharacterState::CS_NULL)
+			if (nextDesc.StateType == -1)
 				nextDesc = curDesc;
 			else if (curDesc.Priority > nextDesc.Priority)
 				nextDesc = curDesc;
@@ -105,7 +105,7 @@ void UStateManager::SetCharacterDataArchive(UCharacterDataArchive* archive)
 	mCDArchive = archive;
 }
 
-void UStateManager::SetDefaultState(int index,CharacterState state)
+void UStateManager::SetDefaultState(int index,uint8 state)
 {
 	ChangeStateContainer(index);
 	mCurState = mStates.mStateContainer[state];
@@ -116,7 +116,7 @@ void UStateManager::ChangeStateContainer(int index)
 	mStates = mStateContiners[index];
 }
 
-UCState* UStateManager::AddStateData(int index, CharacterState stateName, UCState* newState)
+UCState* UStateManager::AddStateData(int index, uint8 stateName, UCState* newState)
 {
 	//for (int i = mStateContiners.Num(); i <= index; ++i)
 	//{
@@ -133,7 +133,7 @@ UCState* UStateManager::AddStateData(int index, CharacterState stateName, UCStat
 	return newState;
 }
 
-UCState* UStateManager::GetStateData(int index, CharacterState stateName)
+UCState* UStateManager::GetStateData(int index, uint8 stateName)
 {
 	return mStateContiners[index].mStateContainer[stateName];
 }

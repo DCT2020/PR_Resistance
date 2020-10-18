@@ -6,7 +6,7 @@
 
 UWalk::UWalk()
 {
-	mDesc.StateType = CharacterState::CS_WALK;
+	mDesc.StateType = (uint8)CharacterState::CS_WALK;
 	mDesc.Priority = 2;
 }
 
@@ -34,7 +34,7 @@ bool UWalk::_Init()
 	return true;
 }
 
-bool UWalk::Begin(CharacterState prevState)
+bool UWalk::Begin(uint8 prevState)
 {
 	(*mMaxWalkSpeed) = mCharacterStatus->walkSpeed;
 	return true;

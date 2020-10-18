@@ -8,7 +8,7 @@
 
 URun::URun()
 {
-	mDesc.StateType = CharacterState::CS_RUN;
+	mDesc.StateType = (uint8)CharacterState::CS_RUN;
 	mDesc.Priority = 3;
 }
 
@@ -29,9 +29,9 @@ bool URun::_Init()
 	return true;
 }
 
-bool URun::Begin(CharacterState prevState)
+bool URun::Begin(uint8 prevState)
 {
-	if(prevState != CharacterState::CS_WALK)
+	if(prevState != (uint8)CharacterState::CS_WALK)
 		return false;
 
 	assert(mSPProvider == nullptr);

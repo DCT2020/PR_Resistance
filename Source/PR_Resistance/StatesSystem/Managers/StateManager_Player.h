@@ -26,7 +26,7 @@ enum class StateType : uint8
  };
 
  UCLASS()
-class PR_RESISTANCE_API UStateManager_Player : 
+class PR_RESISTANCE_API UStateManager_Player final : 
 	public UStateManager, public IStaminaProvider, public IStaminaUser
 {
 	GENERATED_BODY()
@@ -54,16 +54,17 @@ public:
 	// subState
 	CharacterState GetCurSubState();
 	void TryChangeSubState(CharacterState subState);
-	void SetSubStateEnd(CharacterState subState);
+	void SetSubStateEnd(CharacterState subState) const;
 
 	void LoadStates() override;
 
-	void AddPlayerBaseState(int index, CharacterState stateName, UCState_PlayerBase* newState);
 
 protected:
-	UFUNCTION()
-		void OnSubStateChange(CharacterState prevState, CharacterState newState);
+	void AddPlayerBaseState(int index, CharacterState stateName, UCState_PlayerBase* newState);
 
 	UFUNCTION()
-		void OnMyStateChange(CharacterState prevState, CharacterState newState);
+		void OnSubStateChange(uint8 prevState, uint8 newState);
+
+	UFUNCTION()
+		void OnMyStateChange(uint8 prevState, uint8 newState);
  };

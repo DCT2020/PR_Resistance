@@ -11,16 +11,16 @@
  * 
  */
 
- USTRUCT()
+ USTRUCT(BlueprintType)
  struct FChracterState
  {
 	GENERATED_BODY()
 	public:
 	UPROPERTY()
-		TMap<CharacterState, UCState*> mStateContainer;
+		TMap<uint8, UCState*> mStateContainer;
  };
 
- UCLASS()
+ UCLASS(Blueprintable)
 class PR_RESISTANCE_API UStateManager : public UActorComponent
 {
 	GENERATED_BODY()
@@ -53,15 +53,15 @@ public:
 	* FStateDesc의 Priority에 따라 실패하거나 성공합니다.
 	* 다음 프레임에 시도됩니다.
 	*/
-	void TryChangeState(CharacterState stateType);
+	void TryChangeState(uint8 stateType);
 	/*
 	* 현재 상태를 종료시킵니다.
 	*/
-	void SetStateEnd(CharacterState stateType);
+	void SetStateEnd(uint8 stateType);
 	/*
 	* Priroty를 무시하고 즉시 상태를 변경합니다.
 	*/
-	void SetState(CharacterState destateTypesc);
+	void SetState(uint8 destateTypesc);
 	
 	// UActorComponent
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -78,10 +78,10 @@ public:
 
 public: //Event
 	// 상태가 변할때마다 호출									prevState		curState
-	DECLARE_EVENT_TwoParams(UStateManager, FChangeEvent, CharacterState, CharacterState);
+	DECLARE_EVENT_TwoParams(UStateManager, FChangeEvent, uint8, uint8);
 	FChangeEvent& OnStateChange();
 
-	inline void BindStateChangeCall(const TBaseDelegate<void, CharacterState, CharacterState> func) 
+	inline void BindStateChangeCall(const TBaseDelegate<void, uint8, uint8> func)
 	{
 		mChangeEvent.Add(func);
 	}
@@ -94,9 +94,9 @@ protected:
 	UCharacterDataArchive * GetCharacterDataArchive();
 	void SetCharacterDataArchive(UCharacterDataArchive* archive);
 
-	void SetDefaultState(int index, CharacterState state);
+	void SetDefaultState(int index, uint8 state);
 	void ChangeStateContainer(int index);
-	UCState* AddStateData(int index, CharacterState stateName, UCState* newState);
-	UCState* GetStateData(int index, CharacterState stateName);
+	UCState* AddStateData(int index, uint8 stateName, UCState* newState);
+	UCState* GetStateData(int index, uint8 stateName);
 	bool ChangeState(UCState* newState);
 };

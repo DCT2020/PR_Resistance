@@ -2,11 +2,11 @@
 
 UReload::UReload()
 {
-	mDesc.StateType = CharacterState::CS_SUB_RELOAD;
+	mDesc.StateType = (uint8)CharacterState::CS_SUB_RELOAD;
 	mDesc.Priority = 2;
 }
 
-bool UReload::Begin(CharacterState prevState)
+bool UReload::Begin(uint8 prevState)
 {
 	elapsedTime = 0.0f;
 	return true;

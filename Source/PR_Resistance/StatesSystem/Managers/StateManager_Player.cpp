@@ -29,7 +29,7 @@ bool UStateManager_Player::Init()
 	mSubState = NewObject<UStateManager_SubState>();
 	mSubState->Init_SubState(GetCharacterDataArchive());
 
-	TBaseDelegate<void,CharacterState,CharacterState> delegator;
+	TBaseDelegate<void,uint8,uint8> delegator;
 	delegator.BindUObject(this, &UStateManager_Player::OnSubStateChange);
 	mSubState->BindStateChangeCall(delegator);
 
@@ -47,46 +47,46 @@ void UStateManager_Player::LoadStates()
 {
 	// ST_SWORD
 #pragma region ST_SWORD
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_IDLE, NewObject<UIdle>());
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_WALK, NewObject<UWalk>());
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_IDLE, NewObject<UIdle>());
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_WALK, NewObject<UWalk>());
 
 	auto run = NewObject<URun>();
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_RUN, run);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_RUN, run);
 	run->SetProvider(mSPProvider);
 
 	auto dodge = NewObject<UDodge>();
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_DODGE, dodge);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_DODGE, dodge);
 	dodge->SetProvider(mSPProvider);
 
 	auto jumpDash = NewObject<UJumpDash>();
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_JUMPDASH, jumpDash);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMPDASH, jumpDash);
 	jumpDash->SetProvider(mSPProvider);
 
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_JUMP, NewObject<UJump>());
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMP, NewObject<UJump>());
 
 	auto attack = NewObject<UAttack>();
-	AddStateData((uint8)StateType::ST_SWORD, CharacterState::CS_ATTACK, attack);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_ATTACK, attack);
 	attack->SetProvider(mSPProvider);
 #pragma endregion
 
 #pragma region ST_GUN
-	auto temp = GetStateData((uint8)StateType::ST_SWORD, CharacterState::CS_IDLE);
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_IDLE, temp);
+	auto temp = GetStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_IDLE);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_IDLE, temp);
 
-	temp = GetStateData((uint8)StateType::ST_SWORD, CharacterState::CS_WALK);
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_WALK, temp);
+	temp = GetStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_WALK);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_WALK, temp);
 
-	temp = GetStateData((uint8)StateType::ST_SWORD, CharacterState::CS_JUMP);
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_JUMP, temp);
+	temp = GetStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMP);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMP, temp);
 
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_RUN, run);
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_DODGE, dodge);
-	AddStateData((uint8)StateType::ST_GUN, CharacterState::CS_JUMPDASH, jumpDash);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_RUN, run);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_DODGE, dodge);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMPDASH, jumpDash);
 	AddPlayerBaseState((uint8)StateType::ST_GUN, CharacterState::CS_ATTACK, NewObject<UFire>());
 
 #pragma endregion
 
-	SetDefaultState((uint8)StateType::ST_GUN, CharacterState::CS_IDLE);
+	SetDefaultState((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_IDLE);
 
 	mSubState->LoadStates();
 }
@@ -95,7 +95,7 @@ void UStateManager_Player::LoadStates()
 void UStateManager_Player::AddPlayerBaseState(int index, CharacterState stateName, UCState_PlayerBase* newState)
 {
 	newState->InitDatas(&mCurStateInfo);
-	AddStateData(index, stateName, newState);
+	AddStateData(index, (uint8)stateName, newState);
 }
 
 void UStateManager_Player::Update(float deltaTime)
@@ -103,7 +103,7 @@ void UStateManager_Player::Update(float deltaTime)
 	UStateManager::Update(deltaTime);
 	mSubState->Update(deltaTime);
 
-	TryChangeState(CharacterState::CS_IDLE);
+	TryChangeState((uint8)CharacterState::CS_IDLE);
 
 }
 
@@ -127,27 +127,27 @@ void UStateManager_Player::ChangeState(StateType type)
 
 CharacterState UStateManager_Player::GetCurSubState()
 {
-	return mSubState->GetCurStateDesc().StateType;
+	return (CharacterState)mSubState->GetCurStateDesc().StateType;
 }
 
 void UStateManager_Player::TryChangeSubState(CharacterState subState)
 {
-	mSubState->TryChangeState(subState);
+	mSubState->TryChangeState((uint8)subState);
 }
 
-void UStateManager_Player::SetSubStateEnd(CharacterState subState)
+void UStateManager_Player::SetSubStateEnd(CharacterState subState) const
 {
-	mSubState->SetStateEnd(subState);
+	mSubState->SetStateEnd((uint8)subState);
 }
 
 
 // binded function
-void UStateManager_Player::OnSubStateChange(CharacterState prevState, CharacterState newState)
+void UStateManager_Player::OnSubStateChange(uint8 prevState, uint8 newState)
 {
-	mCurStateInfo.mCurSubState = newState;
+	mCurStateInfo.mCurSubState = (CharacterState)newState;
 }
 
-void UStateManager_Player::OnMyStateChange(CharacterState prevState, CharacterState newState)
+void UStateManager_Player::OnMyStateChange(uint8 prevState, uint8 newState)
 {
-	mCurStateInfo.mCurMainState = newState;
+	mCurStateInfo.mCurMainState = (CharacterState)newState;
 }
