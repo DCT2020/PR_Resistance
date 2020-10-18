@@ -62,6 +62,9 @@ bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index
 
 void UFloatsComponent::AddConditionChecker(FDele_CheckCondition func, uint8 index)
 {
+	if (!mConditionCheckers.IsValidIndex(index))
+		mConditionCheckers.Reserve(index);
+
 	mConditionCheckers[index].Add(func);
 }
 
