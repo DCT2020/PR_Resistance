@@ -17,10 +17,6 @@ AEnemy::AEnemy()
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
-	mFloatsComponent->PushBack(0);
-	mFloatsComponent->AddListener(this, HP_INDEX);
-	mStateManager->AddArchiveData(TEXT("Floats"), mFloatsComponent);
-
 	Super::BeginPlay();
 
 
