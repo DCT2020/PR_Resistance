@@ -67,5 +67,5 @@ public: //blueprint call
 	}*/
 
 private:
-	TArray<TArray<FDele_CheckCondition>> mConditionCheckers;
+	TArray<TArray<FDele_CheckCondition>*> mConditionCheckers;
 };
