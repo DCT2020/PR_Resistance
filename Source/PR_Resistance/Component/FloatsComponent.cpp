@@ -135,3 +135,8 @@ void UFloatsComponent::AddConditionChecker_bp(uint8 index, const FDele_CheckCond
 {
 	AddConditionChecker(func, index);
 }
+
+void UFloatsComponent::AddListener_bp(uint8 index, const IFloatListener*& newFloatListener)
+{
+	AddListener(const_cast<IFloatListener*>(newFloatListener), index);
+}

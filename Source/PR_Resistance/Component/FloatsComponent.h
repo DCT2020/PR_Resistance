@@ -57,6 +57,9 @@ public: //blueprint call
 
 	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisPlayName = "AddConditionChecker"))
 	void AddConditionChecker_bp(uint8 index, const FDele_CheckCondition& func);
+
+	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisPlayName = "AddListener"))
+		void AddListener_bp(uint8 index, const IFloatListener*& newFloatListener);
 	
 	/*DECLARE_EVENT_TwoParams(UFloatsComponent, FConditionEvent, uint8, float);
 	FConditionEvent& OnStateChange();
