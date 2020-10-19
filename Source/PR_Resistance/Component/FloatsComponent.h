@@ -6,11 +6,21 @@
 #include "Components/ActorComponent.h"
 #include "FloatsComponent.generated.h"
 
-class IFloatListener
+// This class does not need to be modified.
+UINTERFACE(MinimalAPI)
+class UFloatListener : public UInterface
 {
+	GENERATED_BODY()
+};
+
+class PR_RESISTANCE_API IFloatListener
+{
+	GENERATED_BODY()
 public:
 	virtual void ListenFloat(int index, float newFloat) = 0;
 };
+
+
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FDele_CheckCondition, uint8, Index, float, newValue);
 
@@ -59,7 +69,7 @@ public: //blueprint call
 	void AddConditionChecker_bp(uint8 index, const FDele_CheckCondition& func);
 
 	UFUNCTION(BlueprintCallable, Category = Floats, meta = (DisPlayName = "AddListener"))
-		void AddListener_bp(uint8 index, const IFloatListener*& newFloatListener);
+		void AddListener_bp(uint8 index, const TScriptInterface<IFloatListener>& newFloatListener);
 	
 	/*DECLARE_EVENT_TwoParams(UFloatsComponent, FConditionEvent, uint8, float);
 	FConditionEvent& OnStateChange();

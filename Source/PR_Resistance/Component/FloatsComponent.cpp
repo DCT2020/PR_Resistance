@@ -83,14 +83,11 @@ bool UFloatsComponent::Set(const float newValue, uint8 index)
 	for (auto listener : *mListeners[index])
 	{
 		listener->ListenFloat(index, mFloats[index]);
+	}
 
-		if(mConditionCheckers.IsValidIndex(index))
-		{
-			for (auto conditionChecker : mConditionCheckers[index])
-			{
-				conditionChecker.Execute(index, newValue);
-			}
-		}
+	for (auto conditionChecker : mConditionCheckers[index])
+	{
+		conditionChecker.Execute(index, newValue);
 	}
 
 	return true;
@@ -136,7 +133,7 @@ void UFloatsComponent::AddConditionChecker_bp(uint8 index, const FDele_CheckCond
 	AddConditionChecker(func, index);
 }
 
-void UFloatsComponent::AddListener_bp(uint8 index, const IFloatListener*& newFloatListener)
+void UFloatsComponent::AddListener_bp(uint8 index, const TScriptInterface<IFloatListener>& newFloatListener)
 {
-	AddListener(const_cast<IFloatListener*>(newFloatListener), index);
+	AddListener(static_cast<IFloatListener*>(newFloatListener.GetInterface()), index);
 }
