@@ -56,14 +56,27 @@ void UDestructible_Comp::ListenFloat(int index, float newFloat)
 	if(mCurStage >= UDestructible_Comp::MAX_STAGE)
 		return;
 
-	if (newFloat <= mHPs[mCurStage])
+	if(newFloat <= mHPs[1])
+	{
+		if(newFloat <= mHPs[2])
+		{
+			
+			mOwnerStaticMesh->SetStaticMesh(mStageShapes[1]);
+		}
+		else
+		{
+			mOwnerStaticMesh->SetStaticMesh(mStageShapes[2]);
+		}
+	}
+	
+	/*if (newFloat <= mHPs[mCurStage])
 	{
 		if (mStageShapes[mCurStage] != nullptr)
 		{
 			mOwnerStaticMesh->SetStaticMesh(mStageShapes[mCurStage]);
 		}
 		++mCurStage;
-	}
+	}*/
 }
 
 // Blueprint calls
