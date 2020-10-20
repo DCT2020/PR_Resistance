@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PR_Resistance/StatesSystem/CState.h"
+#include "PR_Resistance/StatesSystem/EnemyState/EnmyStateBase.h"
 #include "Idle_Enemy.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable)
-class PR_RESISTANCE_API UIdle_Enemy : public UCState
+class PR_RESISTANCE_API UIdle_Enemy : public UEnmyStateBase
 {
 	GENERATED_BODY()
 

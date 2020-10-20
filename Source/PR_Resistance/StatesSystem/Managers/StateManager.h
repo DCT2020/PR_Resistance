@@ -79,7 +79,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = FSM, meta = (DisplayName = "AddStateData"))
 		void AddStateData_bp(const int index, const uint8 stateName, const UCState* newState, UCState*& ret);
-
+      
 	
 public: //Event
 	// 상태가 변할때마다 호출									prevState		curState
@@ -99,9 +99,12 @@ protected:
 	UCharacterDataArchive * GetCharacterDataArchive();
 	void SetCharacterDataArchive(UCharacterDataArchive* archive);
 
-	void SetDefaultState(int index, uint8 state);
 	void ChangeStateContainer(int index);
+	bool ChangeState(UCState* newState);
+public:
+#define AddStateData_uint8(Index, State, StateClass) AddStateData(Index, static_cast<uint8>(State),NewObject<StateClass>())
+#define SetDefaultState_uint8(Index, State) SetDefaultState(Index, static_cast<uint8>(State))
+	void SetDefaultState(int index, uint8 state);
 	UCState* AddStateData(int index, uint8 stateName, UCState* newState);
 	UCState* GetStateData(int index, uint8 stateName);
-	bool ChangeState(UCState* newState);
 };

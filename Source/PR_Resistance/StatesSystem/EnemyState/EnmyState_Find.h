@@ -4,21 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "PR_Resistance/StatesSystem/EnemyState/EnmyStateBase.h"
-#include "Attack_TitaniumClow_Enemy.generated.h"
+#include "EnmyState_Find.generated.h"
 
 /**
  * 
  */
-UCLASS(Blueprintable)
-class PR_RESISTANCE_API UAttack_TitaniumClow_Enemy : public UEnmyStateBase
+UCLASS()
+class PR_RESISTANCE_API UEnmyState_Find : public UEnmyStateBase
 {
 	GENERATED_BODY()
 
 public:
+	UEnmyState_Find();
+	
 	virtual bool Begin(uint8 prevState) override;
 	virtual void Update(float deltaTime) override;
 	virtual void End() override;
 protected:
 	virtual bool _Init() override;
-};
 
+protected:
+	UFUNCTION()
+		void OnDetect(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+};
