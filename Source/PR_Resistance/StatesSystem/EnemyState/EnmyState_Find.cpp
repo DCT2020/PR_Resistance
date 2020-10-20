@@ -12,6 +12,8 @@ UEnmyState_Find::UEnmyState_Find()
 bool UEnmyState_Find::Begin(uint8 prevState)
 {
 	mData.mDetectingCollider->OnComponentBeginOverlap.AddDynamic(this, &UEnmyState_Find::OnDetect);
+	mData.mDetectingCollider->OnComponentEndOverlap.AddDynamic(this, &UEnmyState_Find::OnOutDetect);
+
 	return true;
 }
 
@@ -32,5 +34,11 @@ bool UEnmyState_Find::_Init()
 void UEnmyState_Find::OnDetect(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	mDetectedTargets.Add(OtherActor);
+}
+
+void UEnmyState_Find::OnOutDetect(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, 
+	UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+{
+	mDetectedTargets.Remove(OtherActor);
 }
