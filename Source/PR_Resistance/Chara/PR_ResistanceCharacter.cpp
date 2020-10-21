@@ -418,7 +418,8 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 		}
 		break;
 	case EAnimNotifyToCharacterTypes::ATC_RELOAD_COMPLITE:
-		mStateManager->SetSubStateEnd(CharacterState::CS_SUB_RELOAD);
+		if(bIsEnd)
+			mStateManager->SetSubStateEnd(CharacterState::CS_SUB_RELOAD);
 		break;
 	default:
 		break;
