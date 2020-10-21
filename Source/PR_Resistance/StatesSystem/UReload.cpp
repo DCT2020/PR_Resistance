@@ -28,13 +28,16 @@ void UReload::End()
 
 bool UReload::_Init()
 {
-	void* buffer;
-	GetCharaDataWithLog(TEXT("AnimTable"), &buffer);
-	UDataTable* animTable = static_cast<UDataTable*>(buffer);
-	mReloadAnimationData = animTable->FindRow<FCharacterAnimationData>(TEXT("Reload"), nullptr);
-
-	GetCharaDataWithLog(TEXT("AnimInstance"), &buffer);
-	mAnimInstance = static_cast<UAnimInstance*>(buffer);
+	void* buffer = nullptr;
+	GetCharaDataWithLog("AnimTable", &buffer);
+	{
+		UDataTable* animTable = static_cast<UDataTable*>(buffer);
+		mReloadAnimationData = animTable->FindRow<FCharacterAnimationData>(TEXT("Reload"), nullptr);
+	}
+	GetCharaDataWithLog("AnimInstance", &buffer);
+	{
+		mAnimInstance = static_cast<UAnimInstance*>(buffer);
+	}
 	
 	return true;
 }
