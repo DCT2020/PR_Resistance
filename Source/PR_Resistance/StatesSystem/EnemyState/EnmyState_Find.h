@@ -14,8 +14,13 @@ class PR_RESISTANCE_API UEnmyState_Find : public UEnmyStateBase
 {
 	GENERATED_BODY()
 protected:
+
+
+   // ------------------ Blueprintable
+        UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = Detecting)
 	TSet<AActor*> mDetectedTargets;
 
+        
 public:
 	UEnmyState_Find();
 	
@@ -29,5 +34,6 @@ protected:
 	UFUNCTION()
 		void OnDetect(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
-                void OnOutDetect(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+                void OnOutDetect(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+public: /////// Blueprint callable functions
 };

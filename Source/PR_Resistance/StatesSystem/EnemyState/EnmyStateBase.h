@@ -25,7 +25,12 @@ USTRUCT()
 struct FEnemyStateData
 {
 	GENERATED_BODY()
-		USphereComponent* mDetectingCollider;
+
+	UPROPERTY()
+        USphereComponent* mDetectingCollider;
+
+        UPROPERTY()
+        AActor* mOwner;
 };
 
 /**
