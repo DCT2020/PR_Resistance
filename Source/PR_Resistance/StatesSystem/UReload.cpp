@@ -3,7 +3,7 @@
 UReload::UReload()
 {
 	mDesc.StateType = (uint8)CharacterState::CS_SUB_RELOAD;
-	mDesc.Priority = 2;
+	mDesc.Priority = 3;
 }
 
 bool UReload::Begin(uint8 prevState)
