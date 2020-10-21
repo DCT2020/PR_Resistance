@@ -57,7 +57,8 @@ bool ComboManager::StartAttack(FName firstAttack)
 
 void ComboManager::StartWaitInput()
 {
-	mOwnerAnimInst->Montage_Pause();
+	auto temp = mOwnerAnimInst->GetCurrentActiveMontage();
+	mOwnerAnimInst->Montage_Pause(temp);
 	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::Blue,TEXT("Notified"));
 	mbIsWait = true;
 	mEalsedTime = 0.0f;
