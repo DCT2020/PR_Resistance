@@ -4,6 +4,7 @@
 #include "UDodge.h"
 #include "PR_Resistance/StatesSystem/CharacterDataArchive.h"
 #include "PR_Resistance/Interface/IStaminaProvider.h"
+#include "PR_Resistance/Chara/PR_ResistanceCharacter.h"
 
 #include <cassert>
 
@@ -19,18 +20,6 @@ UDodge::~UDodge()
 
 bool UDodge::_Init()
 {
-	return true;
-}
-
-
-bool UDodge::Begin(uint8 prevState)
-{
-	if(prevState == (uint8)CharacterState::CS_JUMP 
-	|| prevState == (uint8)CharacterState::CS_JUMPDASH)
-		return false;
-
-	assert(mSPProvider == nullptr);
-
 	void* buffer = nullptr;
 	if (GetCharacterDataArchive()->GetData("Status", &buffer))
 	{
@@ -60,6 +49,31 @@ bool UDodge::Begin(uint8 prevState)
 		}
 	}
 
+	GetCharaDataWithLog("AnimTable", &buffer);
+	{
+		UDataTable* animTable = static_cast<UDataTable*>(buffer);
+		mDodgaAnim = animTable->FindRow<FCharacterAnimationData>(TEXT("Reload"), nullptr)->mAnimation;
+	}
+	GetCharaDataWithLog("AnimInstance", &buffer);
+	{
+		mAnimInstance = static_cast<UAnimInstance*>(buffer);
+		mAnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &UDodge::OnAnimEnd);
+	}
+
+	return true;
+}
+
+
+bool UDodge::Begin(uint8 prevState)
+{
+	if(prevState == (uint8)CharacterState::CS_JUMP 
+	|| prevState == (uint8)CharacterState::CS_JUMPDASH)
+		return false;
+
+	assert(mSPProvider == nullptr);
+
+	mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim, "DefaultSlot");
+
 	return true;
 }
 
@@ -85,4 +99,9 @@ void UDodge::SetProvider(IStaminaProvider* provider)
 {
 	assert(provider == nullptr);
 	mSPProvider = provider;
+}
+
+void UDodge::OnAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload &BranchingPointPayload)
+{
+	mDesc.bIsEnd = true;
 }

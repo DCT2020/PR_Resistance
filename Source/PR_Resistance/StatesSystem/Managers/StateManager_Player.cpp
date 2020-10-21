@@ -37,9 +37,6 @@ bool UStateManager_Player::Init()
 	this->BindStateChangeCall(delegator);
 
 
-	// subState Init
-	mSubState->Init();
-
 	return true;
 }
 

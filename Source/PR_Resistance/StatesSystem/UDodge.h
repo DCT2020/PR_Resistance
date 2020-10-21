@@ -16,6 +16,8 @@ GENERATED_BODY()
 protected:
 	IStaminaProvider* mSPProvider = nullptr;
 	FStatus* mChracterStatus = nullptr;
+	UAnimInstance* mAnimInstance = nullptr;
+	UAnimSequence* mDodgaAnim = nullptr;
 
 	//юс╫ц
 	float* mMaxWalkSpeed = nullptr;
@@ -32,4 +34,7 @@ public:
 	void End() override;
 
 	void SetProvider(IStaminaProvider* provider) override;
+protected:
+	UFUNCTION()
+	void OnAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 };

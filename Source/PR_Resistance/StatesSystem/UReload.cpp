@@ -11,8 +11,7 @@ UReload::UReload()
 
 bool UReload::Begin(uint8 prevState)
 {
-	mAnimInstance->PlaySlotAnimationAsDynamicMontage(mReloadAnimationData->mAnimation, "UpperSlot");
-	mAnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &UReload::OnAnimEnd);
+	mAnimInstance->PlaySlotAnimationAsDynamicMontage(mReloadAnimationData->mAnimation, "UpperMotion");
 	
 	return true;
 }
@@ -37,6 +36,7 @@ bool UReload::_Init()
 	GetCharaDataWithLog("AnimInstance", &buffer);
 	{
 		mAnimInstance = static_cast<UAnimInstance*>(buffer);
+		mAnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &UReload::OnAnimEnd);
 	}
 	
 	return true;
