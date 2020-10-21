@@ -36,10 +36,10 @@ void ComboManager::Update(float deltaTime)
 			mEalsedTime += deltaTime;
 			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, FString::Printf(TEXT("%f : elapsedTime"), mEalsedTime));
 
-			if (!mOwnerAnimInst->IsPlayingSlotAnimation(mCurAction->Animation, TEXT("DefaultSlot")))
-			{
-				SetComboEnd();
-			}
+			//if (!mOwnerAnimInst->IsPlayingSlotAnimation(mCurAction->Animation, TEXT("DefaultSlot")))
+			//{
+			//	SetComboEnd();
+			//}
 		}
 		else
 		{

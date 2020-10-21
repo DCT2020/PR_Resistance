@@ -274,6 +274,12 @@ void APR_ResistanceCharacter::LookUpAtRate(float Rate)
 
 void APR_ResistanceCharacter::MoveForward(float Value)
 {
+	if (bIsMeele)
+	{
+		if (mStateManager->GetCurSubState() == CharacterState::CS_ATTACK)
+			return;
+	}
+	
 	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
 	if (bIsMoved)
 	{
@@ -295,6 +301,12 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 
 void APR_ResistanceCharacter::MoveRight(float Value)
 {
+	if (bIsMeele)
+	{
+		if (mStateManager->GetCurSubState() == CharacterState::CS_ATTACK)
+			return;
+	}
+	
 	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
 	if (bIsMoved)
 	{
