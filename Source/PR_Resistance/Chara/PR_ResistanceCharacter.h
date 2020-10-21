@@ -26,6 +26,17 @@
 
 #include "PR_ResistanceCharacter.generated.h"
 
+USTRUCT(BlueprintType,Atomic)
+struct PR_RESISTANCE_API FCharacterAnimationData : public FTableRowBase
+{
+	GENERATED_BODY()
+		
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
+		UAnimSequence* mAnimation;
+};
+
+
+
 //Dynamic Delegate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
 
@@ -54,9 +65,12 @@ private:
 	ActionInput mLastInput = ActionInput::AINPUT_NULL;
 
 	//state
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = State, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UStateManager_Player* mStateManager;
 
+	UPROPERTY(VisibleAnywhere, EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true"))
+	UDataTable* mAnimTable;
+	
 
 	std::function<void()> mTimeToNextStepNotifier;
 
@@ -80,16 +94,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
 	FStatus mStatus;
 
-	UPROPERTY(EditAnywhere, Category = Attack)
+	UPROPERTY(EditAnywhere, Category = Character)
 	UDataTable* mActionDataTable;
 
-	UPROPERTY(BlueprintReadWrite, Category = Attack)
+	UPROPERTY(BlueprintReadWrite, Category = Character)
 	bool bIsMeele = true;
 
-	UPROPERTY(BlueprintReadWrite, Category = State)
+	UPROPERTY(BlueprintReadWrite, Category = Character)
 	bool bIsIdle = true;
 
-	UPROPERTY(BlueprintReadWrite, Category = State)
+	UPROPERTY(BlueprintReadWrite, Category = Character)
 	bool bIsAim = false;
 
 	// 스테미나 사용 이벤트 디스패쳐(델리게이트)

@@ -1,4 +1,7 @@
 #include "UReload.h"
+#include "Engine/DataTable.h"
+#include "PR_Resistance/Chara/PR_ResistanceCharacter.h"
+
 
 UReload::UReload()
 {
@@ -8,6 +11,9 @@ UReload::UReload()
 
 bool UReload::Begin(uint8 prevState)
 {
+	mAnimInstance->PlaySlotAnimationAsDynamicMontage(mReloadAnimationData->mAnimation, "UpperSlot");
+	mAnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &UReload::OnAnimEnd);
+	
 	return true;
 }
 
@@ -22,6 +28,18 @@ void UReload::End()
 
 bool UReload::_Init()
 {
+	void* buffer;
+	GetCharaDataWithLog(TEXT("AnimTable"), &buffer);
+	UDataTable* animTable = static_cast<UDataTable*>(buffer);
+	mReloadAnimationData = animTable->FindRow<FCharacterAnimationData>(TEXT("Reload"), nullptr);
+
+	GetCharaDataWithLog(TEXT("AnimInstance"), &buffer);
+	mAnimInstance = static_cast<UAnimInstance*>(buffer);
 	
 	return true;
+}
+
+void UReload::OnAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
+{
+	mDesc.bIsEnd = true;
 }

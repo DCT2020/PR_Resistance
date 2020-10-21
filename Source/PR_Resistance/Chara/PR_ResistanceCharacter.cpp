@@ -171,6 +171,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("World", GetWorld());
 	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
 	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
+	mStateManager->AddArchiveData("AnimTable", mAnimTable);
 	
 	// Load states
 	mStateManager->LoadStates();
