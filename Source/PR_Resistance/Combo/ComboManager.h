@@ -20,6 +20,7 @@ protected:
 	TMap<ActionInput, const FAction*> StartActions;
 	const FAction* mCurAction = nullptr;
 	UAnimInstance* mOwnerAnimInst = nullptr;
+	UAnimMontage* mCurDynmMontage = nullptr;
 	std::function<void()> ComboEndEvent;
 
 	bool mbIsWait = false;
