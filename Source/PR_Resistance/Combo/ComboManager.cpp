@@ -109,7 +109,7 @@ bool ComboManager::ChangeAction(const FAction* action)
 		mCurAction = action;
 		mCurWaitTime = mCurAction->ComboWaitTime;
 		mOwnerAnimInst->StopSlotAnimation(0.25f, TEXT("DefaultSlot"));
-		mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"));
+		mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f);
 		return true;
 	}
 
