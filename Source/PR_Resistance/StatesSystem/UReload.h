@@ -19,5 +19,4 @@ protected:
 	bool _Init() override;
 
 protected:
-	float elapsedTime = 0.0f;
 };

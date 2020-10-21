@@ -417,6 +417,9 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 			Rifle->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		}
 		break;
+	case EAnimNotifyToCharacterTypes::ATC_RELOAD_COMPLITE:
+		mStateManager->SetSubStateEnd(CharacterState::CS_SUB_RELOAD);
+		break;
 	default:
 		break;
 	}

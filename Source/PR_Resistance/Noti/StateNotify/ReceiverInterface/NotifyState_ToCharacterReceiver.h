@@ -12,6 +12,7 @@ UENUM()
 enum class EAnimNotifyToCharacterTypes : uint8
 {
 	ATC_ATTACK,
+	ATC_RELOAD_COMPLITE,
 };
 
  // This class does not need to be modified.
