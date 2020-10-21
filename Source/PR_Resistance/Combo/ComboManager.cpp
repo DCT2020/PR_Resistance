@@ -57,7 +57,7 @@ bool ComboManager::StartAttack(FName firstAttack)
 
 void ComboManager::StartWaitInput()
 {
-	mOwnerAnimInst->Montage_Pause(mOwnerAnimInst->GetCurrentActiveMontage());
+	mOwnerAnimInst->Montage_Pause();
 	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::Blue,TEXT("Notified"));
 	mbIsWait = true;
 	mEalsedTime = 0.0f;
@@ -110,6 +110,7 @@ bool ComboManager::ChangeAction(const FAction* action)
 		mCurAction = action;
 		mCurWaitTime = mCurAction->ComboWaitTime;
 		mOwnerAnimInst->StopSlotAnimation(0.25f, TEXT("DefaultSlot"));
+		//mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f);
 		mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f);
 		return true;
 	}
