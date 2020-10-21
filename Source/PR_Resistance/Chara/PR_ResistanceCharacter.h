@@ -68,7 +68,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UStateManager_Player* mStateManager;
 
-	UPROPERTY(VisibleAnywhere, EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UDataTable* mAnimTable;
 	
 

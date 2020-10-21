@@ -27,7 +27,7 @@ void UStateManager_SubState::Update(float deltaTime)
 void UStateManager_SubState::LoadStates()
 {
 	AddStateData(0, (uint8)CharacterState::CS_IDLE, NewObject<UIdle>());
-	AddStateData(0, (uint8)CharacterState::CS_SUB_RELOAD, NewObject<UReload>());
+	//AddStateData(0, (uint8)CharacterState::CS_SUB_RELOAD, NewObject<UReload>());
 	AddStateData(0, (uint8)CharacterState::CS_SUB_AIM, NewObject<UAim>());
 
 	SetDefaultState(0, (uint8)CharacterState::CS_IDLE);
