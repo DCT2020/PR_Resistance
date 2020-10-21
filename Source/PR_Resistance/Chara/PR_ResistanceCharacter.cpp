@@ -276,7 +276,7 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 {
 	if (bIsMeele)
 	{
-		if (mStateManager->GetCurSubState() == CharacterState::CS_ATTACK)
+		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
 			return;
 	}
 	
@@ -303,7 +303,7 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 {
 	if (bIsMeele)
 	{
-		if (mStateManager->GetCurSubState() == CharacterState::CS_ATTACK)
+		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
 			return;
 	}
 	
