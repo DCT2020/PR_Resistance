@@ -68,17 +68,17 @@ void UStateManager_Player::LoadStates()
 
 #pragma region ST_GUN
 	auto temp = GetStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_IDLE);
-	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_IDLE, temp);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_IDLE, temp,false);
 
 	temp = GetStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_WALK);
-	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_WALK, temp);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_WALK, temp, false);
 
 	temp = GetStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMP);
-	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMP, temp);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMP, temp, false);
 
-	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_RUN, run);
-	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_DODGE, dodge);
-	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMPDASH, jumpDash);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_RUN, run, false);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_DODGE, dodge, false);
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMPDASH, jumpDash, false);
 	AddPlayerBaseState((uint8)StateType::ST_GUN, CharacterState::CS_ATTACK, NewObject<UFire>());
 
 #pragma endregion

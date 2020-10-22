@@ -121,14 +121,18 @@ void UStateManager::ChangeStateContainer(int index)
 	mStates = mStateContiners[index];
 }
 
-UCState* UStateManager::AddStateData(int index, uint8 stateName, UCState* newState)
+UCState* UStateManager::AddStateData(int index, uint8 stateName, UCState* newState, bool isDoInit)
 {
 	//for (int i = mStateContiners.Num(); i <= index; ++i)
 	//{
 	//	mStateContiners.Push(TMap<CharacterState, std::shared_ptr<IState>>());
 	//}
 
-	newState->Init(mCDArchive);
+	if(isDoInit)
+	{
+		newState->Init(mCDArchive);
+	}
+	
 	if (!mStateContiners.IsValidIndex(index))
 	{
 		mStateContiners.EmplaceAt(index);

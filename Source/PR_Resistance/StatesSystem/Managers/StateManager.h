@@ -105,6 +105,6 @@ public:
 #define AddStateData_uint8(Index, State, StateClass) AddStateData(Index, static_cast<uint8>(State),NewObject<StateClass>())
 #define SetDefaultState_uint8(Index, State) SetDefaultState(Index, static_cast<uint8>(State))
 	void SetDefaultState(int index, uint8 state);
-	UCState* AddStateData(int index, uint8 stateName, UCState* newState);
+	UCState* AddStateData(int index, uint8 stateName, UCState* newState, bool isDoInit = true);
 	UCState* GetStateData(int index, uint8 stateName);
 };
