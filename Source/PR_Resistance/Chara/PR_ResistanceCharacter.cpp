@@ -194,6 +194,8 @@ void APR_ResistanceCharacter::BeginPlay()
 
 	// hitmotion
 	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
+
+	GetMesh()->GetAnimInstance()->OnPlayMontageNotifyEnd.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
@@ -443,9 +445,9 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 	{
 		// 공격 받았다.
 		UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
-		animInstance->PlaySlotAnimationAsDynamicMontage(mHitMotion, TEXT("ParalleMotion"));
-		animInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
-		bIsParalleMotionValid = true;
+		animInstance->PlaySlotAnimationAsDynamicMontage(mHitMotion, TEXT("ParallelMotion"));
+		
+		bIsParallelMotionValid = true;
 	}
 
 	mStatus.curHP = newFloat;
@@ -457,7 +459,7 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 
 void APR_ResistanceCharacter::OnHitAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
 {
-	bIsParalleMotionValid = false;
+	bIsParallelMotionValid = false;
 }
 
 void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes curNotiType, bool bIsEnd)

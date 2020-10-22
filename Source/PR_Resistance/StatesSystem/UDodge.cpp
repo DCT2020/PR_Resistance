@@ -79,7 +79,7 @@ bool UDodge::Begin(uint8 prevState)
 
 void UDodge::Update(float deltaTime)
 {
-	if (mElapsedTime >= mChracterStatus->DodgeTime)
+	/*if (mElapsedTime >= mChracterStatus->DodgeTime)
 	{
 		(*mMaxWalkSpeed) = mChracterStatus->walkSpeed;
 		mElapsedTime = 0.0f;
@@ -88,7 +88,7 @@ void UDodge::Update(float deltaTime)
 	else
 	{
 		mElapsedTime+= deltaTime;
-	}
+	}*/
 }
 
 void UDodge::End()

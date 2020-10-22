@@ -118,11 +118,12 @@ public:
 		FDele_Dynamic_OneParam FucDynamicOneParam;
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = Character)
-		bool bIsParalleMotionValid = false;
+		bool bIsParallelMotionValid = false;
 
 	UPROPERTY()
 		UAnimSequence* mHitMotion = nullptr;
-	UFUNCTION()
+	
+	UFUNCTION(BlueprintCallable)
 		void OnHitAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 
 protected:
