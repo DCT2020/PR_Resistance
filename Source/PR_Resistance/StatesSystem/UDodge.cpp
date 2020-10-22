@@ -57,7 +57,8 @@ bool UDodge::_Init()
 	GetCharaDataWithLog("AnimInstance", &buffer);
 	{
 		mAnimInstance = static_cast<UAnimInstance*>(buffer);
-		mAnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &UDodge::OnAnimEnd);
+		
+		mAnimInstance->OnMontageEnded.AddDynamic(this, &UDodge::OnAnimEnd);
 	}
 
 	return true;
@@ -101,7 +102,7 @@ void UDodge::SetProvider(IStaminaProvider* provider)
 	mSPProvider = provider;
 }
 
-void UDodge::OnAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload &BranchingPointPayload)
+void UDodge::OnAnimEnd(UAnimMontage* motange, bool bInterrupted)
 {
 	mDesc.bIsEnd = true;
 }

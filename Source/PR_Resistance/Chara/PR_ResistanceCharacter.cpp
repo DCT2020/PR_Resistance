@@ -194,8 +194,11 @@ void APR_ResistanceCharacter::BeginPlay()
 
 	// hitmotion
 	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
-
-	GetMesh()->GetAnimInstance()->OnPlayMontageNotifyEnd.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
+	// spawn rifle motion
+	mSpawnRifleMotion = mAnimTable->FindRow <FCharacterAnimationData > (TEXT("SpawnRifle"), nullptr)->mAnimation;
+	mDeSpawnRifleMotion = mAnimTable->FindRow <FCharacterAnimationData >(TEXT("DeSpawnRifle"), nullptr)->mAnimation;
+	
+	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
@@ -352,6 +355,9 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 
 void APR_ResistanceCharacter::StartAttack()
 {
+	if (!bIsCanAttack)
+		return;
+	
 	mLastInput = ActionInput::AINPUT_WEAKATTACK;
 	bIsInAttack = true;
 
@@ -368,6 +374,9 @@ void APR_ResistanceCharacter::StopAttack()
 
 void APR_ResistanceCharacter::StrongAttack()
 {
+	if (!bIsCanAttack)
+		return;
+	
 	if (bIsMeele)
 	{
 		mLastInput = ActionInput::AINPUT_STRONGATTACK;
@@ -379,12 +388,16 @@ void APR_ResistanceCharacter::StrongAttack()
 
 void APR_ResistanceCharacter::SetWeapon1()
 {
-	mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
+	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mDeSpawnRifleMotion, TEXT("UpperMotion"));
+	bIsCanAttack = false;
+	bIsMeele = true;
 }
 
 void APR_ResistanceCharacter::SetWeapon2()
 {
-	mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
+	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mSpawnRifleMotion, TEXT("UpperMotion"));
+	bIsCanAttack = false;
+	bIsMeele = false;
 }
 
 void APR_ResistanceCharacter::Turn(float var)
@@ -457,9 +470,10 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 	}
 }
 
-void APR_ResistanceCharacter::OnHitAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
+void APR_ResistanceCharacter::OnHitAnimEnd(UAnimMontage* motange, bool bInterrupted)
 {
 	bIsParallelMotionValid = false;
+	bIsCanAttack = true;
 }
 
 void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes curNotiType, bool bIsEnd)

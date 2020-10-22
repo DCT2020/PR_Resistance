@@ -122,10 +122,18 @@ public:
 
 	UPROPERTY()
 		UAnimSequence* mHitMotion = nullptr;
-	
-	UFUNCTION(BlueprintCallable)
-		void OnHitAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+	UPROPERTY()
+		UAnimSequence* mSpawnRifleMotion = nullptr;
+	UPROPERTY()
+		UAnimSequence* mDeSpawnRifleMotion = nullptr;
 
+	
+	UFUNCTION()
+		void OnHitAnimEnd(UAnimMontage* motange, bool bInterrupted);
+
+	bool bIsCanAttack = true;
+	
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
@@ -190,6 +198,8 @@ protected:
 	// aim
 	void StartAiming();
 	void EndAiming();
+
+	//Aim
 
 
 	// Weapon OverlapBegin

@@ -36,5 +36,5 @@ public:
 	void SetProvider(IStaminaProvider* provider) override;
 protected:
 	UFUNCTION()
-	void OnAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
+	void OnAnimEnd(UAnimMontage* motange, bool bInterrupted);
 };
