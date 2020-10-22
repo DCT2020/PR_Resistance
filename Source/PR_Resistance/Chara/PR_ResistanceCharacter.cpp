@@ -54,7 +54,6 @@ APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& Objec
 
 	// float 관리 컴포넌트
 	mFloatsComponent = CreateDefaultSubobject<UFloatsComponent>(TEXT("FloatManager"));
-	mFloatsComponent->AddConditionChecker(,0)
 
 	// 데미지 처리 콜백 함수 등록
 	OnTakeAnyDamage.AddDynamic(this, &APR_ResistanceCharacter::OntTakeDamage);
@@ -192,6 +191,9 @@ void APR_ResistanceCharacter::BeginPlay()
 	// floats 등록
 	mFloatsComponent->PushBack(mStatus.curHP);
 	mFloatsComponent->AddListener(this, 0);
+
+	// hitmotion
+	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)

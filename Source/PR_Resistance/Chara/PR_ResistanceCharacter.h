@@ -42,7 +42,7 @@ struct PR_RESISTANCE_API FCharacterAnimationData : public FTableRowBase
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
 
 UCLASS(config = Game)
-class APR_ResistanceCharacter : public ACharacter, public IStaminaProvider, public IITimeToNextStepNotify, public INotifyState_ToCharacterReceiver, IFloatListener
+class APR_ResistanceCharacter : public ACharacter, public IStaminaProvider, public IITimeToNextStepNotify, public INotifyState_ToCharacterReceiver, public IFloatListener
 {
 	GENERATED_BODY()
 
@@ -119,6 +119,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = Character)
 		bool bIsParalleMotionValid = false;
+
+	UPROPERTY()
+		UAnimSequence* mHitMotion = nullptr;
 
 protected:
 	virtual void BeginPlay() override;
