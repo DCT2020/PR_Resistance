@@ -442,6 +442,10 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 	if(mStatus.curHP > newFloat)
 	{
 		// 공격 받았다.
+		UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
+		animInstance->PlaySlotAnimationAsDynamicMontage(mHitMotion, TEXT("ParalleMotion"));
+		animInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
+		bIsParalleMotionValid = true;
 	}
 
 	mStatus.curHP = newFloat;
@@ -451,6 +455,10 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 	}
 }
 
+void APR_ResistanceCharacter::OnHitAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload)
+{
+	bIsParalleMotionValid = false;
+}
 
 void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes curNotiType, bool bIsEnd)
 {
@@ -486,6 +494,8 @@ void APR_ResistanceCharacter::OntTakeDamage(AActor* DamagedActor, float Damage, 
 	float hp = 0.0f;
 	mFloatsComponent->Get(0, hp);
 	mFloatsComponent->Set(hp - Damage,0);
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Black, TEXT("hitted"));
 }
 
 /////////// bps

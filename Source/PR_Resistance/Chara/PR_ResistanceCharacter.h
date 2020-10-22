@@ -122,6 +122,8 @@ public:
 
 	UPROPERTY()
 		UAnimSequence* mHitMotion = nullptr;
+	UFUNCTION()
+		void OnHitAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);
 
 protected:
 	virtual void BeginPlay() override;
