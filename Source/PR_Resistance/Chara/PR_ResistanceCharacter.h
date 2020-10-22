@@ -19,6 +19,7 @@
 //Components
 #include "Components/StaticMeshComponent.h"
 #include "PR_Resistance/StatesSystem/Managers/StateManager_Player.h"
+#include "PR_Resistance/Component/FloatsComponent.h"
 
 //
 #include <functional>
@@ -40,8 +41,8 @@ struct PR_RESISTANCE_API FCharacterAnimationData : public FTableRowBase
 //Dynamic Delegate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
 
-UCLASS(config=Game)
-class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, public IITimeToNextStepNotify, public INotifyState_ToCharacterReceiver
+UCLASS(config = Game)
+class APR_ResistanceCharacter : public ACharacter, public IStaminaProvider, public IITimeToNextStepNotify, public INotifyState_ToCharacterReceiver, IFloatListener
 {
 	GENERATED_BODY()
 
@@ -59,6 +60,12 @@ class APR_ResistanceCharacter : public ACharacter , public IStaminaProvider, pub
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeleeWeapon;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true", DisplayName = "FloatManager"))
+	UFloatsComponent* mFloatsComponent;
+	
+	virtual void ListenFloat(int index, float newFloat) override;
+	
+	
 private:
 	// 내부 변수들
 	// combo
@@ -110,7 +117,8 @@ public:
 	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
 		FDele_Dynamic_OneParam FucDynamicOneParam;
 
-
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = Character)
+		bool bIsParalleMotionValid = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -160,6 +168,9 @@ protected:
 	void StartAttack();
 	void StopAttack();
 
+	//Attack
+	void StrongAttack();
+
 	// Swap
 	void SetWeapon1();
 	void SetWeapon2();
@@ -194,6 +205,9 @@ public:
 
 	// callback
 	virtual void Landed(const FHitResult& Hit);
+
+	UFUNCTION()
+	virtual void OntTakeDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	
 
 protected:

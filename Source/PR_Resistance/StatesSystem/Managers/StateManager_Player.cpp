@@ -48,22 +48,22 @@ void UStateManager_Player::LoadStates()
 	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_WALK, NewObject<UWalk>());
 
 	auto run = NewObject<URun>();
-	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_RUN, run);
 	run->SetProvider(mSPProvider);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_RUN, run);
 
 	auto dodge = NewObject<UDodge>();
-	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_DODGE, dodge);
 	dodge->SetProvider(mSPProvider);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_DODGE, dodge);
 
 	auto jumpDash = NewObject<UJumpDash>();
-	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMPDASH, jumpDash);
 	jumpDash->SetProvider(mSPProvider);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMPDASH, jumpDash);
 
 	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_JUMP, NewObject<UJump>());
 
 	auto attack = NewObject<UAttack>();
-	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_ATTACK, attack);
 	attack->SetProvider(mSPProvider);
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_ATTACK, attack);
 #pragma endregion
 
 #pragma region ST_GUN

@@ -51,7 +51,13 @@ APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& Objec
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-	
+
+	// float 관리 컴포넌트
+	mFloatsComponent = CreateDefaultSubobject<UFloatsComponent>(TEXT("FloatManager"));
+	mFloatsComponent->AddConditionChecker(,0)
+
+	// 데미지 처리 콜백 함수 등록
+	OnTakeAnyDamage.AddDynamic(this, &APR_ResistanceCharacter::OntTakeDamage);
 
 	// 라이플 StaticMesh
 	
@@ -77,8 +83,7 @@ APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& Objec
 	mStateManager = CreateDefaultSubobject<UStateManager_Player>(TEXT("FSM"));
 	mStateManager->SetProvider(this);
 
-	// add to archive
-
+	
 
 	
 }
@@ -145,6 +150,9 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	//Aim
 	PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &APR_ResistanceCharacter::StartAiming);
 	PlayerInputComponent->BindAction("Aiming", IE_Released, this, &APR_ResistanceCharacter::EndAiming);
+
+	PlayerInputComponent->BindAction("StrongAttack", IE_Pressed, this, &APR_ResistanceCharacter::StrongAttack);
+
 }
 
 void APR_ResistanceCharacter::BeginPlay()
@@ -176,12 +184,14 @@ void APR_ResistanceCharacter::BeginPlay()
 	// Load states
 	mStateManager->LoadStates();
 
-
-
 	// weapon collision (나중에 Rifle에서 MeleeWeapon으로 바꿀 것)	
 	Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Rifle->OnComponentBeginOverlap.AddDynamic(this, &APR_ResistanceCharacter::OnWeaponOverlaped);
 	Rifle->SetGenerateOverlapEvents(true);
+
+	// floats 등록
+	mFloatsComponent->PushBack(mStatus.curHP);
+	mFloatsComponent->AddListener(this, 0);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
@@ -210,6 +220,8 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 		mStateManager->ChangeState(StateType::ST_GUN);
 	}
 }
+
+#pragma  region INPUT_BINDED_FUNCTIONS
 
 // Jump
 void APR_ResistanceCharacter::Jump_Wrapped()
@@ -275,6 +287,9 @@ void APR_ResistanceCharacter::LookUpAtRate(float Rate)
 
 void APR_ResistanceCharacter::MoveForward(float Value)
 {
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
+		return;
+
 	if (bIsMeele)
 	{
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
@@ -302,6 +317,9 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 
 void APR_ResistanceCharacter::MoveRight(float Value)
 {
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
+		return;
+
 	if (bIsMeele)
 	{
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
@@ -344,6 +362,16 @@ void APR_ResistanceCharacter::StopAttack()
 	}
 }
 
+void APR_ResistanceCharacter::StrongAttack()
+{
+	if (bIsMeele)
+	{
+		mLastInput = ActionInput::AINPUT_STRONGATTACK;
+		bIsInAttack = true;
+		mStateManager->TryChangeState((uint8)CharacterState::CS_ATTACK);
+	}
+}
+
 
 void APR_ResistanceCharacter::SetWeapon1()
 {
@@ -378,13 +406,17 @@ void APR_ResistanceCharacter::Reload()
 
 void APR_ResistanceCharacter::StartAiming()
 {
+    if(!bIsMeele)
 	mStateManager->TryChangeSubState(CharacterState::CS_SUB_AIM);
 }
 
 void APR_ResistanceCharacter::EndAiming()
 {
+    if (!bIsMeele)
 	mStateManager->SetSubStateEnd(CharacterState::CS_SUB_AIM);
 }
+
+#pragma  endregion 
 
 void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -402,6 +434,21 @@ bool APR_ResistanceCharacter::UseStamina(float usedStamina)
 
 	return true;
 }
+
+void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
+{
+	if(mStatus.curHP > newFloat)
+	{
+		// 공격 받았다.
+	}
+
+	mStatus.curHP = newFloat;
+	if(mStatus.curHP < 0.0f)
+	{
+		mStatus.curHP = 0.0f;
+	}
+}
+
 
 void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes curNotiType, bool bIsEnd)
 {
@@ -426,6 +473,19 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 		break;
 	}
 }
+
+/*
+ * On Damage
+ * 
+ */
+void APR_ResistanceCharacter::OntTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	AController* InstigatedBy, AActor* DamageCauser)
+{
+	float hp = 0.0f;
+	mFloatsComponent->Get(0, hp);
+	mFloatsComponent->Set(hp - Damage,0);
+}
+
 /////////// bps
 void APR_ResistanceCharacter::GetCurrentCharacterState_bp(CharacterState& state)
 {

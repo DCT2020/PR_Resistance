@@ -52,7 +52,7 @@ bool UDodge::_Init()
 	GetCharaDataWithLog("AnimTable", &buffer);
 	{
 		UDataTable* animTable = static_cast<UDataTable*>(buffer);
-		mDodgaAnim = animTable->FindRow<FCharacterAnimationData>(TEXT("Reload"), nullptr)->mAnimation;
+		mDodgaAnim = animTable->FindRow<FCharacterAnimationData>(TEXT("Dodge"), nullptr)->mAnimation;
 	}
 	GetCharaDataWithLog("AnimInstance", &buffer);
 	{
