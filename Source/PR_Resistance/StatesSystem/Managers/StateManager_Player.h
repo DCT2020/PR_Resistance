@@ -67,4 +67,6 @@ protected:
 
 	UFUNCTION()
 		void OnMyStateChange(uint8 prevState, uint8 newState);
+public:
+	virtual void TryChangeState(uint8 stateType) override;
  };

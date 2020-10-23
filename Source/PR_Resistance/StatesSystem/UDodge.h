@@ -18,7 +18,9 @@ protected:
 	FStatus* mChracterStatus = nullptr;
 	UAnimInstance* mAnimInstance = nullptr;
 	UAnimSequence* mDodgaAnim = nullptr;
+	USceneComponent* mCharacterRootComponent = nullptr;
 
+	
 	//юс╫ц
 	float* mMaxWalkSpeed = nullptr;
 	float mElapsedTime = 0.0f;

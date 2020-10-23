@@ -53,7 +53,7 @@ public:
 	* FStateDesc의 Priority에 따라 실패하거나 성공합니다.
 	* 다음 프레임에 시도됩니다.
 	*/
-	void TryChangeState(uint8 stateType);
+	virtual void TryChangeState(uint8 stateType);
 	/*
 	* 현재 상태를 종료시킵니다.
 	*/

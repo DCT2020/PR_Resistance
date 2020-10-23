@@ -178,6 +178,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("World", GetWorld());
 	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
 	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
+	mStateManager->AddArchiveData("RootComponent", RootComponent);
 	mStateManager->AddArchiveData("AnimTable", mAnimTable);
 	
 	// Load states
@@ -247,6 +248,8 @@ void APR_ResistanceCharacter::Jump_Wrapped()
 
 void APR_ResistanceCharacter::Dodge()
 {
+	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, TEXT("UpperMotion"));
+	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, TEXT("ParallelMotion"));
 	mStateManager->TryChangeState((uint8)CharacterState::CS_DODGE);
 }
 
@@ -388,6 +391,9 @@ void APR_ResistanceCharacter::StrongAttack()
 
 void APR_ResistanceCharacter::SetWeapon1()
 {
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
+		return;
+
 	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mDeSpawnRifleMotion, TEXT("UpperMotion"));
 	bIsCanAttack = false;
 	bIsMeele = true;
@@ -395,6 +401,9 @@ void APR_ResistanceCharacter::SetWeapon1()
 
 void APR_ResistanceCharacter::SetWeapon2()
 {
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
+		return;
+	
 	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mSpawnRifleMotion, TEXT("UpperMotion"));
 	bIsCanAttack = false;
 	bIsMeele = false;

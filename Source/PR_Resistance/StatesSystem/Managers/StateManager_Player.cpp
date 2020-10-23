@@ -129,6 +129,9 @@ CharacterState UStateManager_Player::GetCurSubState()
 
 void UStateManager_Player::TryChangeSubState(CharacterState subState)
 {
+	if (GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
+		return;
+	
 	mSubState->TryChangeState((uint8)subState);
 }
 
@@ -147,4 +150,13 @@ void UStateManager_Player::OnSubStateChange(uint8 prevState, uint8 newState)
 void UStateManager_Player::OnMyStateChange(uint8 prevState, uint8 newState)
 {
 	mCurStateInfo.mCurMainState = (CharacterState)newState;
+}
+
+void UStateManager_Player::TryChangeState(uint8 stateType)
+{
+	if(stateType == (uint8)CharacterState::CS_DODGE)
+	{
+		mSubState->SetStateEnd(mSubState->GetCurStateDesc().StateType);
+	}
+	UStateManager::TryChangeState(stateType);
 }

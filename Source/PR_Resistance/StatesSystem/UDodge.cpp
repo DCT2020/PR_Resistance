@@ -60,7 +60,12 @@ bool UDodge::_Init()
 		
 		mAnimInstance->OnMontageEnded.AddDynamic(this, &UDodge::OnAnimEnd);
 	}
+	GetCharaDataWithLog("RootComponent", &buffer);
+	{
+		mCharacterRootComponent = static_cast<USceneComponent*>(buffer);
+	}
 
+	
 	return true;
 }
 
