@@ -11,7 +11,7 @@
 /**
  * 
  */
- class ComboManager;
+ class UComboManager;
  class UAnimInstance;
  class UDataTable;
  UCLASS()
@@ -22,7 +22,7 @@ protected:
 	IStaminaProvider* mSPProvider = nullptr;
 	FStatus* mCharacterStatus = nullptr;
 
-	ComboManager* mComboManager = nullptr;
+	UComboManager* mComboManager = nullptr;
 	ActionInput* AInput = nullptr;
 
 public:

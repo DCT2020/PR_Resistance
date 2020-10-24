@@ -81,7 +81,7 @@ bool UAttack::_Init()
 
 	if (mComboManager == nullptr)
 	{
-		mComboManager = new ComboManager();
+		mComboManager = NewObject<UComboManager>();
 		mComboManager->Init(mActionTable, mAnimInstance);
 		mComboManager->BindComboAndEvent([this]() {StopAttack(); });
 	}

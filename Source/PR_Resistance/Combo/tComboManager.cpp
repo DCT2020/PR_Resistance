@@ -1,16 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+
 #include "ComboManager.h"
 
-UComboManager::UComboManager()
+ComboManager::ComboManager()
 {
 }
 
-UComboManager::~UComboManager()
+ComboManager::~ComboManager()
 {
 }
 
-void UComboManager::Init(UDataTable* actionTable, UAnimInstance* animInstance)
+void ComboManager::Init(UDataTable* actionTable, UAnimInstance* animInstance)
 {
 	mOwnerAnimInst = animInstance;
 
@@ -21,12 +22,12 @@ void UComboManager::Init(UDataTable* actionTable, UAnimInstance* animInstance)
 		Actions.Add(it.Key, action);
 		if (action->bIsStartAttack)
 		{
-			StartActions.Add(action->InputBinding, action);
+			StartActions.Add(action->InputBinding,action);
 		}
 	}
 }
 
-void UComboManager::Update(float deltaTime)
+void ComboManager::Update(float deltaTime)
 {
 	if (mbIsWait)
 	{
@@ -47,22 +48,22 @@ void UComboManager::Update(float deltaTime)
 	}
 }
 
-bool UComboManager::StartAttack(FName firstAttack)
+bool ComboManager::StartAttack(FName firstAttack)
 {
 	ChangeAction(firstAttack);
 
 	return false;
 }
 
-void UComboManager::StartWaitInput()
+void ComboManager::StartWaitInput()
 {
 	mOwnerAnimInst->Montage_Pause(mCurDynmMontage);
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, TEXT("Notified"));
+	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::Blue,TEXT("Notified"));
 	mbIsWait = true;
 	mEalsedTime = 0.0f;
 }
 
-void UComboManager::PushInput(ActionInput inputType)
+void ComboManager::PushInput(ActionInput inputType)
 {
 	if (mCurAction == nullptr)
 	{
@@ -89,39 +90,40 @@ void UComboManager::PushInput(ActionInput inputType)
 	}
 }
 
-void UComboManager::BindComboAndEvent(std::function<void()> function)
+void ComboManager::BindComboAndEvent(std::function<void()> function)
 {
 	ComboEndEvent = function;
 }
 
-void UComboManager::PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* animSequence)
+void ComboManager::PlaySlotAnimation_Implementation(FName slotName,UAnimSequenceBase *animSequence)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("PlaySlotAnimation"));
 
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("%s"), buffer));
 
-	if (mOwnerAnimInst->TryGetPawnOwner()->GetLocalRole() == ROLE_Authority)
+        if(mOwnerAnimInst->TryGetPawnOwner()->GetLocalRole() == ROLE_Authority) 
 	{
-		mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
+	        mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
 	}
-	else
-	{
+	else 
+        {
 		mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("%s, %s"), *animSequence->GetPathName(), *slotName.ToString()));
-	}
+		}
 }
 
-void UComboManager::StopSlotAnimation_Implementation(FName slotName)
+void ComboManager::StopSlotAnimation_Implementation(FName slotName)
 {
 	mOwnerAnimInst->StopSlotAnimation(0.25f, slotName);
 }
 
-bool UComboManager::ChangeAction(FName actionName)
+bool ComboManager::ChangeAction(FName actionName)
 {
 	auto action = Actions[actionName];
 	return ChangeAction(action);
 }
 
-bool UComboManager::ChangeAction(const FAction* action)
+bool ComboManager::ChangeAction(const FAction* action)
 {
 	if (action != nullptr)
 	{
@@ -139,13 +141,13 @@ bool UComboManager::ChangeAction(const FAction* action)
 	return false;
 }
 
-void UComboManager::SetComboEnd()
+void ComboManager::SetComboEnd()
 {
 	mEalsedTime = 0.0f;
 	mbIsWait = false;
 	mCurAction = nullptr;
-	mOwnerAnimInst->Montage_Stop(0.15f, mCurDynmMontage);
-	mOwnerAnimInst->StopSlotAnimation(0.0f, TEXT("DefaultSlot"));
+	mOwnerAnimInst->Montage_Stop(0.15f,mCurDynmMontage);
+	mOwnerAnimInst->StopSlotAnimation(0.0f,TEXT("DefaultSlot"));
 
 	ComboEndEvent();
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, TEXT("ComboEnd"));

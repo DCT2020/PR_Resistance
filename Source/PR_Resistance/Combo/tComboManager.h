@@ -3,23 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "Engine/DataTable.h"
-#include "PR_Resistance/Combo/Action.h"
 #include "Animation/AnimInstance.h"
+#include "PR_Resistance/Combo/Action.h"
+
+#include "UObject/Object.h"
 
 #include <functional>
-#include "ComboManager.generated.h"
 
 /**
- *
+ * 
  */
-class PR_RESISTANCE_API UComboManager : public UObject
+class PR_RESISTANCE_API ComboManager : public UObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-	UComboManager();
-	~UComboManager();
+	ComboManager();
+	~ComboManager();
 
 protected:
 	TMap<FName, const FAction*> Actions;
@@ -44,11 +44,11 @@ public:
 
 	UFUNCTION(NetMulticast)
 		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* animSequence);
-	void PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* animSequence);
+		void PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* animSequence);
 
 	UFUNCTION(NetMulticast)
 		void StopSlotAnimation(FName slotName);
-	void StopSlotAnimation_Implementation(FName slotName);
+		void StopSlotAnimation_Implementation(FName slotName);
 
 protected:
 	bool ChangeAction(FName actionName);
