@@ -97,6 +97,9 @@ void UStateManager_Player::AddPlayerBaseState(int index, CharacterState stateNam
 
 void UStateManager_Player::Update(float deltaTime)
 {
+	if (GetOwnerRole() != ROLE_Authority)
+		return;
+
 	UStateManager::Update(deltaTime);
 	mSubState->Update(deltaTime);
 

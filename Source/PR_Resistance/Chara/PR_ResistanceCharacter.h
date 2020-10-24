@@ -120,20 +120,24 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = Character)
 		bool bIsParallelMotionValid = false;
 
+	UPROPERTY(Replicated,BlueprintReadOnly, VisibleAnywhere, Category = Input, meta = (DisplayName = "Prev forward input"))
+		float mPrevForwardInput = 0.0f;
+	UPROPERTY(Replicated,BlueprintReadOnly, VisibleAnywhere, Category = Input, meta = (DisplayName = "Prev right input"))
+		float mPrevRightInput = 0.0f;
+
 	UPROPERTY()
 		UAnimSequence* mHitMotion = nullptr;
 	UPROPERTY()
 		UAnimSequence* mSpawnRifleMotion = nullptr;
 	UPROPERTY()
 		UAnimSequence* mDeSpawnRifleMotion = nullptr;
-
 	
 	UFUNCTION()
 		void OnHitAnimEnd(UAnimMontage* motange, bool bInterrupted);
 
 	bool bIsCanAttack = true;
 	
-	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float deltaTime) override;
@@ -145,7 +149,9 @@ protected:
       
 
 	/** Called for side to side input */
-	void MoveRight(float Value);
+	UFUNCTION(Reliable,Server)
+	        void MoveRight(float Value);
+	        void MoveRight_Implementation(float Value);
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -162,8 +168,13 @@ protected:
 	/*
 	* Run Action
 	*/
-	void Run();
-	void RunStop();
+	UFUNCTION(Reliable, Server)
+		void Run();
+		void Run_Implementation();
+
+	UFUNCTION(Reliable, Server)
+		void RunStop();
+	        void RunStop_Implementation();
 
 	/** Handler for when a touch input begins. */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
@@ -172,36 +183,54 @@ protected:
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
 	// Jump
-	void Jump_Wrapped();
-	void StopJumpping_Wrapped();
+	UFUNCTION(Reliable, Server)
+		void Jump_Wrapped();
+	        void Jump_Wrapped_Implementation();
 
 	// Dodge
-	void Dodge();
+	UFUNCTION(Reliable, Server)
+		void Dodge();
+	        void Dodge_Implementation();
 
 	// Jump Dash
 	void DoJumpDash();
 
 	//Attack
-	void StartAttack();
-	void StopAttack();
+	UFUNCTION(Reliable, Server)
+	        void StartAttack();
+	        void StartAttack_Implementation();
+	UFUNCTION(Reliable, Server)
+		void StopAttack();
+		void StopAttack_Implementation();
 
 	//Attack
-	void StrongAttack();
+	UFUNCTION(Reliable, Server)
+		void StrongAttack();
+		void StrongAttack_Implementation();
 
 	// Swap
-	void SetWeapon1();
-	void SetWeapon2();
+	UFUNCTION(Reliable, Server)
+		void SetWeapon1();
+		void SetWeapon1_Implementation();
+	UFUNCTION(Reliable, Server)
+		void SetWeapon2();
+		void SetWeapon2_Implementation();
 
 	void Turn(float var);
 	void LookUp(float var);
 
 	//Substate
 	// reload
-	void Reload();
+	UFUNCTION(Reliable, Server)
+		void Reload();
+		void Reload_Implementation();
 	// aim
-	void StartAiming();
-	void EndAiming();
-
+	UFUNCTION(Reliable, Server)
+	        void StartAiming();
+	        void StartAiming_Implementation();
+	UFUNCTION(Reliable, Server)
+		void EndAiming();
+		void EndAiming_Implementation();
 	//Aim
 
 

@@ -3,6 +3,8 @@
 
 #include "StateManager.h"
 
+#include "Net/UnrealNetwork.h"
+
 UStateManager::UStateManager()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -38,6 +40,7 @@ void UStateManager::SetState(uint8 stateType)
 
 void UStateManager::Update(float deltaTime)
 {
+
 	if (!mStateChangeCalls.IsEmpty())
 	{
 		FStateDesc curDesc;
@@ -71,6 +74,9 @@ void UStateManager::Update(float deltaTime)
 
 FStateDesc UStateManager::GetCurStateDesc()
 {
+        if(mCurState == nullptr) {
+			return FStateDesc();
+        }
 	return mCurState->GetStateDesc();
 }
 
@@ -87,6 +93,19 @@ void UStateManager::RemoveArchiveData(FName key)
 void UStateManager::AddStateData_bp(int index, uint8 stateName, const UCState* newState, UCState*& ret)
 {
 	ret = AddStateData(index, stateName, const_cast<UCState*>(newState));
+}
+
+void UStateManager::GetCurState_bp(UCState *&curState)
+{
+	curState = mCurState;
+}
+
+void UStateManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UStateManager, mCurState);
+	DOREPLIFETIME(UStateManager, mCDArchive);
+	DOREPLIFETIME(UStateManager, mStateContiners);
 }
 
 UStateManager::FChangeEvent& UStateManager::OnStateChange()

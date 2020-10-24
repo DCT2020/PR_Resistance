@@ -25,13 +25,13 @@ class PR_RESISTANCE_API UStateManager : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		TArray<FChracterState> mStateContiners;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		UCharacterDataArchive* mCDArchive = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 		UCState* mCurState = nullptr;
 
 	TQueue<FStateDesc> mStateChangeCalls;
@@ -79,7 +79,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = FSM, meta = (DisplayName = "AddStateData"))
 		void AddStateData_bp(const int index, const uint8 stateName, const UCState* newState, UCState*& ret);
-      
+
+	UFUNCTION(BlueprintCallable, Category = FSM, meta = (DisplayName = "GetCurStateData"))
+		void GetCurState_bp(UCState*& curState);
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	
 public: //Event
 	// 상태가 변할때마다 호출									prevState		curState

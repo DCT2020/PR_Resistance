@@ -6,6 +6,9 @@
 #include "Engine/DataTable.h"
 #include "Animation/AnimInstance.h"
 #include "PR_Resistance/Combo/Action.h"
+
+#include "UObject/UObject.h"
+
 #include <functional>
 /**
  * 
@@ -35,6 +38,14 @@ public:
 	void PushInput(ActionInput inputType);
 	void BindComboAndEvent(std::function<void()> function);
 	void SetComboEnd();
+
+	UFUNCTION(NetMulticast)
+		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* animSequence);
+		void PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* animSequence);
+
+	UFUNCTION(NetMulticast)
+		void StopSlotAnimation(FName slotName);
+		void StopSlotAnimation_Implementation(FName slotName);
 
 protected:
 	bool ChangeAction(FName actionName);

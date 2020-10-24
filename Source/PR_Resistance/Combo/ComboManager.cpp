@@ -2,6 +2,7 @@
 
 
 #include "ComboManager.h"
+#include <Windows.h>
 
 ComboManager::ComboManager()
 {
@@ -95,6 +96,30 @@ void ComboManager::BindComboAndEvent(std::function<void()> function)
 	ComboEndEvent = function;
 }
 
+void ComboManager::PlaySlotAnimation_Implementation(FName slotName,UAnimSequenceBase *animSequence)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("PlaySlotAnimation"));
+
+	TCHAR buffer[256];
+	GetWindowText(GetActiveWindow(), buffer, 256);
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("%s"), buffer));
+
+        if(mOwnerAnimInst->TryGetPawnOwner()->GetLocalRole() == ROLE_Authority) 
+	{
+	        mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
+	}
+	else 
+        {
+		mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("%s, %s"), *animSequence->GetPathName(), *slotName.ToString()));
+		}
+}
+
+void ComboManager::StopSlotAnimation_Implementation(FName slotName)
+{
+	mOwnerAnimInst->StopSlotAnimation(0.25f, slotName);
+}
+
 bool ComboManager::ChangeAction(FName actionName)
 {
 	auto action = Actions[actionName];
@@ -109,9 +134,10 @@ bool ComboManager::ChangeAction(const FAction* action)
 		mbIsWait = false;
 		mCurAction = action;
 		mCurWaitTime = mCurAction->ComboWaitTime;
-		mOwnerAnimInst->StopSlotAnimation(0.25f, TEXT("DefaultSlot"));
+		StopSlotAnimation_Implementation(TEXT("DefaultSlot"));
 		//mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f);
-		mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f,0.0f);
+		//mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f,0.0f);
+		PlaySlotAnimation_Implementation(TEXT("DefaultSlot"), mCurAction->Animation);
 		return true;
 	}
 
