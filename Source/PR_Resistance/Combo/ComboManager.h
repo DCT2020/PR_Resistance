@@ -7,17 +7,22 @@
 #include "Animation/AnimInstance.h"
 #include "PR_Resistance/Combo/Action.h"
 
-#include "UObject/UObject.h"
+#include "UObject/Object.h"
 
 #include <functional>
+
+#include "ComboManager.generated.h"
+
 /**
  * 
  */
-class PR_RESISTANCE_API ComboManager
+class PR_RESISTANCE_API ComboManager : public UObject
 {
+    GENERATED_BODY()
 public:
 	ComboManager();
 	~ComboManager();
+
 protected:
 	TMap<FName, const FAction*> Actions;
 	TMap<ActionInput, const FAction*> StartActions;

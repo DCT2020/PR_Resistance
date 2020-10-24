@@ -2,7 +2,6 @@
 
 
 #include "ComboManager.h"
-#include <Windows.h>
 
 ComboManager::ComboManager()
 {
@@ -100,8 +99,6 @@ void ComboManager::PlaySlotAnimation_Implementation(FName slotName,UAnimSequence
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("PlaySlotAnimation"));
 
-	TCHAR buffer[256];
-	GetWindowText(GetActiveWindow(), buffer, 256);
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("%s"), buffer));
 
         if(mOwnerAnimInst->TryGetPawnOwner()->GetLocalRole() == ROLE_Authority) 
