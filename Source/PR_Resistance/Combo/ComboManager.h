@@ -14,6 +14,7 @@
 /**
  *
  */
+struct FSlotMotionProcess;
 UCLASS()
 class PR_RESISTANCE_API UComboManager : public UObject
 {
@@ -28,14 +29,19 @@ protected:
 	const FAction* mCurAction = nullptr;
 	UAnimInstance* mOwnerAnimInst = nullptr;
 	UAnimMontage* mCurDynmMontage = nullptr;
-	std::function<void()> ComboEndEvent;
+
+        std::function<void()> ComboEndEvent;
+
+        //UObject에서는 RPC가 불가능 하기 때문에 람다로 Function을 넘겨주어 PR_ResistanceCharaceter에서 실행시킨다.
+	TQueue<FSlotMotionQueue>* mSlotMotionQueue;
+
 
 	bool mbIsWait = false;
 	float mCurWaitTime = 0.0f;
 	float mEalsedTime = 0.0f;
 public:
 
-	void Init(UDataTable* actionTable, UAnimInstance* animInstance);
+	void Init(TQueue<FSlotMotionProcess>* _SlotMotionQueue , UDataTable* actionTable, UAnimInstance* animInstance);
 	void Update(float deltaTime);
 	bool StartAttack(FName firstAttack);
 	void StartWaitInput();
@@ -43,15 +49,10 @@ public:
 	void BindComboAndEvent(std::function<void()> function);
 	void SetComboEnd();
 
-	UFUNCTION(NetMulticast)
-		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* animSequence);
-	void PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* animSequence);
-
-	UFUNCTION(NetMulticast)
-		void StopSlotAnimation(FName slotName);
-	void StopSlotAnimation_Implementation(FName slotName);
-
 protected:
 	bool ChangeAction(FName actionName);
 	bool ChangeAction(const FAction* action);
+
+	void PlayerSlotAnimation(FName slotName, UAnimSequenceBase* animSequence);
+	void StopSlotAnimation(FName slotName);
 };

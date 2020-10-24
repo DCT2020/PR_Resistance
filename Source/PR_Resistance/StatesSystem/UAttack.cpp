@@ -18,11 +18,6 @@ UAttack::UAttack()
 
 UAttack::~UAttack()
 {
-	if(mComboManager != nullptr)
-	{
-		delete mComboManager;
-		mComboManager = nullptr;
-	}
 }
 
 bool UAttack::Begin(uint8 prevState)

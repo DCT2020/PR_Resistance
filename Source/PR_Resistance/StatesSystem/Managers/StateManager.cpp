@@ -156,7 +156,7 @@ UCState* UStateManager::AddStateData(int index, uint8 stateName, UCState* newSta
 	{
 		mStateContiners.EmplaceAt(index);
 	}
-	mStateContiners[index].mStateContainer.Add(stateName,newState);
+	mStateContiners[index].mStateContainer.Add(stateName, newState);
 
 	return newState;
 }

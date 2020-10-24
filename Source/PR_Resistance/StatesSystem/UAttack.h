@@ -22,6 +22,7 @@ protected:
 	IStaminaProvider* mSPProvider = nullptr;
 	FStatus* mCharacterStatus = nullptr;
 
+	UPROPERTY()
 	UComboManager* mComboManager = nullptr;
 	ActionInput* AInput = nullptr;
 

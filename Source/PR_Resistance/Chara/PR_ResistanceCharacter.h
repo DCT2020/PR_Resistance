@@ -24,6 +24,7 @@
 //
 #include <functional>
 //
+#include "PR_Resistance/SlotMotionProcess.h"
 
 #include "PR_ResistanceCharacter.generated.h"
 
@@ -78,10 +79,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UDataTable* mAnimTable;
 	
-
 	std::function<void()> mTimeToNextStepNotifier;
+public:
 
-
+	UPROPERTY()
+	 TQueue<FSlotMotionProcess> mSlotMotionQueue;
+	UFUNCTION(Reliable, NetMulticast)
+		void OnProcessSlotMotion_Multicast();
+		void OnProcessSlotMotion_Multicast_Implementation();
 public:
 	APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual ~APR_ResistanceCharacter();

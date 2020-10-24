@@ -17,9 +17,18 @@
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
 
+void APR_ResistanceCharacter::OnProcessSlotMotion_Multicast_Implementation()
+{
+	FSlotMotionProcess process;
+	while(!mSlotMotionQueue.Dequeue(process)) {
+		process.mLamda();
+	}
+}
+
 APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {
+    
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -184,6 +193,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
 	mStateManager->AddArchiveData("RootComponent", RootComponent);
 	mStateManager->AddArchiveData("AnimTable", mAnimTable);
+	mStateManager->AddArchiveData("SlotMotionQueue", &mSlotMotionQueue);
 	
 	// Load states
 	mStateManager->LoadStates();
@@ -231,6 +241,11 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	{
 		mStateManager->ChangeState(StateType::ST_GUN);
 	}
+
+        if(GetLocalRole() == ROLE_Authority) 
+	{
+		OnProcessSlotMotion_Multicast_Implementation();
+        }
 }
 
 #pragma  region INPUT_BINDED_FUNCTIONS
