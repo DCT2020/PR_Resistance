@@ -14,6 +14,7 @@
 /**
  *
  */
+UCLASS()
 class PR_RESISTANCE_API UComboManager : public UObject
 {
 	GENERATED_BODY()
