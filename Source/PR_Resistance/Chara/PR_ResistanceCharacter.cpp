@@ -325,6 +325,11 @@ void APR_ResistanceCharacter::MoveForward(float Value)
 	}
 }
 
+void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
+{
+    
+}
+
 void APR_ResistanceCharacter::MoveRight(float Value)
 {
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)

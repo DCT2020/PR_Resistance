@@ -139,7 +139,10 @@ protected:
 	virtual void Tick(float deltaTime) override;
 
 	/** Called for forwards/backward input */
-	void MoveForward(float Value);
+	UFUNCTION(Reliable,Server)
+		void MoveForward(float Value);
+	        void MoveForward_Implementation(float Value);
+      
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
