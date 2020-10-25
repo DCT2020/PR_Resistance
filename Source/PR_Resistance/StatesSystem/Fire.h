@@ -27,7 +27,9 @@ protected:
 	UDataTable* mSoundTable = nullptr;
 	FSoundData* mSoundCue = nullptr;
 	AActor* mOwner = nullptr;
-	
+
+	USkeletalMeshComponent* mRifleMesh = nullptr;
+	UParticleSystem* mFireEffect = nullptr;
 	float mElapsedTime = 0.0f;
 
 

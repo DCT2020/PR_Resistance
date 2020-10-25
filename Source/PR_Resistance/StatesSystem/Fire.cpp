@@ -48,7 +48,14 @@ bool UFire::_Init()
 	{
 		mOwner = (AActor*)buffer;
 	}
-
+	GetCharaDataWithLog("RifleMesh",&buffer)
+	{
+		mRifleMesh = (USkeletalMeshComponent*)buffer;
+	}
+	GetCharaDataWithLog("FireEffect", &buffer)
+	{
+		mFireEffect = (UParticleSystem*)buffer;
+	}
 	return isInited;
 }
 
@@ -98,6 +105,10 @@ void UFire::Update(float deltaTime)
 				UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue->mSound,
 					mStaticMeshComp->GetSocketLocation(TEXT("UFirePoint")),
 					mStaticMeshComp->GetSocketRotation(TEXT("UFirePoint")));
+
+				UGameplayStatics::SpawnEmitterAtLocation(mOwner, mFireEffect,
+					mRifleMesh->GetSocketLocation(TEXT("FirePoint")),
+					mRifleMesh->GetSocketRotation(TEXT("FirePoint")));
 			}
 		}
 	}

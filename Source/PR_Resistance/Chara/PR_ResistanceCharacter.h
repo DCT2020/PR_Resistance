@@ -90,6 +90,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true", DisplayName = "Sound Table"))
 	UDataTable* mSoundTable;
 	
+	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true", DisplayName = "Fire Effect"))
+		UParticleSystem* mFireEffect;
+	
 	std::function<void()> mTimeToNextStepNotifier;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))

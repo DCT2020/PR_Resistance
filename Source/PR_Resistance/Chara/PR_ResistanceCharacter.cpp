@@ -223,8 +223,8 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("AnimTable", mAnimTable);
 	mStateManager->AddArchiveData("Owner", const_cast<APR_ResistanceCharacter*>(this));
 	mStateManager->AddArchiveData("SoundTable", mSoundTable);
-
-	
+	mStateManager->AddArchiveData("FireEffect", mFireEffect);
+	mStateManager->AddArchiveData("RifleMesh", Rifle);
 	
 	// Load states
 	mStateManager->LoadStates();
