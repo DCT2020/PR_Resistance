@@ -228,7 +228,6 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("SoundTable", mSoundTable);
 	mStateManager->AddArchiveData("FireEffect", mFireEffect);
 	mStateManager->AddArchiveData("RifleMesh", Rifle);
-	
 	// Load states
 	mStateManager->LoadStates();
 
@@ -346,6 +345,8 @@ void APR_ResistanceCharacter::LookUpAtRate(float Rate)
 
 void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 {
+	mPrevForwardInput = 0.0f;
+
 	if (GetLocalRole() != ROLE_Authority)
 		return;
 
@@ -381,6 +382,8 @@ void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 
 void APR_ResistanceCharacter::MoveRight_Implementation(float Value)
 {
+	mPrevRightInput = 0.0f;
+
 	if (GetLocalRole() != ROLE_Authority)
 		return;
 
