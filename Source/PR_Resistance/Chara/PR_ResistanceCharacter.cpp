@@ -531,8 +531,10 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 	{
 		// 공격 받았다.
 		UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
-		animInstance->PlaySlotAnimationAsDynamicMontage(mHitMotion, TEXT("ParallelMotion"));
-		
+		//mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
+
+		mStateManager->TryChangeSubState(CharacterState::CS_HIT);
+
 		bIsParallelMotionValid = true;
 	}
 
@@ -556,7 +558,6 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 	case EAnimNotifyToCharacterTypes::ATC_ATTACK:
 		if (bIsEnd)
 		{
-			// 현재 라이플이지만 검으로 사용하고 있다.
 			Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 		else
@@ -580,6 +581,9 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 void APR_ResistanceCharacter::OntTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	AController* InstigatedBy, AActor* DamageCauser)
 {
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
+		return;
+
 	float hp = 0.0f;
 	mFloatsComponent->Get(0, hp);
 	mFloatsComponent->Set(hp - Damage,0);

@@ -10,6 +10,7 @@
 #include "PR_Resistance/StatesSystem/UJumpDash.h"
 #include "PR_Resistance/StatesSystem/UAttack.h"
 #include "PR_Resistance/StatesSystem/Fire.h"
+#include "PR_Resistance/Hit.h"
 
 #include "PR_Resistance/Interface/IStaminaUser.h"
 
@@ -64,6 +65,11 @@ void UStateManager_Player::LoadStates()
 	auto attack = NewObject<UAttack>();
 	attack->SetProvider(mSPProvider);
 	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_ATTACK, attack);
+
+	auto hit = NewObject<UHit>();
+	AddStateData((uint8)StateType::ST_SWORD, (uint8)CharacterState::CS_HIT, hit);
+
+	
 #pragma endregion
 
 #pragma region ST_GUN
@@ -79,8 +85,10 @@ void UStateManager_Player::LoadStates()
 	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_RUN, run, false);
 	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_DODGE, dodge, false);
 	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_JUMPDASH, jumpDash, false);
+
 	AddPlayerBaseState((uint8)StateType::ST_GUN, CharacterState::CS_ATTACK, NewObject<UFire>());
 
+	AddStateData((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_HIT, hit);
 #pragma endregion
 
 	SetDefaultState((uint8)StateType::ST_GUN, (uint8)CharacterState::CS_IDLE);
