@@ -84,8 +84,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UStateManager_Player* mStateManager;
 
-	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true", DisplayName = "Animation Table"))
 	UDataTable* mAnimTable;
+
+	UPROPERTY(EditAnywhere, Category = Character, meta = (AllowPrivateAccess = "true", DisplayName = "Sound Table"))
+	UDataTable* mSoundTable;
 	
 	std::function<void()> mTimeToNextStepNotifier;
 public:

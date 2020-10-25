@@ -222,6 +222,9 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("RootComponent", RootComponent);
 	mStateManager->AddArchiveData("AnimTable", mAnimTable);
 	mStateManager->AddArchiveData("Owner", const_cast<APR_ResistanceCharacter*>(this));
+	mStateManager->AddArchiveData("SoundTable", mSoundTable);
+
+	
 	
 	// Load states
 	mStateManager->LoadStates();

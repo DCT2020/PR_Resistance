@@ -5,6 +5,7 @@
 #include "PR_Resistance/StatesSystem/CharacterDataArchive.h"
 #include "PR_Resistance/Object/Projectile.h"
 #include "Kismet/GameplayStatics.h"
+#include "PR_Resistance/Chara/PR_ResistanceCharacter.h"
 #include "Components/StaticMeshComponent.h"
 
 UFire::UFire()
@@ -39,6 +40,14 @@ bool UFire::_Init()
 	{
 		mStaticMeshComp = (USkeletalMeshComponent*)(buffer);
 	}
+	GetCharaDataWithLog("SoundTable", &buffer);
+	{
+		mSoundTable = (UDataTable*)buffer;
+	}
+	GetCharaDataWithLog("Owner", &buffer)
+	{
+		mOwner = (AActor*)buffer;
+	}
 
 	return isInited;
 }
@@ -51,6 +60,7 @@ bool UFire::Begin(uint8 prevState)
 	if (mCurrentStateInfos->mCurSubState != CharacterState::CS_SUB_AIM)
 		return false;
 
+	mSoundCue =  mSoundTable->FindRow<FSoundData>(TEXT("SMG"), nullptr);
 
 	return true;
 }
@@ -84,6 +94,10 @@ void UFire::Update(float deltaTime)
 				screenSize *= 0.5f;
 				UGameplayStatics::DeprojectScreenToWorld(playerController, screenSize, position, direciton);
 				projectile->Init(direciton,mCharacterStatus->BulletDamage,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
+
+				UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue,
+					mStaticMeshComp->GetSocketTransform(TEXT("UFirePoint")),
+					mStaticMeshComp->GetSocketRotation(TEXT("UFirePoint")));
 			}
 		}
 	}

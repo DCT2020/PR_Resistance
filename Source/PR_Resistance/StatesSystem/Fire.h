@@ -9,6 +9,8 @@
 /**
  * 
  */
+class FSoundData;
+class UDataTable;
 class UStaticMeshComponent;
 UCLASS()
 class PR_RESISTANCE_API UFire : public UCState_PlayerBase
@@ -21,6 +23,10 @@ protected:
 	USkeletalMeshComponent* mStaticMeshComp = nullptr;
 	FTransform* mCharacterTransform = nullptr;
 	UClass* mProjectileClass = nullptr;
+	
+	UDataTable* mSoundTable = nullptr;
+	FSoundData* mSoundCue = nullptr;
+	AActor* mOwner = nullptr;
 	
 	float mElapsedTime = 0.0f;
 
