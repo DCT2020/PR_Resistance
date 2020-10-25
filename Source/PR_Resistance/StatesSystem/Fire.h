@@ -9,7 +9,7 @@
 /**
  * 
  */
-class FSoundData;
+struct FSoundData;
 class UDataTable;
 class UStaticMeshComponent;
 UCLASS()

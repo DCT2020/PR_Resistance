@@ -95,8 +95,8 @@ void UFire::Update(float deltaTime)
 				UGameplayStatics::DeprojectScreenToWorld(playerController, screenSize, position, direciton);
 				projectile->Init(direciton,mCharacterStatus->BulletDamage,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
 
-				UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue,
-					mStaticMeshComp->GetSocketTransform(TEXT("UFirePoint")),
+				UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue->mSound,
+					mStaticMeshComp->GetSocketLocation(TEXT("UFirePoint")),
 					mStaticMeshComp->GetSocketRotation(TEXT("UFirePoint")));
 			}
 		}
