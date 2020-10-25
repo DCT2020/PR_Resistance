@@ -3,6 +3,7 @@
 
 #include "UAttack.h"
 #include "Animation/AnimInstance.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/DataTable.h"
 
 #include "PR_Resistance/StatesSystem/CharacterDataArchive.h"
@@ -73,6 +74,15 @@ bool UAttack::_Init()
 		notifer = (std::function<void()>*)buffer;
 		(*notifer) = [this]() {mComboManager->StartWaitInput(); };
 	}
+	GetCharaDataWithLog("Camera", &buffer);
+	{
+		mCamera = (UCameraComponent*)buffer;
+	}
+	GetCharaDataWithLog("Owner", &buffer);
+	{
+		mOwner = (AActor*)buffer;
+	}
+
 
 	if (mComboManager == nullptr)
 	{
@@ -80,6 +90,7 @@ bool UAttack::_Init()
 		mComboManager = NewObject<UComboManager>();
 		mComboManager->Init(static_cast<APR_ResistanceCharacter*>(buffer),mActionTable, mAnimInstance);
 		mComboManager->BindComboAndEvent([this]() {StopAttack(); });
+		mComboManager->BindActionChangeEvent([this]() {OnChangeAction(); });
 	}
 
 	return true;
@@ -88,4 +99,12 @@ bool UAttack::_Init()
 void UAttack::StopAttack()
 {
 	mDesc.bIsEnd = true;
+}
+
+void UAttack::OnChangeAction()
+{
+	FRotator rot = mCamera->GetForwardVector().Rotation();
+	rot.Pitch = 0.0f;
+	rot.Roll = 0.0f;
+	mOwner->SetActorRotation(rot);
 }

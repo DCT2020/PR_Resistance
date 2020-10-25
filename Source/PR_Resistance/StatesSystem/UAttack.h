@@ -13,6 +13,7 @@
  */
  class UComboManager;
  class UAnimInstance;
+ class UCameraComponent;
  class UDataTable;
  UCLASS()
  class PR_RESISTANCE_API UAttack : public UCState, public IStaminaUser
@@ -25,7 +26,8 @@ protected:
 	UPROPERTY()
 	UComboManager* mComboManager = nullptr;
 	ActionInput* AInput = nullptr;
-
+	UCameraComponent* mCamera = nullptr;
+	AActor* mOwner = nullptr;
 public:
 	UAttack();
 	~UAttack();
@@ -39,4 +41,5 @@ public:
 protected:
 	bool _Init() override;
 	void StopAttack();
+	void OnChangeAction();
 };

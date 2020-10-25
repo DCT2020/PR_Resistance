@@ -31,7 +31,8 @@ protected:
 	UAnimInstance* mOwnerAnimInst = nullptr;
 	UAnimMontage* mCurDynmMontage = nullptr;
 
-        std::function<void()> ComboEndEvent;
+	std::function<void()> ComboEndEvent;
+	std::function<void()> ActionChangeEvent;
 
         //UObject에서는 RPC가 불가능 하기 때문에 람다로 Function을 넘겨주어 PR_ResistanceCharaceter에서 실행시킨다.
 	APR_ResistanceCharacter* mOwner;
@@ -48,6 +49,7 @@ public:
 	void StartWaitInput();
 	void PushInput(ActionInput inputType);
 	void BindComboAndEvent(std::function<void()> function);
+	void BindActionChangeEvent(std::function<void()> function);
 	void SetComboEnd();
 
 protected:

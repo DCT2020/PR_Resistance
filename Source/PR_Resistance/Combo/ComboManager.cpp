@@ -105,6 +105,11 @@ void UComboManager::BindComboAndEvent(std::function<void()> function)
 	ComboEndEvent = function;
 }
 
+void UComboManager::BindActionChangeEvent(std::function<void()> function)
+{
+	ActionChangeEvent = function;
+}
+
 
 bool UComboManager::ChangeAction(FName actionName)
 {
@@ -125,6 +130,8 @@ bool UComboManager::ChangeAction(const FAction* action)
 		//mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f);
 		//mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(mCurAction->Animation, TEXT("DefaultSlot"),0.0f,0.0f);
 		PlayerSlotAnimation(TEXT("DefaultSlot"), mCurAction->Animation);
+
+		ActionChangeEvent();
 		return true;
 	}
 
