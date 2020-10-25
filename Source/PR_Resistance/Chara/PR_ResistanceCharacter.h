@@ -99,14 +99,14 @@ public:
 		UAnimSequence* testSequence;
 
 	UPROPERTY()
-		TArray<UAnimMontage*> mAtiveMontage;
+		UAnimMontage* mActiveMontage;
 
 	UFUNCTION(Reliable, Server)
 		void PlaySlotAnimation_onServrer(FName slotName, UAnimSequenceBase* anim, int index = 0);
 	UFUNCTION(Reliable, Server)
 		void StopSlotAnimation_onServrer(FName slotName);
 	UFUNCTION(Reliable, Server)
-		void Montage_PauseOnServer();
+		void Montage_PauseOnServer(int index = 0);
 
 	UFUNCTION(Reliable, NetMulticast)
 		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* anim, int index = 0);
@@ -114,7 +114,7 @@ public:
         UFUNCTION(Reliable, NetMulticast)
 		void StopSlotAnimation(FName slotName);
 	UFUNCTION(Reliable, NetMulticast)
-		void Montage_PauseMulticast();
+		void Montage_PauseMulticast(int index = 0);
 public:
 	APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual ~APR_ResistanceCharacter();

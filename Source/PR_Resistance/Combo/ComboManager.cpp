@@ -146,7 +146,7 @@ void UComboManager::SetComboEnd()
 	mEalsedTime = 0.0f;
 	mbIsWait = false;
 	mCurAction = nullptr;
-	mOwner->Montage_PauseOnServer();
+	//mOwner->Montage_PauseOnServer();
 	mOwner->StopSlotAnimation(TEXT("DefaultSlot"));
 	//mOwnerAnimInst->Montage_Stop(0.15f, mCurDynmMontage);
 	//mOwnerAnimInst->StopSlotAnimation(0.0f, TEXT("DefaultSlot"));

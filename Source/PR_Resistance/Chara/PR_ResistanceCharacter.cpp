@@ -34,22 +34,24 @@ void APR_ResistanceCharacter::PlaySlotAnimation_Implementation(FName slotName, U
 
 	  }
 
-	  mAtiveMontage.EmplaceAt(index,
-		  GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(anim, slotName));
+	  mActiveMontage = GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(anim, slotName,0.1f,0.1f);
 }
 
 void APR_ResistanceCharacter::StopSlotAnimation_Implementation(FName slotName)
 {
-	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, slotName);
+        if(mActiveMontage != nullptr) {
+			GetMesh()->GetAnimInstance()->Montage_Play(mActiveMontage);
+        }
+	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.25f, slotName);
 }
 
 
-void APR_ResistanceCharacter::Montage_PauseOnServer_Implementation() {
-	Montage_PauseMulticast();
+void APR_ResistanceCharacter::Montage_PauseOnServer_Implementation(int index) {
+	Montage_PauseMulticast(index);
 }
 
-void APR_ResistanceCharacter::Montage_PauseMulticast_Implementation() {
-        GetMesh()->GetAnimInstance()->Montage_Pause();
+void APR_ResistanceCharacter::Montage_PauseMulticast_Implementation(int index) {
+        GetMesh()->GetAnimInstance()->Montage_Pause(mActiveMontage);
 }
 
 APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer)
@@ -347,8 +349,6 @@ void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 	if (GetLocalRole() != ROLE_Authority)
 		return;
 
-	mPrevForwardInput = Value;
-
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
 		return;
 
@@ -357,6 +357,8 @@ void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
 			return;
 	}
+
+	mPrevForwardInput = Value;
 
 	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
 	if (bIsMoved)
@@ -382,8 +384,6 @@ void APR_ResistanceCharacter::MoveRight_Implementation(float Value)
 	if (GetLocalRole() != ROLE_Authority)
 		return;
 
-	mPrevRightInput = Value;
-
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
 		return;
 
@@ -392,6 +392,8 @@ void APR_ResistanceCharacter::MoveRight_Implementation(float Value)
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
 			return;
 	}
+
+	mPrevRightInput = Value;
 
 	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
 	if (bIsMoved)
