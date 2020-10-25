@@ -23,6 +23,9 @@ class PR_RESISTANCE_API UHit : public UCState
 		UDataTable* mAnimTable = nullptr;
 	UPROPERTY()
 		APR_ResistanceCharacter* mOwner;
+
+	UPROPERTY()
+		UAnimMontage* mMontage;
 	
 	FCharacterAnimationData* mHitAnimation;
 public:
@@ -31,6 +34,9 @@ public:
 	virtual bool Begin(uint8 prevState) override;
 	virtual void Update(float deltaTime) override;
 	virtual void End() override;
+
+	UFUNCTION()
+	void OnHitEnd(UAnimMontage* Montage, bool bInterrupted);
 protected:
 	virtual bool _Init() override;
 };

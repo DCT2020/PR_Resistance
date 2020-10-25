@@ -533,7 +533,7 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 		UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
 		//mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
 
-		mStateManager->TryChangeSubState(CharacterState::CS_HIT);
+		mStateManager->TryChangeState((uint8)CharacterState::CS_HIT);
 
 		bIsParallelMotionValid = true;
 	}

@@ -13,10 +13,15 @@ UHit::UHit()
 
 bool UHit::Begin(uint8 prevState)
 {
+	mDesc.bIsEnd = false;
+
+	
 	mOwner->StopSlotAnimation_onServrer(TEXT("DefaultSlot"));
 	mOwner->StopSlotAnimation_onServrer(TEXT("UpperMotion"));
-	mOwner->PlaySlotAnimation_onServrer(TEXT("ParalleMotion"), mHitAnimation->mAnimation);
+	mMontage = mOwner->PlaySlotAnimation_onServrer(TEXT("ParallelMotion"), mHitAnimation->mAnimation);
 	
+	mAnimInstace->OnMontageEnded.AddDynamic(this, &UHit::OnHitEnd);
+
 	return true;
 }
 
@@ -26,6 +31,14 @@ void UHit::Update(float deltaTime)
 
 void UHit::End()
 {
+}
+
+void UHit::OnHitEnd(UAnimMontage* Montage, bool bInterrupted)
+{
+	if(mMontage == Montage)
+	{
+		mDesc.bIsEnd = true;
+	}
 }
 
 bool UHit::_Init()
