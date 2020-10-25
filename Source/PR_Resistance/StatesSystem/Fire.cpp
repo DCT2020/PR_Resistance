@@ -56,6 +56,11 @@ bool UFire::_Init()
 	{
 		mFireEffect = (UParticleSystem*)buffer;
 	}
+	GetCharaDataWithLog("Floats", &buffer)
+        {
+		mFloats = (UFloatsComponent*)buffer;
+	}
+	
 	return isInited;
 }
 
@@ -81,6 +86,14 @@ void UFire::Update(float deltaTime)
 	else
 	{
 		mElapsedTime = 0.0f;
+
+		float out = 0.0f;
+		mFloats->Set(mCharacterStatus->CurAmmo - 1.0f, 1);
+		mFloats->Get(1, out);
+		if (out <= 0.0f)
+		{
+			return;
+		}
 
 		FTransform tempTransform = mStaticMeshComp->GetSocketTransform("UFirePoint");
 		auto actor = mWorld->SpawnActor(mCharacterStatus->ProjectileClass, &tempTransform);

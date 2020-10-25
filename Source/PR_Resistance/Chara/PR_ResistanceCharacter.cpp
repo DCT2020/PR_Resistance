@@ -228,6 +228,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("SoundTable", mSoundTable);
 	mStateManager->AddArchiveData("FireEffect", mFireEffect);
 	mStateManager->AddArchiveData("RifleMesh", Rifle);
+	mStateManager->AddArchiveData("Floats", mFloatsComponent);
 	mStateManager->AddArchiveData("Camera", FollowCamera);
 	// Load states
 	mStateManager->LoadStates();
@@ -240,6 +241,8 @@ void APR_ResistanceCharacter::BeginPlay()
 	// floats 등록
 	mFloatsComponent->PushBack(mStatus.curHP);
 	mFloatsComponent->AddListener(this, 0);
+	mFloatsComponent->PushBack(mStatus.CurAmmo);
+	mFloatsComponent->AddListener(this, 1);
 
 	// hitmotion
 	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
@@ -351,9 +354,12 @@ void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 	if (GetLocalRole() != ROLE_Authority)
 		return;
 
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_HIT)
+		return;
+	
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
 		return;
-
+	
 	if (bIsMeele)
 	{
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
@@ -386,6 +392,9 @@ void APR_ResistanceCharacter::MoveRight_Implementation(float Value)
 	mPrevRightInput = 0.0f;
 
 	if (GetLocalRole() != ROLE_Authority)
+		return;
+
+	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_HIT)
 		return;
 
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
@@ -527,12 +536,11 @@ bool APR_ResistanceCharacter::UseStamina(float usedStamina)
 
 void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 {
-	if(mStatus.curHP > newFloat)
+    if(index == 0) 
+    {
+      if(mStatus.curHP > newFloat)
 	{
 		// 공격 받았다.
-		UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
-		//mStateManager->SetStateEnd((uint8)CharacterState::CS_ATTACK);
-
 		mStateManager->TryChangeState((uint8)CharacterState::CS_HIT);
 
 		bIsParallelMotionValid = true;
@@ -542,7 +550,12 @@ void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 	if(mStatus.curHP < 0.0f)
 	{
 		mStatus.curHP = 0.0f;
-	}
+	}  
+    }
+    else if(index ==1) 
+    {
+	mStatus.CurAmmo = newFloat;
+    }
 }
 
 void APR_ResistanceCharacter::OnHitAnimEnd(UAnimMontage* motange, bool bInterrupted)

@@ -15,12 +15,9 @@ bool UHit::Begin(uint8 prevState)
 {
 	mDesc.bIsEnd = false;
 
-	
 	mOwner->StopSlotAnimation_onServrer(TEXT("DefaultSlot"));
 	mOwner->StopSlotAnimation_onServrer(TEXT("UpperMotion"));
-	mMontage = mOwner->PlaySlotAnimation_onServrer(TEXT("ParallelMotion"), mHitAnimation->mAnimation);
-	
-	mAnimInstace->OnMontageEnded.AddDynamic(this, &UHit::OnHitEnd);
+	mMontage = mAnimInstace->PlaySlotAnimationAsDynamicMontage(mHitAnimation->mAnimation, TEXT("DefautSlot"));
 
 	return true;
 }
@@ -58,6 +55,7 @@ bool UHit::_Init()
 	}
 	
 	mHitAnimation = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"),nullptr);
-	
+	mAnimInstace->OnMontageEnded.AddDynamic(this, &UHit::OnHitEnd);
+
 	return true;
 }

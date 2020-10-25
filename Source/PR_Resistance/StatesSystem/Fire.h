@@ -12,6 +12,7 @@
 struct FSoundData;
 class UDataTable;
 class UStaticMeshComponent;
+class UFloatsComponent;
 UCLASS()
 class PR_RESISTANCE_API UFire : public UCState_PlayerBase
 {
@@ -32,6 +33,7 @@ protected:
 	UParticleSystem* mFireEffect = nullptr;
 	float mElapsedTime = 0.0f;
 
+	UFloatsComponent* mFloats;
 
 	bool _Init() override;
 

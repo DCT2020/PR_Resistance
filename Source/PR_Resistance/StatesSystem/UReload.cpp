@@ -12,7 +12,9 @@ UReload::UReload()
 bool UReload::Begin(uint8 prevState)
 {
 	mAnimInstance->PlaySlotAnimationAsDynamicMontage(mReloadAnimationData->mAnimation, "UpperMotion");
-	
+
+	mFloats->Set(mStatus->MaxAmmo,1);
+
 	return true;
 }
 
@@ -37,6 +39,14 @@ bool UReload::_Init()
 	{
 		mAnimInstance = static_cast<UAnimInstance*>(buffer);
 		mAnimInstance->OnPlayMontageNotifyEnd.AddDynamic(this, &UReload::OnAnimEnd);
+	}
+	GetCharaDataWithLog("Floats", &buffer);
+	{
+		mFloats = static_cast<UFloatsComponent*>(buffer);
+	}
+	GetCharaDataWithLog("Status", &buffer);
+	{
+		mStatus = static_cast<FStatus*>(buffer);
 	}
 	
 	return true;

@@ -11,7 +11,7 @@
 UDodge::UDodge()
 {
 	mDesc.StateType = (uint8)CharacterState::CS_DODGE;
-	mDesc.Priority = 5;
+	mDesc.Priority = 11;
 }
 
 UDodge::~UDodge()
@@ -82,7 +82,7 @@ bool UDodge::Begin(uint8 prevState)
 
 	assert(mSPProvider == nullptr);
 
-	mOwner->PlaySlotAnimation_onServrer(TEXT("DefaultSlot"), mDodgaAnim);
+	mDodgeAnim = mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim,TEXT("DefaultSlot"));
 	//mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim, "DefaultSlot");
 
 	return true;
@@ -114,5 +114,8 @@ void UDodge::SetProvider(IStaminaProvider* provider)
 
 void UDodge::OnAnimEnd(UAnimMontage* motange, bool bInterrupted)
 {
-	mDesc.bIsEnd = true;
+	if(mDodgeAnim == motange)
+	{
+		mDesc.bIsEnd = true;
+	}
 }

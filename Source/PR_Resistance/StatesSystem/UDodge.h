@@ -22,6 +22,7 @@ protected:
 	USceneComponent* mCharacterRootComponent = nullptr;
 	APR_ResistanceCharacter* mOwner= nullptr;
 
+	UAnimMontage* mDodgeAnim = nullptr;
 	
 	//юс╫ц
 	float* mMaxWalkSpeed = nullptr;

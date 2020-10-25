@@ -4,7 +4,7 @@
 #include "PR_Resistance/StatesSystem/CState.h"
 #include "UReload.generated.h"
 
-
+class UFloatsComponent;
 struct FCharacterAnimationData;
 UCLASS()
 class UReload : public UCState
@@ -23,6 +23,8 @@ protected:
 protected:
 	FCharacterAnimationData* mReloadAnimationData = nullptr;
 	UAnimInstance* mAnimInstance = nullptr;
+	UFloatsComponent* mFloats = nullptr;
+	FStatus* mStatus = nullptr;
 
 	UFUNCTION()
 		void OnAnimEnd(FName NotifyName, const FBranchingPointNotifyPayload& BranchingPointPayload);

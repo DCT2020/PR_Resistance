@@ -51,6 +51,10 @@ public:
 		UClass* ProjectileClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMesh* GunModelWith_FireSocket;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float CurAmmo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float MaxAmmo;
 };
 
 		
