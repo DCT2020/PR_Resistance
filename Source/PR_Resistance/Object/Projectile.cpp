@@ -44,6 +44,7 @@ void AProjectile::OnProjectileBeginOverlap_inheritance(UPrimitiveComponent* Over
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("Hit"));
 	UGameplayStatics::ApplyDamage(OtherActor, 10.0f, NULL, this, NULL);
+	UGameplayStatics::SpawnEmitterAtLocation(this, mHitEffect, this->GetActorLocation(), this->GetActorRotation());
 
 	Destroy();
 }
