@@ -18,15 +18,15 @@
 // APR_ResistanceCharacter
 
 void APR_ResistanceCharacter::PlaySlotAnimation_onServrer_Implementation(FName slotName,
-	UAnimSequenceBase* anim) {
-	PlaySlotAnimation(slotName, anim);
+	UAnimSequenceBase* anim, int index) {
+	PlaySlotAnimation(slotName, anim,index);
 }
 
 void APR_ResistanceCharacter::StopSlotAnimation_onServrer_Implementation(FName slotName) {
 	StopSlotAnimation(slotName);
 }
 
-void APR_ResistanceCharacter::PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* anim)
+void APR_ResistanceCharacter::PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* anim, int index)
 {
 	UKismetSystemLibrary::PrintString(this, TEXT("Multicast"));
 	  if(!HasAuthority()) {
@@ -34,12 +34,13 @@ void APR_ResistanceCharacter::PlaySlotAnimation_Implementation(FName slotName, U
 
 	  }
 
-	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(anim, slotName);
+	  mAtiveMontage.EmplaceAt(index,
+		  GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(anim, slotName));
 }
 
 void APR_ResistanceCharacter::StopSlotAnimation_Implementation(FName slotName)
 {
-	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.25, slotName);
+	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, slotName);
 }
 
 

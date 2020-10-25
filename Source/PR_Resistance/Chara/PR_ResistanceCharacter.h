@@ -98,15 +98,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 		UAnimSequence* testSequence;
 
+	UPROPERTY()
+		TArray<UAnimMontage*> mAtiveMontage;
+
 	UFUNCTION(Reliable, Server)
-		void PlaySlotAnimation_onServrer(FName slotName, UAnimSequenceBase* anim);
+		void PlaySlotAnimation_onServrer(FName slotName, UAnimSequenceBase* anim, int index = 0);
 	UFUNCTION(Reliable, Server)
 		void StopSlotAnimation_onServrer(FName slotName);
 	UFUNCTION(Reliable, Server)
 		void Montage_PauseOnServer();
 
 	UFUNCTION(Reliable, NetMulticast)
-		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* anim);
+		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* anim, int index = 0);
 
         UFUNCTION(Reliable, NetMulticast)
 		void StopSlotAnimation(FName slotName);

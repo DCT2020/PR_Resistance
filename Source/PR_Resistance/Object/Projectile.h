@@ -39,7 +39,7 @@ public:
 	UStaticMeshComponent* mMesh;
 	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USphereComponent* mCollider;
-	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", DisplayNAame = "Hit Effect"))
+	UPROPERTY(Category = Projectile, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", DisplayNAame = "Hit Effect"))
         UParticleSystem* mHitEffect;
 public:	
 	// Sets default values for this actor's properties
