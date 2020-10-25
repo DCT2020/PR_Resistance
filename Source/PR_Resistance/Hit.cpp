@@ -11,6 +11,9 @@ UHit::UHit()
 	mDesc.Priority = 10;
 }
 
+UHit::~UHit() {
+}
+
 bool UHit::Begin(uint8 prevState)
 {
 	mDesc.bIsEnd = false;
@@ -54,7 +57,7 @@ bool UHit::_Init()
 	}
 	
 	mHitAnimation = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"),nullptr);
-	//mAnimInstace->OnMontageEnded.AddDynamic(this, &UHit::OnHitEnd);
+	mAnimInstace->OnMontageEnded.AddDynamic(this, &UHit::OnHitEnd);
 
 	return true;
 }
