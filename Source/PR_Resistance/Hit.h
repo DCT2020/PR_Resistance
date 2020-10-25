@@ -16,20 +16,21 @@ UCLASS()
 class PR_RESISTANCE_API UHit : public UCState
 {
 	GENERATED_BODY()
-
+public:
 	UPROPERTY()
 		UAnimInstance* mAnimInstace = nullptr;
-	UPROPERTY()
-		UDataTable* mAnimTable = nullptr;
 	UPROPERTY()
 		APR_ResistanceCharacter* mOwner;
 
 	UPROPERTY()
 		UAnimMontage* mMontage;
-	
+
+
+	UDataTable* mAnimTable = nullptr;
 	FCharacterAnimationData* mHitAnimation;
 public:
 	UHit();
+        virtual ~UHit();
 	
 	virtual bool Begin(uint8 prevState) override;
 	virtual void Update(float deltaTime) override;
