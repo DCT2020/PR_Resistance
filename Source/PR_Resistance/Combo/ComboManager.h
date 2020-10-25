@@ -7,6 +7,7 @@
 #include "Engine/DataTable.h"
 #include "PR_Resistance/Combo/Action.h"
 #include "Animation/AnimInstance.h"
+#include "PR_Resistance/SlotMotionProcess.h"
 
 #include <functional>
 #include "ComboManager.generated.h"
@@ -14,7 +15,7 @@
 /**
  *
  */
-struct FSlotMotionProcess;
+class APR_ResistanceCharacter;
 UCLASS()
 class PR_RESISTANCE_API UComboManager : public UObject
 {
@@ -33,7 +34,7 @@ protected:
         std::function<void()> ComboEndEvent;
 
         //UObject에서는 RPC가 불가능 하기 때문에 람다로 Function을 넘겨주어 PR_ResistanceCharaceter에서 실행시킨다.
-	TQueue<FSlotMotionQueue>* mSlotMotionQueue;
+	APR_ResistanceCharacter* mOwner;
 
 
 	bool mbIsWait = false;
@@ -41,7 +42,7 @@ protected:
 	float mEalsedTime = 0.0f;
 public:
 
-	void Init(TQueue<FSlotMotionProcess>* _SlotMotionQueue , UDataTable* actionTable, UAnimInstance* animInstance);
+	void Init(APR_ResistanceCharacter* _SlotMotionQueue , UDataTable* actionTable, UAnimInstance* animInstance);
 	void Update(float deltaTime);
 	bool StartAttack(FName firstAttack);
 	void StartWaitInput();

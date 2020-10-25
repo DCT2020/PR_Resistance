@@ -13,3 +13,10 @@ struct PR_RESISTANCE_API FSlotMotionProcess
 		std::function<void()> mLamda;
 };
 
+USTRUCT()
+struct PR_RESISTANCE_API FSlotMotionQueue
+{
+	GENERATED_BODY()
+		TArray<FSlotMotionProcess> mSlotMotionFuncs;
+};
+

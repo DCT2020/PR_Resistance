@@ -22,25 +22,74 @@ bool UStateManager::Init()
 	return true;
 }
 
-void UStateManager::TryChangeState(uint8 stateType)
+void UStateManager::TryChangeState_Implementation(uint8 stateType)
 {
 	// 이후 editor에서 가져오는걸로 바꾸기 (FStateDesc를)
 	mStateChangeCalls.Enqueue(mStates.mStateContainer[stateType]->GetStateDesc());
 }
 
-void UStateManager::SetStateEnd(uint8 stateType)
+void UStateManager::SetStateEnd_Implementation(uint8 stateType)
 {
 	mStates.mStateContainer[stateType]->SetStop();
 }
 
-void UStateManager::SetState(uint8 stateType)
+void UStateManager::SetState_Implementation(uint8 stateType)
 {
 	ChangeState(mStates.mStateContainer[stateType]);
 }
 
-void UStateManager::Update(float deltaTime)
+FStateDesc UStateManager::GetCurStateDesc()
 {
+        if(mCurState == nullptr) {
+			return FStateDesc();
+        }
+	return mCurState->GetStateDesc();
+}
 
+bool UStateManager::AddArchiveData(FName key, void *data)
+{
+	return mCDArchive->AddData(key, data);
+}
+
+void UStateManager::RemoveArchiveData(FName key)
+{
+	mCDArchive->RemoveData(key);
+}
+
+void UStateManager::AddStateData_bp(const int index,
+    const uint8 stateName, const UCState *newState, UCState *&ret)
+{
+	ret = AddStateData(index, stateName, const_cast<UCState*>(newState));
+}
+
+void UStateManager::GetCurState_bp(UCState *&curState)
+{
+	curState = mCurState;
+}
+
+void UStateManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UStateManager, mCurState);
+	DOREPLIFETIME(UStateManager, mCDArchive);
+	DOREPLIFETIME(UStateManager, mStateContiners);
+}
+
+UStateManager::FChangeEvent& UStateManager::OnStateChange()
+{
+	return mChangeEvent;
+}
+
+void UStateManager::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (GetOwner()->HasAuthority())
+		Update(DeltaTime);
+}
+
+void UStateManager::Update_Implementation(float deltaTime)
+{
 	if (!mStateChangeCalls.IsEmpty())
 	{
 		FStateDesc curDesc;
@@ -70,53 +119,6 @@ void UStateManager::Update(float deltaTime)
 	{
 		mCurState->Update(deltaTime);
 	}
-}
-
-FStateDesc UStateManager::GetCurStateDesc()
-{
-        if(mCurState == nullptr) {
-			return FStateDesc();
-        }
-	return mCurState->GetStateDesc();
-}
-
-bool UStateManager::AddArchiveData(FName key, void* data)
-{
-	return mCDArchive->AddData(key,data);
-}
-
-void UStateManager::RemoveArchiveData(FName key)
-{
-	mCDArchive->RemoveData(key);
-}
-
-void UStateManager::AddStateData_bp(int index, uint8 stateName, const UCState* newState, UCState*& ret)
-{
-	ret = AddStateData(index, stateName, const_cast<UCState*>(newState));
-}
-
-void UStateManager::GetCurState_bp(UCState *&curState)
-{
-	curState = mCurState;
-}
-
-void UStateManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UStateManager, mCurState);
-	DOREPLIFETIME(UStateManager, mCDArchive);
-	DOREPLIFETIME(UStateManager, mStateContiners);
-}
-
-UStateManager::FChangeEvent& UStateManager::OnStateChange()
-{
-	return mChangeEvent;
-}
-
-void UStateManager::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	this->Update(DeltaTime);
 }
 
 UCharacterDataArchive * UStateManager::GetCharacterDataArchive()

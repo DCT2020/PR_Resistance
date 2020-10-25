@@ -11,9 +11,9 @@ UComboManager::~UComboManager()
 {
 }
 
-void UComboManager::Init(TQueue<FSlotMotionProcess>* _SlotMotionQueue, UDataTable* actionTable, UAnimInstance* animInstance)
+void UComboManager::Init(APR_ResistanceCharacter* Owner, UDataTable* actionTable, UAnimInstance* animInstance)
 {
-	mSlotMotionQueue = _SlotMotionQueue;
+	mOwner = Owner;
 	mOwnerAnimInst = animInstance;
 
 	TArray<FAction> rows;
@@ -60,7 +60,8 @@ bool UComboManager::StartAttack(FName firstAttack)
 
 void UComboManager::StartWaitInput()
 {
-	mOwnerAnimInst->Montage_Pause(mCurDynmMontage);
+	//mOwnerAnimInst->Montage_Pause(mCurDynmMontage);
+	mOwner->Montage_PauseOnServer();
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, TEXT("Notified"));
 	mbIsWait = true;
 	mEalsedTime = 0.0f;
@@ -132,35 +133,12 @@ bool UComboManager::ChangeAction(const FAction* action)
 
 void UComboManager::PlayerSlotAnimation(FName slotName, UAnimSequenceBase *animSequence)
 {
-	FSlotMotionProcess process;
-	process.mLamda = [this, slotName, animSequence]()
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, TEXT("PlaySlotAnimation"));
-
-		if (mOwnerAnimInst->TryGetPawnOwner()->GetLocalRole() == ROLE_Authority)
-		{
-			mCurDynmMontage = mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
-		}
-		else
-		{
-			mOwnerAnimInst->PlaySlotAnimationAsDynamicMontage(animSequence, slotName, 0.0f, 0.0f);
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("%s, %s"), *animSequence->GetPathName(), *slotName.ToString()));
-		}
-
-	};
-
-	mSlotMotionQueue->Enqueue(process);
+	mOwner->PlaySlotAnimation_onServrer(slotName, animSequence);
 }
 
 void UComboManager::StopSlotAnimation(FName slotName)
 {
-	FSlotMotionProcess process;
-	process.mLamda = [this,slotName]()
-	{
-		mOwnerAnimInst->StopSlotAnimation(0.25f, slotName);
-	};
-
-	mSlotMotionQueue->Enqueue(process);
+	mOwner->StopSlotAnimation_onServrer(slotName);
 }
 
 void UComboManager::SetComboEnd()
@@ -168,8 +146,10 @@ void UComboManager::SetComboEnd()
 	mEalsedTime = 0.0f;
 	mbIsWait = false;
 	mCurAction = nullptr;
-	mOwnerAnimInst->Montage_Stop(0.15f, mCurDynmMontage);
-	mOwnerAnimInst->StopSlotAnimation(0.0f, TEXT("DefaultSlot"));
+	mOwner->Montage_PauseOnServer();
+	mOwner->StopSlotAnimation(TEXT("DefaultSlot"));
+	//mOwnerAnimInst->Montage_Stop(0.15f, mCurDynmMontage);
+	//mOwnerAnimInst->StopSlotAnimation(0.0f, TEXT("DefaultSlot"));
 
 	if (ComboEndEvent != nullptr)
 		ComboEndEvent();

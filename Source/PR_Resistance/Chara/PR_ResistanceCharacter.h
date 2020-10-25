@@ -33,10 +33,18 @@ struct PR_RESISTANCE_API FCharacterAnimationData : public FTableRowBase
 {
 	GENERATED_BODY()
 		
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation, meta = (DisplayName = "Animation"))
 		UAnimSequence* mAnimation;
 };
 
+USTRUCT(BlueprintType, Atomic)
+struct PR_RESISTANCE_API FSoundData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation,meta =(DisplayName = "Sound"))
+		USoundBase* mSound;
+};
 
 
 //Dynamic Delegate
@@ -81,12 +89,23 @@ private:
 	
 	std::function<void()> mTimeToNextStepNotifier;
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+		UAnimSequence* testSequence;
 
-	UPROPERTY()
-	 TQueue<FSlotMotionProcess> mSlotMotionQueue;
+	UFUNCTION(Reliable, Server)
+		void PlaySlotAnimation_onServrer(FName slotName, UAnimSequenceBase* anim);
+	UFUNCTION(Reliable, Server)
+		void StopSlotAnimation_onServrer(FName slotName);
+	UFUNCTION(Reliable, Server)
+		void Montage_PauseOnServer();
+
 	UFUNCTION(Reliable, NetMulticast)
-		void OnProcessSlotMotion_Multicast();
-		void OnProcessSlotMotion_Multicast_Implementation();
+		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* anim);
+
+        UFUNCTION(Reliable, NetMulticast)
+		void StopSlotAnimation(FName slotName);
+	UFUNCTION(Reliable, NetMulticast)
+		void Montage_PauseMulticast();
 public:
 	APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual ~APR_ResistanceCharacter();
@@ -109,7 +128,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Character)
 	UDataTable* mActionDataTable;
 
-	UPROPERTY(BlueprintReadWrite, Category = Character)
+	UPROPERTY(BlueprintReadWrite, Category = Character,Replicated)
 	bool bIsMeele = true;
 
 	UPROPERTY(BlueprintReadWrite, Category = Character)
@@ -140,6 +159,7 @@ public:
 	UFUNCTION()
 		void OnHitAnimEnd(UAnimMontage* motange, bool bInterrupted);
 
+        UPROPERTY(Replicated)
 	bool bIsCanAttack = true;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;

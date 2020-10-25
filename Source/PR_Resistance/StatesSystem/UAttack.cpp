@@ -76,8 +76,9 @@ bool UAttack::_Init()
 
 	if (mComboManager == nullptr)
 	{
+		  GetCharaDataWithLog("Owner",&buffer)
 		mComboManager = NewObject<UComboManager>();
-		mComboManager->Init(mActionTable, mAnimInstance);
+		mComboManager->Init(static_cast<APR_ResistanceCharacter*>(buffer),mActionTable, mAnimInstance);
 		mComboManager->BindComboAndEvent([this]() {StopAttack(); });
 	}
 

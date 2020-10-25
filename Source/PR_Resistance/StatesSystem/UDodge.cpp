@@ -64,6 +64,10 @@ bool UDodge::_Init()
 	{
 		mCharacterRootComponent = static_cast<USceneComponent*>(buffer);
 	}
+	GetCharaDataWithLog("Owner", &buffer);
+	{
+		mOwner = static_cast<APR_ResistanceCharacter *>(buffer);
+	}
 
 	
 	return true;
@@ -78,7 +82,8 @@ bool UDodge::Begin(uint8 prevState)
 
 	assert(mSPProvider == nullptr);
 
-	mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim, "DefaultSlot");
+	mOwner->PlaySlotAnimation_onServrer(TEXT("DefaultSlot"), mDodgaAnim);
+	//mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim, "DefaultSlot");
 
 	return true;
 }

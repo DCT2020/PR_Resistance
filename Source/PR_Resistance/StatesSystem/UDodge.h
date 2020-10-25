@@ -9,6 +9,7 @@
 /**
  *	TODO: 공격불가상태 코딩해야함
  */
+class APR_ResistanceCharacter;
  UCLASS()
 class PR_RESISTANCE_API UDodge : public UCState, public IStaminaUser
 {
@@ -19,6 +20,7 @@ protected:
 	UAnimInstance* mAnimInstance = nullptr;
 	UAnimSequence* mDodgaAnim = nullptr;
 	USceneComponent* mCharacterRootComponent = nullptr;
+	APR_ResistanceCharacter* mOwner= nullptr;
 
 	
 	//임시
@@ -36,6 +38,7 @@ public:
 	void End() override;
 
 	void SetProvider(IStaminaProvider* provider) override;
+
 protected:
 	UFUNCTION()
 	void OnAnimEnd(UAnimMontage* motange, bool bInterrupted);

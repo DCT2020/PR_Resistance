@@ -17,12 +17,38 @@
 //////////////////////////////////////////////////////////////////////////
 // APR_ResistanceCharacter
 
-void APR_ResistanceCharacter::OnProcessSlotMotion_Multicast_Implementation()
+void APR_ResistanceCharacter::PlaySlotAnimation_onServrer_Implementation(FName slotName,
+	UAnimSequenceBase* anim) {
+	PlaySlotAnimation(slotName, anim);
+}
+
+void APR_ResistanceCharacter::StopSlotAnimation_onServrer_Implementation(FName slotName) {
+	StopSlotAnimation(slotName);
+}
+
+void APR_ResistanceCharacter::PlaySlotAnimation_Implementation(FName slotName, UAnimSequenceBase* anim)
 {
-	FSlotMotionProcess process;
-	while(!mSlotMotionQueue.Dequeue(process)) {
-		process.mLamda();
-	}
+	UKismetSystemLibrary::PrintString(this, TEXT("Multicast"));
+	  if(!HasAuthority()) {
+		  GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Cyan, TEXT("MT"));
+
+	  }
+
+	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(anim, slotName);
+}
+
+void APR_ResistanceCharacter::StopSlotAnimation_Implementation(FName slotName)
+{
+	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.25, slotName);
+}
+
+
+void APR_ResistanceCharacter::Montage_PauseOnServer_Implementation() {
+	Montage_PauseMulticast();
+}
+
+void APR_ResistanceCharacter::Montage_PauseMulticast_Implementation() {
+        GetMesh()->GetAnimInstance()->Montage_Pause();
 }
 
 APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& ObjectInitializer)
@@ -165,6 +191,8 @@ void APR_ResistanceCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APR_ResistanceCharacter, mPrevForwardInput);
 	DOREPLIFETIME(APR_ResistanceCharacter, mPrevRightInput);
+	DOREPLIFETIME(APR_ResistanceCharacter, bIsMeele); 
+	DOREPLIFETIME(APR_ResistanceCharacter, bIsCanAttack); 
 }
 
 void APR_ResistanceCharacter::BeginPlay()
@@ -193,7 +221,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
 	mStateManager->AddArchiveData("RootComponent", RootComponent);
 	mStateManager->AddArchiveData("AnimTable", mAnimTable);
-	mStateManager->AddArchiveData("SlotMotionQueue", &mSlotMotionQueue);
+	mStateManager->AddArchiveData("Owner", const_cast<APR_ResistanceCharacter*>(this));
 	
 	// Load states
 	mStateManager->LoadStates();
@@ -241,11 +269,6 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	{
 		mStateManager->ChangeState(StateType::ST_GUN);
 	}
-
-        if(GetLocalRole() == ROLE_Authority) 
-	{
-		OnProcessSlotMotion_Multicast_Implementation();
-        }
 }
 
 #pragma  region INPUT_BINDED_FUNCTIONS
@@ -266,8 +289,10 @@ void APR_ResistanceCharacter::Jump_Wrapped_Implementation()
 
 void APR_ResistanceCharacter::Dodge_Implementation()
 {
-	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, TEXT("UpperMotion"));
-	GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, TEXT("ParallelMotion"));
+	StopSlotAnimation_onServrer(TEXT("UpperMotion"));
+	StopSlotAnimation_onServrer(TEXT("ParallelMotion"));
+	//GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, );
+	//GetMesh()->GetAnimInstance()->StopSlotAnimation(0.0f, TEXT("ParallelMotion"));
 	mStateManager->TryChangeState((uint8)CharacterState::CS_DODGE);
 }
 
@@ -421,7 +446,8 @@ void APR_ResistanceCharacter::SetWeapon1_Implementation()
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
 		return;
 
-	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mDeSpawnRifleMotion, TEXT("UpperMotion"));
+	PlaySlotAnimation_onServrer(TEXT("UpperMotion"), mDeSpawnRifleMotion);
+	//GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mDeSpawnRifleMotion, TEXT("UpperMotion"));
 	bIsCanAttack = false;
 	bIsMeele = true;
 }
@@ -431,7 +457,8 @@ void APR_ResistanceCharacter::SetWeapon2_Implementation()
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
 		return;
 
-	GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mSpawnRifleMotion, TEXT("UpperMotion"));
+	PlaySlotAnimation_onServrer(TEXT("UpperMotion"), mSpawnRifleMotion);
+	//GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mSpawnRifleMotion, TEXT("UpperMotion"));
 	bIsCanAttack = false;
 	bIsMeele = false;
 }
