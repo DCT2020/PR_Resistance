@@ -99,20 +99,20 @@ APR_ResistanceCharacter::APR_ResistanceCharacter(const FObjectInitializer& Objec
 
 	// 라이플 StaticMesh
 	
-	Rifle = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle"));
-	if (Rifle)
+	mRifle = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Rifle_Skeletal"));
+	if (mRifle)
 	{
-		Rifle->AlwaysLoadOnClient = true;
-		Rifle->AlwaysLoadOnServer = true;
-		Rifle->bOwnerNoSee = false;
-		Rifle->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
-		Rifle->bCastDynamicShadow = true;
-		Rifle->bAffectDynamicIndirectLighting = true;
-		Rifle->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-		Rifle->SetupAttachment(GetMesh(), TEXT("SM_Rifle"));
-		Rifle->SetCollisionProfileName(TEXT("Rifle"));
-		Rifle->SetGenerateOverlapEvents(false);
-		Rifle->SetCanEverAffectNavigation(false);
+		mRifle->AlwaysLoadOnClient = true;
+		mRifle->AlwaysLoadOnServer = true;
+		mRifle->bOwnerNoSee = false;
+		mRifle->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
+		mRifle->bCastDynamicShadow = true;
+		mRifle->bAffectDynamicIndirectLighting = true;
+		mRifle->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+		mRifle->SetupAttachment(GetMesh(), TEXT("SM_Rifle"));
+		mRifle->SetCollisionProfileName(TEXT("Rifle"));
+		mRifle->SetGenerateOverlapEvents(false);
+		mRifle->SetCanEverAffectNavigation(false);
 	}
 	// 근접 무기 StaticMesh
 	MeleeWeapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeleeWeapon"));
@@ -221,22 +221,22 @@ void APR_ResistanceCharacter::BeginPlay()
 	mStateManager->AddArchiveData("TimeToNextStepNotify", &mTimeToNextStepNotifier);
 	mStateManager->AddArchiveData("World", GetWorld());
 	mStateManager->AddArchiveData("CharacterTransform", const_cast<FTransform*>(&GetTransform()));
-	mStateManager->AddArchiveData("SkeletalMeshComponent", Rifle);
+	mStateManager->AddArchiveData("SkeletalMeshComponent", mRifle);
 	mStateManager->AddArchiveData("RootComponent", RootComponent);
 	mStateManager->AddArchiveData("AnimTable", mAnimTable);
 	mStateManager->AddArchiveData("Owner", const_cast<APR_ResistanceCharacter*>(this));
 	mStateManager->AddArchiveData("SoundTable", mSoundTable);
 	mStateManager->AddArchiveData("FireEffect", mFireEffect);
-	mStateManager->AddArchiveData("RifleMesh", Rifle);
+	mStateManager->AddArchiveData("RifleMesh", mRifle);
 	mStateManager->AddArchiveData("Floats", mFloatsComponent);
 	mStateManager->AddArchiveData("Camera", FollowCamera);
 	// Load states
 	mStateManager->LoadStates();
 
 	// weapon collision (나중에 Rifle에서 MeleeWeapon으로 바꿀 것)	
-	Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Rifle->OnComponentBeginOverlap.AddDynamic(this, &APR_ResistanceCharacter::OnWeaponOverlaped);
-	Rifle->SetGenerateOverlapEvents(true);
+	mRifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	mRifle->OnComponentBeginOverlap.AddDynamic(this, &APR_ResistanceCharacter::OnWeaponOverlaped);
+	mRifle->SetGenerateOverlapEvents(true);
 
 	// floats 등록
 	mFloatsComponent->PushBack(mStatus.curHP);
@@ -571,11 +571,11 @@ void APR_ResistanceCharacter::ReceiveNotification(EAnimNotifyToCharacterTypes cu
 	case EAnimNotifyToCharacterTypes::ATC_ATTACK:
 		if (bIsEnd)
 		{
-			Rifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			mRifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 		else
 		{
-			Rifle->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			mRifle->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		}
 		break;
 	case EAnimNotifyToCharacterTypes::ATC_RELOAD_COMPLITE:

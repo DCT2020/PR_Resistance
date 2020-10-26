@@ -64,7 +64,7 @@ class APR_ResistanceCharacter : public ACharacter, public IStaminaProvider, publ
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* Rifle;
+	USkeletalMeshComponent* mRifle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* MeleeWeapon;
