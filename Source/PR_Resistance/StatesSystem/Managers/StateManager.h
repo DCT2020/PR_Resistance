@@ -35,7 +35,6 @@ private:
 		UCState* mCurState = nullptr;
 
 	TQueue<FStateDesc> mStateChangeCalls;
-
 	FChracterState mStates; // State리스트는 에디터에서 받을수 있도록
 public:
 	UStateManager();

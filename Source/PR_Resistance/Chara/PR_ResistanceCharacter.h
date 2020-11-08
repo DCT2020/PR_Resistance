@@ -111,7 +111,7 @@ public:
 	UFUNCTION(Reliable, NetMulticast)
 		void PlaySlotAnimation(FName slotName, UAnimSequenceBase* anim, int index = 0);
 
-        UFUNCTION(Reliable, NetMulticast)
+       UFUNCTION(Reliable, NetMulticast)
 		void StopSlotAnimation(FName slotName);
 	UFUNCTION(Reliable, NetMulticast)
 		void Montage_PauseMulticast(int index = 0);
@@ -179,13 +179,11 @@ protected:
 	/** Called for forwards/backward input */
 	UFUNCTION(Reliable,Server)
 		void MoveForward(float Value);
-	        void MoveForward_Implementation(float Value);
       
 
 	/** Called for side to side input */
 	UFUNCTION(Reliable,Server)
 	        void MoveRight(float Value);
-	        void MoveRight_Implementation(float Value);
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -204,11 +202,9 @@ protected:
 	*/
 	UFUNCTION(Reliable, Server)
 		void Run();
-		void Run_Implementation();
 
 	UFUNCTION(Reliable, Server)
 		void RunStop();
-	        void RunStop_Implementation();
 
 	/** Handler for when a touch input begins. */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
@@ -219,12 +215,10 @@ protected:
 	// Jump
 	UFUNCTION(Reliable, Server)
 		void Jump_Wrapped();
-	        void Jump_Wrapped_Implementation();
 
 	// Dodge
 	UFUNCTION(Reliable, Server)
 		void Dodge();
-	        void Dodge_Implementation();
 
 	// Jump Dash
 	void DoJumpDash();
@@ -232,23 +226,18 @@ protected:
 	//Attack
 	UFUNCTION(Reliable, Server)
 	        void StartAttack();
-	        void StartAttack_Implementation();
 	UFUNCTION(Reliable, Server)
 		void StopAttack();
-		void StopAttack_Implementation();
 
 	//Attack
 	UFUNCTION(Reliable, Server)
 		void StrongAttack();
-		void StrongAttack_Implementation();
 
 	// Swap
 	UFUNCTION(Reliable, Server)
 		void SetWeapon1();
-		void SetWeapon1_Implementation();
 	UFUNCTION(Reliable, Server)
 		void SetWeapon2();
-		void SetWeapon2_Implementation();
 
 	void Turn(float var);
 	void LookUp(float var);
@@ -257,14 +246,11 @@ protected:
 	// reload
 	UFUNCTION(Reliable, Server)
 		void Reload();
-		void Reload_Implementation();
 	// aim
 	UFUNCTION(Reliable, Server)
 	        void StartAiming();
-	        void StartAiming_Implementation();
 	UFUNCTION(Reliable, Server)
 		void EndAiming();
-		void EndAiming_Implementation();
 	//Aim
 
 
