@@ -204,6 +204,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	ACharacter::BeginPlay();
 	
 	mStateManager->Init();
+		RootComponent->SetIsReplicated(true);
 
 
 	//
@@ -254,6 +255,9 @@ void APR_ResistanceCharacter::BeginPlay()
 	mDeSpawnRifleMotion = mAnimTable->FindRow <FCharacterAnimationData >(TEXT("DeSpawnRifle"), nullptr)->mAnimation;
 	
 	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
+
+	//replicate
+	RootComponent->SetIsReplicated(true);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)

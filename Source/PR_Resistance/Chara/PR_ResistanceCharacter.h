@@ -242,7 +242,7 @@ protected:
 	UFUNCTION(Reliable, Server)
 		void SetWeapon2();
 
-	UFUNCTION(Reliable,Server);
+	UFUNCTION(Reliable,Server)
 		void Turn(float var);
 
 	void LookUp(float var);
