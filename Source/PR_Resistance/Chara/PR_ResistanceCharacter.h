@@ -177,13 +177,14 @@ protected:
 	virtual void Tick(float deltaTime) override;
 
 	/** Called for forwards/backward input */
-	UFUNCTION(Reliable,Server)
-		void MoveForward(float Value);
-      
+	void MoveForward(float Value);
+	UFUNCTION(Unreliable,Server)
+		void UpdatePrevForwardInput(float value);
 
 	/** Called for side to side input */
-	//UFUNCTION(Reliable,Server)
 	void MoveRight(float Value);
+	UFUNCTION(Unreliable,Server)
+		void UpdatePrevRightInput(float value);
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -198,10 +199,6 @@ protected:
 	void LookUpAtRate(float Rate);
 
 
-	#define MAKE_INPUT_RPC(UFUNCTION_MACRO, functionName) \
-	UFUNCTION_MACRO \
-	void functionName(); \
-	void functionName##Bind() {functionName();}
 	/*
 	* Run Action
 	*/
@@ -239,7 +236,8 @@ protected:
 		void StrongAttack();
 
 	// Swap
-	MAKE_INPUT_RPC(UFUNCTION(RELIABLE_BUFFER, Server),SetWeapon1)
+	UFUNCTION(Reliable, Server) 
+		void SetWeapon1();
 
 	UFUNCTION(Reliable, Server)
 		void SetWeapon2();

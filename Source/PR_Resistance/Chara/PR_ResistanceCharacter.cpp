@@ -144,9 +144,10 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APR_ResistanceCharacter::Jump_Wrapped_Implementation);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APR_ResistanceCharacter::Jump_Wrapped);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &APR_ResistanceCharacter::MoveForward_Implementation);
+	PlayerInputComponent->BindAxis(TEXT("MoveForward_"), this, &APR_ResistanceCharacter::MoveForward);
+	
 	PlayerInputComponent->BindAxis("MoveRight", this, &APR_ResistanceCharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
@@ -164,28 +165,28 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindTouch(IE_Released, this, &APR_ResistanceCharacter::TouchStopped);
 
 	// Run
-	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::Run_Implementation);
-	PlayerInputComponent->BindAction("Run", IE_Released, this, &APR_ResistanceCharacter::RunStop_Implementation);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APR_ResistanceCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &APR_ResistanceCharacter::RunStop);
 
 	//Dodge
-	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &APR_ResistanceCharacter::Dodge_Implementation);
+	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &APR_ResistanceCharacter::Dodge);
 
-	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APR_ResistanceCharacter::StartAttack_Implementation);
-	PlayerInputComponent->BindAction("Attack", IE_Released, this, &APR_ResistanceCharacter::StopAttack_Implementation);
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &APR_ResistanceCharacter::StartAttack);
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &APR_ResistanceCharacter::StopAttack);
 
 
-	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon1Bind);
-	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon2_Implementation);
+	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon1);
+	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon2);
 
 	////////////////////////////// SubState //////////////////////////////////////////
 	//Reload
-	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &APR_ResistanceCharacter::Reload_Implementation);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &APR_ResistanceCharacter::Reload);
 
 	//Aim
-	PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &APR_ResistanceCharacter::StartAiming_Implementation);
-	PlayerInputComponent->BindAction("Aiming", IE_Released, this, &APR_ResistanceCharacter::EndAiming_Implementation);
+	PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &APR_ResistanceCharacter::StartAiming);
+	PlayerInputComponent->BindAction("Aiming", IE_Released, this, &APR_ResistanceCharacter::EndAiming);
 
-	PlayerInputComponent->BindAction("StrongAttack", IE_Pressed, this, &APR_ResistanceCharacter::StrongAttack_Implementation);
+	PlayerInputComponent->BindAction("StrongAttack", IE_Pressed, this, &APR_ResistanceCharacter::StrongAttack);
 
 }
 
@@ -243,7 +244,7 @@ void APR_ResistanceCharacter::BeginPlay()
 	mFloatsComponent->AddListener(this, 0);
 	mFloatsComponent->PushBack(mStatus.CurAmmo);
 	mFloatsComponent->AddListener(this, 1);
-
+	
 	// hitmotion
 	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
 	// spawn rifle motion
@@ -280,6 +281,7 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	}
 
 	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] IsMeele? : %d"),*this->GetName(),bIsMeele),true,true,FLinearColor::Blue,0.0f);
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] SubState : %d"), *this->GetName(), mStateManager->GetCurSubState()), true, true, FLinearColor::Blue, 0.0f);
 }
 
 #pragma  region INPUT_BINDED_FUNCTIONS
@@ -287,8 +289,6 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 // Jump
 void APR_ResistanceCharacter::Jump_Wrapped_Implementation()
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] Jump Call"), *this->GetName()));
-
 	if (JumpCurrentCount < 2)
 	{
 		float forUseStamina = mStatus.maxStamina * (JumpCurrentCount == 0 ? 0.07f : 0.08f);
@@ -351,30 +351,28 @@ void APR_ResistanceCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
+void APR_ResistanceCharacter::MoveForward(float Value)
 {
-	mPrevForwardInput = 0.0f;
-
-	if (GetLocalRole() != ROLE_Authority)
-		return;
+	mPrevForwardInput = Value;
 
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_HIT)
-		return;
+		mPrevForwardInput = 0.0f;;
 	
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
-		return;
+		mPrevForwardInput = 0.0f;;
 	
 	if (bIsMeele)
 	{
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
-			return;
+			mPrevForwardInput = 0.0f;;
 	}
 
-	mPrevForwardInput = Value;
+	UpdatePrevForwardInput(mPrevForwardInput);
 
 	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
 	if (bIsMoved)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Black, FString::Printf(TEXT("%f"), GetMovementComponent()->GetMaxSpeed()));
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -391,30 +389,33 @@ void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 	}
 }
 
+void APR_ResistanceCharacter::UpdatePrevForwardInput_Implementation(float value)
+{
+	mPrevForwardInput = value;
+}
+
 void APR_ResistanceCharacter::MoveRight(float Value)
 {
-	mPrevRightInput = 0.0f;
-
-	if (GetLocalRole() != ROLE_Authority)
-		return;
+	mPrevRightInput = Value;
 
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_HIT)
-		return;
+		mPrevRightInput = 0;
 
 	if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_DODGE)
-		return;
+		mPrevRightInput = 0;
 
 	if (bIsMeele)
 	{
 		if (mStateManager->GetCurStateDesc().StateType == (uint8)CharacterState::CS_ATTACK)
-			return;
+			mPrevRightInput = 0;
 	}
-
-	mPrevRightInput = Value;
+	
+	UpdatePrevRightInput(mPrevRightInput);
 
 	bool bIsMoved = (Controller != NULL) && (Value != 0.0f);
 	if (bIsMoved)
 	{
+
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -430,6 +431,11 @@ void APR_ResistanceCharacter::MoveRight(float Value)
 	{
 		mStateManager->SetStateEnd((uint8)CharacterState::CS_WALK);
 	}
+}
+
+void APR_ResistanceCharacter::UpdatePrevRightInput_Implementation(float value)
+{
+	mPrevRightInput = value;
 }
 
 void APR_ResistanceCharacter::StartAttack_Implementation()
@@ -458,7 +464,6 @@ void APR_ResistanceCharacter::StrongAttack_Implementation()
 {
 	if (!bIsCanAttack)
 		return;
-
 	if (bIsMeele)
 	{
 		mLastInput = ActionInput::AINPUT_STRONGATTACK;
