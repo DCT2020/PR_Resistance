@@ -147,7 +147,7 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APR_ResistanceCharacter::Jump_Wrapped_Implementation);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APR_ResistanceCharacter::MoveForward_Implementation);
-	PlayerInputComponent->BindAxis("MoveRight", this, &APR_ResistanceCharacter::MoveRight_Implementation);
+	PlayerInputComponent->BindAxis("MoveRight", this, &APR_ResistanceCharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -174,7 +174,7 @@ void APR_ResistanceCharacter::SetupPlayerInputComponent(class UInputComponent* P
 	PlayerInputComponent->BindAction("Attack", IE_Released, this, &APR_ResistanceCharacter::StopAttack_Implementation);
 
 
-	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon1_Implementation);
+	PlayerInputComponent->BindAction("Weapon1", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon1Bind);
 	PlayerInputComponent->BindAction("Weapon2", IE_Pressed, this, &APR_ResistanceCharacter::SetWeapon2_Implementation);
 
 	////////////////////////////// SubState //////////////////////////////////////////
@@ -266,8 +266,8 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 		bIsIdle = false;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,FString::Printf(TEXT("CurState : %d"), mStateManager->GetCurStateDesc().StateType));
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("bIsMeele : %d"), bIsMeele));
+	//GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,FString::Printf(TEXT("CurState : %d"), mStateManager->GetCurStateDesc().StateType));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, FString::Printf(TEXT("bIsMeele : %d"), bIsMeele));
 	
 	// 효과적이고 간단하게 바꾸기
 	if (bIsMeele)
@@ -278,6 +278,8 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	{
 		mStateManager->ChangeState(StateType::ST_GUN);
 	}
+
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] IsMeele? : %d"),*this->GetName(),bIsMeele),true,true,FLinearColor::Blue,0.0f);
 }
 
 #pragma  region INPUT_BINDED_FUNCTIONS
@@ -285,6 +287,8 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 // Jump
 void APR_ResistanceCharacter::Jump_Wrapped_Implementation()
 {
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] Jump Call"), *this->GetName()));
+
 	if (JumpCurrentCount < 2)
 	{
 		float forUseStamina = mStatus.maxStamina * (JumpCurrentCount == 0 ? 0.07f : 0.08f);
@@ -387,7 +391,7 @@ void APR_ResistanceCharacter::MoveForward_Implementation(float Value)
 	}
 }
 
-void APR_ResistanceCharacter::MoveRight_Implementation(float Value)
+void APR_ResistanceCharacter::MoveRight(float Value)
 {
 	mPrevRightInput = 0.0f;
 
@@ -430,6 +434,9 @@ void APR_ResistanceCharacter::MoveRight_Implementation(float Value)
 
 void APR_ResistanceCharacter::StartAttack_Implementation()
 {
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] Attack Call"), *this->GetName()));
+
+
 	if (!bIsCanAttack)
 		return;
 
@@ -467,6 +474,8 @@ void APR_ResistanceCharacter::SetWeapon1_Implementation()
 
 	PlaySlotAnimation_onServrer(TEXT("UpperMotion"), mDeSpawnRifleMotion);
 	//GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mDeSpawnRifleMotion, TEXT("UpperMotion"));
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] SetWeapon1 Called? : %d"), *this->GetName(), bIsMeele));
+
 	bIsCanAttack = false;
 	bIsMeele = true;
 }

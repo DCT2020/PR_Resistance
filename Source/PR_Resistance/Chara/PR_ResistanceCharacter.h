@@ -137,7 +137,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Character)
 	UDataTable* mActionDataTable;
 
-	UPROPERTY(BlueprintReadWrite, Category = Character,Replicated)
+	UPROPERTY(Replicated,BlueprintReadWrite, Category = Character)
 	bool bIsMeele = true;
 
 	UPROPERTY(BlueprintReadWrite, Category = Character)
@@ -182,8 +182,8 @@ protected:
       
 
 	/** Called for side to side input */
-	UFUNCTION(Reliable,Server)
-	        void MoveRight(float Value);
+	//UFUNCTION(Reliable,Server)
+	void MoveRight(float Value);
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -197,6 +197,11 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+
+	#define MAKE_INPUT_RPC(UFUNCTION_MACRO, functionName) \
+	UFUNCTION_MACRO \
+	void functionName(); \
+	void functionName##Bind() {functionName();}
 	/*
 	* Run Action
 	*/
@@ -234,8 +239,8 @@ protected:
 		void StrongAttack();
 
 	// Swap
-	UFUNCTION(Reliable, Server)
-		void SetWeapon1();
+	MAKE_INPUT_RPC(UFUNCTION(RELIABLE_BUFFER, Server),SetWeapon1)
+
 	UFUNCTION(Reliable, Server)
 		void SetWeapon2();
 
@@ -252,7 +257,6 @@ protected:
 	UFUNCTION(Reliable, Server)
 		void EndAiming();
 	//Aim
-
 
 	// Weapon OverlapBegin
 	UFUNCTION()
