@@ -178,12 +178,12 @@ protected:
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
-	UFUNCTION(Unreliable,Server)
+	UFUNCTION(Reliable,Server)
 		void UpdatePrevForwardInput(float value);
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
-	UFUNCTION(Unreliable,Server)
+	UFUNCTION(Reliable,Server)
 		void UpdatePrevRightInput(float value);
 
 	/** 
@@ -242,7 +242,9 @@ protected:
 	UFUNCTION(Reliable, Server)
 		void SetWeapon2();
 
-	void Turn(float var);
+	UFUNCTION(Reliable,Server);
+		void Turn(float var);
+
 	void LookUp(float var);
 
 	//Substate

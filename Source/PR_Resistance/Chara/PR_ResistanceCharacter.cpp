@@ -234,6 +234,8 @@ void APR_ResistanceCharacter::BeginPlay()
 	// Load states
 	mStateManager->LoadStates();
 
+	GetCharacterMovement()->MaxWalkSpeed = mStatus.walkSpeed;
+
 	// weapon collision (나중에 Rifle에서 MeleeWeapon으로 바꿀 것)	
 	mRifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	mRifle->OnComponentBeginOverlap.AddDynamic(this, &APR_ResistanceCharacter::OnWeaponOverlaped);
@@ -496,7 +498,7 @@ void APR_ResistanceCharacter::SetWeapon2_Implementation()
 	bIsMeele = false;
 }
 
-void APR_ResistanceCharacter::Turn(float var)
+void APR_ResistanceCharacter::Turn_Implementation(float var)
 {
 	APawn::AddControllerYawInput(var);
 	if (bIsAim)
