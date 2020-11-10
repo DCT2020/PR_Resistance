@@ -82,8 +82,7 @@ bool UDodge::Begin(uint8 prevState)
 
 	assert(mSPProvider == nullptr);
 
-	mDodgeAnim = mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim,TEXT("DefaultSlot"));
-	//mAnimInstance->PlaySlotAnimationAsDynamicMontage(mDodgaAnim, "DefaultSlot");
+	mOwner->PlaySlotAnimation(TEXT("DefaultSlot"), mDodgaAnim);
 
 	return true;
 }

@@ -204,7 +204,6 @@ void APR_ResistanceCharacter::BeginPlay()
 	ACharacter::BeginPlay();
 	
 	mStateManager->Init();
-		RootComponent->SetIsReplicated(true);
 
 
 	//
@@ -244,9 +243,11 @@ void APR_ResistanceCharacter::BeginPlay()
 
 	// floats 등록
 	mFloatsComponent->PushBack(mStatus.curHP);
-	mFloatsComponent->AddListener(this, 0);
+	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_HP);
+	mFloatsComponent->PushBack(mStatus.curStamina);
+	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_SP);
 	mFloatsComponent->PushBack(mStatus.CurAmmo);
-	mFloatsComponent->AddListener(this, 1);
+	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_AMMO);
 	
 	// hitmotion
 	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
@@ -255,9 +256,6 @@ void APR_ResistanceCharacter::BeginPlay()
 	mDeSpawnRifleMotion = mAnimTable->FindRow <FCharacterAnimationData >(TEXT("DeSpawnRifle"), nullptr)->mAnimation;
 	
 	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
-
-	//replicate
-	RootComponent->SetIsReplicated(true);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)
@@ -285,9 +283,6 @@ void APR_ResistanceCharacter::Tick(float deltaTime)
 	{
 		mStateManager->ChangeState(StateType::ST_GUN);
 	}
-
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] IsMeele? : %d"),*this->GetName(),bIsMeele),true,true,FLinearColor::Blue,0.0f);
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] SubState : %d"), *this->GetName(), mStateManager->GetCurSubState()), true, true, FLinearColor::Blue, 0.0f);
 }
 
 #pragma  region INPUT_BINDED_FUNCTIONS
@@ -300,7 +295,7 @@ void APR_ResistanceCharacter::Jump_Wrapped_Implementation()
 		float forUseStamina = mStatus.maxStamina * (JumpCurrentCount == 0 ? 0.07f : 0.08f);
 		if (UseStamina(forUseStamina))
 		{
-			Jump();
+			Jump_Client();
 			mStateManager->TryChangeState((uint8)CharacterState::CS_JUMP);
 		}
 	}
@@ -345,16 +340,21 @@ void APR_ResistanceCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVecto
 	mStateManager->SetStateEnd((uint8)CharacterState::CS_JUMP);
 }
 
+void APR_ResistanceCharacter::Jump_Client_Implementation()
+{
+	Jump();
+}
+
 void APR_ResistanceCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	//AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APR_ResistanceCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APR_ResistanceCharacter::MoveForward(float Value)
@@ -485,7 +485,6 @@ void APR_ResistanceCharacter::SetWeapon1_Implementation()
 
 	PlaySlotAnimation_onServrer(TEXT("UpperMotion"), mDeSpawnRifleMotion);
 	//GetMesh()->GetAnimInstance()->PlaySlotAnimationAsDynamicMontage(mDeSpawnRifleMotion, TEXT("UpperMotion"));
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("[%s] SetWeapon1 Called? : %d"), *this->GetName(), bIsMeele));
 
 	bIsCanAttack = false;
 	bIsMeele = true;
@@ -502,15 +501,16 @@ void APR_ResistanceCharacter::SetWeapon2_Implementation()
 	bIsMeele = false;
 }
 
-void APR_ResistanceCharacter::Turn_Implementation(float var)
+void APR_ResistanceCharacter::Turn(float var)
 {
-	APawn::AddControllerYawInput(var);
 	if (bIsAim)
 	{
 		FRotator rot = Controller->GetControlRotation();
 		rot.Pitch = 0.0f;
 		RootComponent->SetWorldRotation(rot);
+		RotateComponent(RootComponent,rot);
 	}
+	APawn::AddControllerYawInput(var);
 }
 
 void APR_ResistanceCharacter::LookUp(float var)
@@ -535,6 +535,11 @@ void APR_ResistanceCharacter::EndAiming_Implementation()
 		mStateManager->SetSubStateEnd(CharacterState::CS_SUB_AIM);
 }
 
+void APR_ResistanceCharacter::RotateComponent_Implementation(USceneComponent* comp, const FRotator& rot)
+{
+	comp->SetWorldRotation(rot);
+}
+
 #pragma  endregion 
 
 void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -545,37 +550,44 @@ void APR_ResistanceCharacter::OnWeaponOverlaped(UPrimitiveComponent* OverlappedC
 ///////////Interface
 bool APR_ResistanceCharacter::UseStamina(float usedStamina)
 {
+	if(GetLocalRole() != ROLE_Authority)
+		return false;
+
 	if (mStatus.curStamina < usedStamina)
 		return false;
 
 	mStatus.curStamina -= usedStamina;
-	FucDynamicOneParam.Broadcast(mStatus.curStamina / mStatus.maxStamina);
+	mFloatsComponent->Set(mStatus.curStamina,(uint8)EPlayerFloats::PF_SP);
+	//FucDynamicOneParam.Broadcast(mStatus.curStamina / mStatus.maxStamina);
 
 	return true;
 }
 
 void APR_ResistanceCharacter::ListenFloat(int index, float newFloat)
 {
-    if(index == 0) 
-    {
-      if(mStatus.curHP > newFloat)
-	{
-		// 공격 받았다.
-		mStateManager->TryChangeState((uint8)CharacterState::CS_HIT);
+	if (GetLocalRole() != ROLE_Authority)
+		return;
 
-		bIsParallelMotionValid = true;
+	if (index == 0)
+	{
+		if (mStatus.curHP > newFloat)
+		{
+			// 공격 받았다.
+			mStateManager->TryChangeState((uint8)CharacterState::CS_HIT);
+
+			bIsParallelMotionValid = true;
+		}
+
+		mStatus.curHP = newFloat;
+		if (mStatus.curHP < 0.0f)
+		{
+			mStatus.curHP = 0.0f;
+		}
 	}
-
-	mStatus.curHP = newFloat;
-	if(mStatus.curHP < 0.0f)
+	else if (index == 1)
 	{
-		mStatus.curHP = 0.0f;
-	}  
-    }
-    else if(index ==1) 
-    {
-	mStatus.CurAmmo = newFloat;
-    }
+		mStatus.CurAmmo = newFloat;
+	}
 }
 
 void APR_ResistanceCharacter::OnHitAnimEnd(UAnimMontage* motange, bool bInterrupted)

@@ -22,7 +22,7 @@ public:
 
 
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FDele_CheckCondition, uint8, Index, float, newValue);
+DECLARE_MULTICAST_DELEGATE_FourParams(FDele_CheckCondition, uint8, Index, float, originValue, float, newValue, float, prevValue);
 
 UCLASS( ClassGroup=(Float), meta=(BlueprintSpawnableComponent) )
 class PR_RESISTANCE_API UFloatsComponent : public UActorComponent
@@ -31,6 +31,7 @@ class PR_RESISTANCE_API UFloatsComponent : public UActorComponent
 
 	TArray<TArray<IFloatListener*>*> mListeners;
 	TArray<float> mFloats;
+	TArray<float> mOriginFloats;
 
 public:	
 	// Sets default values for this component's properties

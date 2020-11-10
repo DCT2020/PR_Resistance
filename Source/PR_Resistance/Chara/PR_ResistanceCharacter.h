@@ -46,6 +46,13 @@ struct PR_RESISTANCE_API FSoundData : public FTableRowBase
 		USoundBase* mSound;
 };
 
+UENUM(BlueprintType)
+enum class EPlayerFloats : uint8
+{
+	PF_HP = 0,
+	PF_SP,
+	PF_AMMO
+};
 
 //Dynamic Delegate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, float, percent);
@@ -73,7 +80,7 @@ class APR_ResistanceCharacter : public ACharacter, public IStaminaProvider, publ
 	UFloatsComponent* mFloatsComponent;
 	
 	virtual void ListenFloat(int index, float newFloat) override;
-	
+
 	
 private:
 	// 내부 변수들
@@ -131,7 +138,7 @@ public:
 	bool bIsInAttack = false;
 
 	//States
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+	UPROPERTY(replicated,EditAnywhere, BlueprintReadWrite, Category = Character)
 	FStatus mStatus;
 
 	UPROPERTY(EditAnywhere, Category = Character)
@@ -217,6 +224,8 @@ protected:
 	// Jump
 	UFUNCTION(Reliable, Server)
 		void Jump_Wrapped();
+	UFUNCTION(Reliable, Client)
+		void Jump_Client();
 
 	// Dodge
 	UFUNCTION(Reliable, Server)
@@ -242,8 +251,7 @@ protected:
 	UFUNCTION(Reliable, Server)
 		void SetWeapon2();
 
-	UFUNCTION(Reliable,Server)
-		void Turn(float var);
+	void Turn(float var);
 
 	void LookUp(float var);
 
@@ -257,6 +265,10 @@ protected:
 	UFUNCTION(Reliable, Server)
 		void EndAiming();
 	//Aim
+
+	//Rotation RPC
+	UFUNCTION(Reliable, Server)
+		void RotateComponent(USceneComponent* comp, const FRotator& rot);
 
 	// Weapon OverlapBegin
 	UFUNCTION()

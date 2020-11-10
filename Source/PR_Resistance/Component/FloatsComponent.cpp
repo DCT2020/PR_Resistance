@@ -69,6 +69,7 @@ void UFloatsComponent::AddConditionChecker(FDele_CheckCondition func, uint8 inde
 int UFloatsComponent::PushBack(float newValue)
 {
 	mFloats.Add(newValue);
+	mOriginFloats.Add(newValue);
 	mListeners.Emplace(new TArray<IFloatListener*>);
 	mConditionCheckers.Emplace(TArray<FDele_CheckCondition>());
 	return mFloats.Num();
@@ -79,15 +80,16 @@ bool UFloatsComponent::Set(const float newValue, uint8 index)
 	if(!mFloats.IsValidIndex(index))
 		return false;
 
+	for (auto conditionChecker : mConditionCheckers[index])
+	{
+		conditionChecker.Execute(index, mOriginFloats[index],newValue, mFloats[index]);
+	}
+
 	mFloats[index] = newValue;
+	
 	for (auto listener : *mListeners[index])
 	{
 		listener->ListenFloat(index, mFloats[index]);
-	}
-
-	for (auto conditionChecker : mConditionCheckers[index])
-	{
-		conditionChecker.Execute(index, newValue);
 	}
 
 	return true;
