@@ -240,14 +240,6 @@ void APR_ResistanceCharacter::BeginPlay()
 	mRifle->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	mRifle->OnComponentBeginOverlap.AddDynamic(this, &APR_ResistanceCharacter::OnWeaponOverlaped);
 	mRifle->SetGenerateOverlapEvents(true);
-
-	// floats 등록
-	mFloatsComponent->PushBack(mStatus.curHP);
-	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_HP);
-	mFloatsComponent->PushBack(mStatus.curStamina);
-	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_SP);
-	mFloatsComponent->PushBack(mStatus.CurAmmo);
-	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_AMMO);
 	
 	// hitmotion
 	mHitMotion = mAnimTable->FindRow<FCharacterAnimationData>(TEXT("Hit"), nullptr)->mAnimation;
@@ -256,6 +248,14 @@ void APR_ResistanceCharacter::BeginPlay()
 	mDeSpawnRifleMotion = mAnimTable->FindRow <FCharacterAnimationData >(TEXT("DeSpawnRifle"), nullptr)->mAnimation;
 	
 	GetMesh()->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &APR_ResistanceCharacter::OnHitAnimEnd);
+
+	// floats 등록
+	mFloatsComponent->PushBack(mStatus.curHP);
+	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_HP);
+	mFloatsComponent->PushBack(mStatus.curStamina);
+	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_SP);
+	mFloatsComponent->PushBack(mStatus.CurAmmo);
+	mFloatsComponent->AddListener(this, (uint8)EPlayerFloats::PF_AMMO);
 }
 
 void APR_ResistanceCharacter::Tick(float deltaTime)

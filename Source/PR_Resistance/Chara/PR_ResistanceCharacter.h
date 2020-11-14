@@ -43,7 +43,7 @@ struct PR_RESISTANCE_API FSoundData : public FTableRowBase
 	GENERATED_BODY()
 
 		UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Animation,meta =(DisplayName = "Sound"))
-		USoundBase* mSound;
+		TSubclassOf<class AActor> mSoundActorClass;
 };
 
 UENUM(BlueprintType)

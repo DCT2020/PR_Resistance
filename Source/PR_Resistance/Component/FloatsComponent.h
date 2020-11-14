@@ -21,8 +21,7 @@ public:
 };
 
 
-
-DECLARE_MULTICAST_DELEGATE_FourParams(FDele_CheckCondition, uint8, Index, float, originValue, float, newValue, float, prevValue);
+DECLARE_DYNAMIC_DELEGATE_FourParams(FDele_CheckCondition, uint8, Index, float, originValue, float, newValue, float, prevValue);
 
 UCLASS( ClassGroup=(Float), meta=(BlueprintSpawnableComponent) )
 class PR_RESISTANCE_API UFloatsComponent : public UActorComponent
@@ -30,7 +29,9 @@ class PR_RESISTANCE_API UFloatsComponent : public UActorComponent
 	GENERATED_BODY()
 
 	TArray<TArray<IFloatListener*>*> mListeners;
+	UPROPERTY();
 	TArray<float> mFloats;
+	UPROPERTY();
 	TArray<float> mOriginFloats;
 
 public:	

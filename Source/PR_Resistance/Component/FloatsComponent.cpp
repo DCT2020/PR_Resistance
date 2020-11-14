@@ -41,7 +41,10 @@ void UFloatsComponent::MakeFloats(uint8 size)
 		for (int i = mListeners.Num(); i < size; ++i)
 		{
 			mListeners.Emplace(new TArray<IFloatListener*>);
-			mConditionCheckers.Emplace(TArray<FDele_CheckCondition>());
+			if (!mConditionCheckers.IsValidIndex(i))
+			{
+				mConditionCheckers.Emplace(TArray<FDele_CheckCondition>());
+			}
 		}
 	}
 }
@@ -63,6 +66,11 @@ bool UFloatsComponent::AddListener(IFloatListener* newFloatListener, uint8 index
 
 void UFloatsComponent::AddConditionChecker(FDele_CheckCondition func, uint8 index)
 {
+	if (!mConditionCheckers.IsValidIndex(index))
+	{
+		mConditionCheckers.EmplaceAt(index,TArray<FDele_CheckCondition>());
+	}
+
 	mConditionCheckers[index].Add(func);
 }
 
@@ -71,7 +79,10 @@ int UFloatsComponent::PushBack(float newValue)
 	mFloats.Add(newValue);
 	mOriginFloats.Add(newValue);
 	mListeners.Emplace(new TArray<IFloatListener*>);
-	mConditionCheckers.Emplace(TArray<FDele_CheckCondition>());
+	if (!mConditionCheckers.IsValidIndex(mFloats.Num() - 1))
+	{
+		mConditionCheckers.Emplace(TArray<FDele_CheckCondition>());
+	}
 	return mFloats.Num();
 }
 

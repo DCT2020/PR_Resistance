@@ -115,13 +115,19 @@ void UFire::Update(float deltaTime)
 				UGameplayStatics::DeprojectScreenToWorld(playerController, screenSize, position, direciton);
 				projectile->Init(direciton,mCharacterStatus->BulletDamage,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
 
-				UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue->mSound,
-					mStaticMeshComp->GetSocketLocation(TEXT("UFirePoint")),
-					mStaticMeshComp->GetSocketRotation(TEXT("UFirePoint")));
+				UWorld* world = GetWorld();
 
-				UGameplayStatics::SpawnEmitterAtLocation(mOwner, mFireEffect,
-					mRifleMesh->GetSocketLocation(TEXT("FirePoint")),
-					mRifleMesh->GetSocketRotation(TEXT("FirePoint")));
+				
+				world->SpawnActor<AActor>(mSoundCue->mSoundActorClass, 
+				mRifleMesh->GetSocketTransform(TEXT("FirePoint")));
+				//
+				//UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue->mSound,
+				//	mStaticMeshComp->GetSocketLocation(TEXT("UFirePoint")),
+				//	mStaticMeshComp->GetSocketRotation(TEXT("UFirePoint")));
+				//
+				//UGameplayStatics::SpawnEmitterAtLocation(mOwner, mFireEffect,
+				//	mRifleMesh->GetSocketLocation(TEXT("FirePoint")),
+				//	mRifleMesh->GetSocketRotation(TEXT("FirePoint")));
 			}
 		}
 	}
