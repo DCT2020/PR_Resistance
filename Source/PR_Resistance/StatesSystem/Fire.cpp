@@ -88,8 +88,8 @@ void UFire::Update(float deltaTime)
 		mElapsedTime = 0.0f;
 
 		float out = 0.0f;
-		mFloats->Set(mCharacterStatus->CurAmmo - 1.0f, 1);
-		mFloats->Get(1, out);
+		mFloats->Set(mCharacterStatus->CurAmmo - 1.0f, (uint8)EPlayerFloats::PF_AMMO);
+		mFloats->Get((uint8)EPlayerFloats::PF_AMMO, out);
 		if (out <= 0.0f)
 		{
 			return;
@@ -115,11 +115,12 @@ void UFire::Update(float deltaTime)
 				UGameplayStatics::DeprojectScreenToWorld(playerController, screenSize, position, direciton);
 				projectile->Init(direciton,mCharacterStatus->BulletDamage,mCharacterStatus->BulletSpeed,mCharacterStatus->BulletLifeTime);
 
-				UWorld* world = GetWorld();
+				UWorld* world = mOwner->GetWorld();
 
 				
-				world->SpawnActor<AActor>(mSoundCue->mSoundActorClass, 
-				mRifleMesh->GetSocketTransform(TEXT("FirePoint")));
+				FTransform FireTransform = mRifleMesh->GetSocketTransform(TEXT("FirePoint"));
+
+				world->SpawnActor<AActor>(mSoundCue->mSoundActorClass, FireTransform);
 				//
 				//UGameplayStatics::PlaySoundAtLocation(mOwner, mSoundCue->mSound,
 				//	mStaticMeshComp->GetSocketLocation(TEXT("UFirePoint")),
