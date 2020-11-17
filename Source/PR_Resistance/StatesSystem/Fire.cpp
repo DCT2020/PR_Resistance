@@ -88,8 +88,8 @@ void UFire::Update(float deltaTime)
 		mElapsedTime = 0.0f;
 
 		float out = 0.0f;
-		mFloats->Set(mCharacterStatus->CurAmmo - 1.0f, (uint8)EPlayerFloats::PF_AMMO);
 		mFloats->Get((uint8)EPlayerFloats::PF_AMMO, out);
+		mFloats->Set(out - 1.0f, (uint8)EPlayerFloats::PF_AMMO);
 		if (out <= 0.0f)
 		{
 			return;
